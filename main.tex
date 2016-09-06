@@ -12,6 +12,30 @@
 }
 \title{Desenvolvimento de Aplicações Paralelas Eficientes com OpenMP}
 
+% Fragmento de Código
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+\lstset{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  numbers=left,
+  stepnumber=2,
+  language=C,
+  tabsize=4,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  otherkeywords={pragma,
+                 omp,
+				 parallel,
+				 num\_threads},
+  keywordstyle=\bfseries\color{blue},
+  commentstyle=\itshape\color{gray},
+  identifierstyle=\bfseries\color{black},
+  stringstyle=\bfseries\color{purple},
+}
+
 \begin{document}
 \maketitle
 
@@ -110,7 +134,7 @@ Resumo aqui.
 	do tipo UMA. Porém, arquiteturas paralelas mais complexas que possuem
 	várias dezenas de \textit{cores} são normalmente do tipo NUMA.
 
-\section{Modelo Fork-Join e Regiões Paralelas}
+\section{Conceitos Básicos}
 
 	Essa seção irá abordar os conceitos básicos de programação paralela com
 	OpenMP. Primeiramente, será apresentado o modelo base dessa API, em
@@ -118,34 +142,77 @@ Resumo aqui.
 	paralelas no código, e por fim serão apresentadas as formas de
 	compartilhamento de dados oferecidas pelo OpenMP.
 
-	% Modelo Fork-Join.
-	O OpenMP segue o modelo Fork-Join de execução paralela, que é ilustrado
-	na Figura (??). Nesse modelo, o programa inicia sua execução com uma
-	única thread, denominada \textit{master thread}. A \textit{master
-	thread} executa sequencialmente até encontrar uma região paralela,
-	definida pela primitiva \texttt{omp parallel} (Figura (??)). Nesse
-	ponto, a \textit{master thread} cria um grupo de threads trabalhadoras,
-	denominadas \textit{worker threads} (Figura (??)), e cada \textit{worker
-	thread} executa então os comandos delimitados pela região paralela. Ao
-	concluirem seu trabalho, as \textit{worker threads} sincronizam suas
-	atividades e terminam (Figura (??)). A \textit{master thread} retoma
-	então a execução sequencial do programa até que uma nova região paralela
-	seja encontrada, momento em que todo esse processo se repete novamente.
-	
-	% Comentários do Modelo Fork-Join
-	Como observação, é importante deixar claro que a \textit{master thread}
-	também executa os comandos na região paralela. Assim, se quatro
-	\textit{worker threads} são criadas pela \textit{master thread}, um
-	total de cinco threads irão executar a região paralela. No entanto, o é
-	possível fazer uso de estruturas condicionais alinhadas a funções
-	internas do OpenMP para definir uma execução de comandos diferentes para
-	a \textit{master thread}. Esse assunto será abordado mais adiante, na
-	Seção \ref{section: sincronizacao}. Por fim, vale ressaltar que, em
-	implementações modernas do OpenMP, a criação das estruturas internas
-	para gerência das threads em regiões paralelas é feita uma única vez,
-	quando a primeira região paralela é encontrada. Dessa forma, a
-	sobrecarga imposta na aplicação não cresce linearmente com o número de
-	regiões paralelas nela presente.
+	\subsection{Modelo Fork-Join}
+
+		% Descrição
+		O OpenMP segue o modelo Fork-Join de execução paralela, que é
+		ilustrado na Figura (??). Nesse modelo, o programa inicia sua
+		execução com uma única thread, denominada \textit{master thread}. A
+		\textit{master thread} executa sequencialmente até encontrar uma
+		região paralela, definida pela primitiva \texttt{omp parallel}
+		(Figura (??)). Nesse ponto, a \textit{master thread} cria um grupo
+		de threads trabalhadoras, denominadas \textit{worker threads}
+		(Figura (??)), e cada \textit{worker thread} executa então os
+		comandos delimitados pela região paralela. Ao concluirem seu
+		trabalho, as \textit{worker threads} sincronizam suas atividades e
+		terminam (Figura (??)). A \textit{master thread} retoma então a
+		execução sequencial do programa até que uma nova região paralela
+		seja encontrada, momento em que todo esse processo se repete
+		novamente.
+		
+		% Comentários
+		Como observação, é importante deixar claro que a \textit{master
+		thread} também executa os comandos na região paralela. Assim, se
+		quatro \textit{worker threads} são criadas pela \textit{master
+		thread}, um total de cinco threads irão executar a região paralela.
+		No entanto, o é possível fazer uso de estruturas condicionais
+		alinhadas a funções internas do OpenMP para definir uma execução de
+		comandos diferentes para a \textit{master thread}. Esse assunto será
+		abordado mais adiante, na Seção \ref{section: sincronizacao}. Por
+		fim, vale ressaltar que, em implementações modernas do OpenMP, a
+		criação das estruturas internas para gerência das threads em regiões
+		paralelas é feita uma única vez, quando a primeira região paralela é
+		encontrada. Dessa forma, a sobrecarga imposta na aplicação não
+		cresce linearmente com o número de regiões paralelas nela presente.
+
+	\subsection{Regiões Paralelas}
+
+		% Descrição.
+		A criação de regiões paralelas no OpenMP é feita através da
+		primitiva \texttt{omp parallel}, como ilustrado no Fragmento de
+		Código (??). Nesse exemplo, um grupo de threads é criado para
+		executar os comandos das linhas 7 a 11. Observe que o número de
+		threads que executam na região paralela é configurado através da
+		primitiva \texttt{num\_threads()}. Além disso, a função utilitária
+		\texttt{omp\_thread\_num()} é utilizada para recuperar o identificar
+		da thread corrente na região paralela. Essas duas funcionalidades da
+		API são úteis no projeto de aplicações paralelas, para  fazer um
+		ajuste da granularidade de paralelização e atribuição de tarefas às
+		threads, respectivamente.
+
+\begin{lstlisting}[frame=single]
+void sayhello(int nthreads)
+{
+	void tids[nthreads]
+
+	/* Cria nthreads. */
+	#pragma omp parallel num_threads(nthreads)
+	{
+		int tid;
+
+		tid = omp_thread_num();
+		tids[tid] = tid;
+	}
+
+	/* 
+	 * Imprime os IDs das threads que
+	 * executaram a região paralela.
+	 */
+	for (int i = 0; i < nthreads; i++)
+		printf("thread %d: my ID is %d\n", i, tids[i]);
+}
+\end{lstlisting}
+
 
 \section{Paralelismo de Dados e Diretivas OpenMP}
 
