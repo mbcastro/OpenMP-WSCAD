@@ -1,0 +1,50 @@
+\documentclass{SBCbookchapter}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+
+\author{Márcio Castro, Pedro H. Penna e Alyson D. Pereira\\
+\textit{Departamento de Informática e Estatística (INE)}\\
+\textit{Universidade Federal de Santa Catarina (UFSC)}
+}
+\title{Desenvolvimento de Aplicações Paralelas Eficientes com OpenMP}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+%\begin{resumo}
+%\begin{otherlanguage}{brazilian}
+%\end{otherlanguage}
+%\end{resumo}
+
+
+
+\section{Introdução}
+
+O capítulo apresentará uma motivação e introdução ao uso da API de programação OpenMP para o desenvolvimento de aplicações paralelas para arquiteturas de memória compartilhada.
+
+\section{Regiões Paralelas e o Modelo Fork-Join}
+
+Esse capítulo irá abordar os conceitos básicos de programação paralela com OpenMP. Primeiramente será apresentado o modelo base do OpenMP (Modelo Fork-Join). Em seguida, será apresentada a primitiva básica para a criação de regiões paralelas no código (\texttt{omp parallel}). Por fim, o serão apresentadas as formas de compartilhamento e privatização de dados oferecidas pelo OpenMP (\texttt{private}, \texttt{firstprivate} e \texttt{shared}).
+
+\section{Paralelismo de Dados e Diretivas OpenMP}
+
+O paralelismo de dados será explorado através do estudo das diretivas de compilação disponíveis no OpenMP para paralelização de laços (\texttt{omp for} e \texttt{omp parallel for}). Além disso, serão discutidas as diferentes estratégias de escalonamento disponíveis no ambiente de execução OpenMP (\texttt{static}, \texttt{dynamic} e \texttt{guided}) assim como as suas vantages e desvantagens. Por fim, será apresentada a cláusula de redução (\texttt{reduction}) juntamente com os seus casos de uso.
+
+\section{Paralelismo de Tarefas e Diretivas OpenMP}
+
+O paralelismo de tarefas será explorado através do estudo das diretivas de compilação disponíveis no OpenMP para paralelização de trechos de códigos. Serão discutidas duas construções: seções (\texttt{omp sections}) e tarefas (\texttt{omp task} e \texttt{omp taskwait}). A utilização de tarefas será abordada com o auxilio de problemas recursivos clássicos.
+
+\section{Sincronização}
+
+Nesse capítulo serão discutidas as diretivas de sincronização de threads disponíveis no OpenMP: serialização de código (\texttt{omp single} e \texttt{omp master}), exclusão mútua (\texttt{omp critical}) e barreiras (\texttt{omp barrier}).
+
+\section{Conclusão}
+
+Esse capítulo apresentará um apanhado geral do minicurso, ressaltando os principais pontos abordados no texto.
+
+\end{document}
