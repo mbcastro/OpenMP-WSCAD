@@ -182,12 +182,31 @@ Resumo aqui.
 		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento de
 		Código (??). Nesse exemplo, assim que a a \textit{master thread}
 		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
-		\textit{worker threads} para executar os comandos especificados.  No
+		\textit{worker threads} para executar os comandos especificados. Ao
+		final da região paralela, uma barreira implícita força a
+		sincronização das threads.
+		
+		% Controle do Número de Threads
+		Por padrão, o número de threads no grupo que executará uma região
+		paralela será igual ao número de núcleos de processamento no
+		processador. No entanto, esse fator pode ser controlador através da
+		cláusula  \texttt{num\_threads())}, pela invocação da função
+		utilitária \texttt{omp\_set\_num\_threads()}, ou então pela
+		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}. No
 		grupo, a \textit{master thread} possui o identificador zero, e o
 		identificar das demais threads pode ser recuperador através da
-		função utilitária do OpenMP \texttt{omp\_get\_thread\_num()}, como é
-		mostrado. Ao final de toda região paralela, uma barreira implícita
-		força a sincronização da computação feita pelas threads.
+		função utilitária do OpenMP \texttt{omp\_get\_thread\_num()}.
+
+		% Controle de Escopo de Dados 
+		Variáveis declaradas fora da região paralela são compartilhadas entre
+		todas as threads por padrão. No entanto, a cláusula \texttt{private()}
+		pode ser usada para a especificação de variáveis locais privadas, e a
+		diretiva \texttt{omp threadprivate} pode ser empregada para a definição
+		de variáveis globais privadas. Alternativamente, é possível alterar o
+		comportamento padrão para variáveis locais através da cláusula
+		\texttt{default()}, definindo todas elas como privadas, e então
+		especificar	as variáveis locais compartilhadas pela cláusula
+		\texttt{shared()}.
 
 \begin{lstlisting}[frame=single]
 void sayhello(int nthreads)
@@ -195,7 +214,7 @@ void sayhello(int nthreads)
 	void tids[nthreads]
 
 	/* Cria threads. */
-	#pragma omp parallel
+	#pragma omp parallel num_threads(nthreads)
 	{
 		int tid;
 
@@ -208,14 +227,6 @@ void sayhello(int nthreads)
 		printf("thread %d: my ID is %d\n", i, tids[i]);
 }
 \end{lstlisting}
-
-		Por padrão, o número de threads no grupo que executará uma região
-		paralela será igual ao número de núcleos de processamento no
-		processador. No entanto, esse fator pode ser controlador através da
-		cláusula  \texttt{num\_threads())}, pela invocação da função
-		utilitária \texttt{omp\_set\_num\_threads()}, ou então pela
-		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}.
-
 
 \section{Paralelismo de Dados e Diretivas OpenMP}
 
