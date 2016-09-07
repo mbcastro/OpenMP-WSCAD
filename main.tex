@@ -50,7 +50,7 @@ Resumo aqui.
 	desempenho de um único processador fosse aumentado com uma taxa anual de
 	40\% à 50\% \cite{LARUS08}. Porém, a dissipação de calor do crescente
 	número de transistores em um único \emph{chip} começou a limitar o
-	aumento da freqüência dos processadores. Devido à esse fato, grande
+	aumento da frequência dos processadores. Devido à esse fato, grande
 	parte da indústria de semicondutores está agora investindo na produção
 	de processadores com diversos núcleos de processamento
 	(\emph{multicores}).
@@ -149,7 +149,7 @@ Resumo aqui.
 		ilustrado na Figura (??). Nesse modelo, o programa inicia sua
 		execução com uma única thread, denominada \textit{master thread}. A
 		\textit{master thread} executa sequencialmente até encontrar uma
-		região paralela, definida pela primitiva \texttt{omp parallel}
+		região paralela, definida pela diretiva \texttt{omp parallel}
 		(Figura (??)). Nesse ponto, a \textit{master thread} cria um grupo
 		de threads trabalhadoras, denominadas \textit{worker threads}
 		(Figura (??)), e cada \textit{worker thread} executa então os
@@ -178,40 +178,43 @@ Resumo aqui.
 	\subsection{Regiões Paralelas}
 
 		% Descrição.
-		A criação de regiões paralelas no OpenMP é feita através da
-		primitiva \texttt{omp parallel}, como ilustrado no Fragmento de
-		Código (??). Nesse exemplo, um grupo de threads é criado para
-		executar os comandos das linhas 7 a 11. Observe que o número de
-		threads que executam na região paralela é configurado através da
-		primitiva \texttt{num\_threads()}. Além disso, a função utilitária
-		\texttt{omp\_thread\_num()} é utilizada para recuperar o identificar
-		da thread corrente na região paralela. Essas duas funcionalidades da
-		API são úteis no projeto de aplicações paralelas, para  fazer um
-		ajuste da granularidade de paralelização e atribuição de tarefas às
-		threads, respectivamente.
+		A definição de regiões paralelas no OpenMP é feita através da
+		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento de
+		Código (??). Nesse exemplo, assim que a a \textit{master thread}
+		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
+		\textit{worker threads} para executar os comandos especificados.  No
+		grupo, a \textit{master thread} possui o identificador zero, e o
+		identificar das demais threads pode ser recuperador através da
+		função utilitária do OpenMP \texttt{omp\_get\_thread\_num()}, como é
+		mostrado. Ao final de toda região paralela, uma barreira implícita
+		força a sincronização da computação feita pelas threads.
 
 \begin{lstlisting}[frame=single]
 void sayhello(int nthreads)
 {
 	void tids[nthreads]
 
-	/* Cria nthreads. */
-	#pragma omp parallel num_threads(nthreads)
+	/* Cria threads. */
+	#pragma omp parallel
 	{
 		int tid;
 
-		tid = omp_thread_num();
+		tid = omp_get_thread_num();
 		tids[tid] = tid;
 	}
 
-	/* 
-	 * Imprime os IDs das threads que
-	 * executaram a região paralela.
-	 */
+	/* Imprime IDs das threads. */
 	for (int i = 0; i < nthreads; i++)
 		printf("thread %d: my ID is %d\n", i, tids[i]);
 }
 \end{lstlisting}
+
+		Por padrão, o número de threads no grupo que executará uma região
+		paralela será igual ao número de núcleos de processamento no
+		processador. No entanto, esse fator pode ser controlador através da
+		cláusula  \texttt{num\_threads())}, pela invocação da função
+		utilitária \texttt{omp\_set\_num\_threads()}, ou então pela
+		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}.
 
 
 \section{Paralelismo de Dados e Diretivas OpenMP}
