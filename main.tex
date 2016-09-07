@@ -208,6 +208,16 @@ Resumo aqui.
 		especificar	as variáveis locais compartilhadas pela cláusula
 		\texttt{shared()}.
 
+		% Programação de Alto Desempenho
+		O uso dos mecanismos apresentados anteriormente é fundamental no
+		desenvolvimento de aplicações paralelas eficientes. O ajuste do
+		número de threads em uma região paralela evita o desperdício de
+		recursos computacionais e possibilita um ajuste da granularidade de
+		tarefas. A identificação de threads é necessária para a correta
+		coordenação e atribuição de tarefas em uma aplicação. Por fim,
+		mecanismos de controle de escopo de dados são inerentemente
+		necessários em aplicações paralelas.
+
 \begin{lstlisting}[frame=single]
 void sayhello(int nthreads)
 {
