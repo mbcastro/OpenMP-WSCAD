@@ -25,7 +25,7 @@
   language=C,
   tabsize=4,
   showstringspaces=false,
-  basicstyle=\footnotesize\ttfamily,
+  basicstyle=\scriptsize\ttfamily,
   otherkeywords={pragma,
                  omp,
 				 parallel,
@@ -82,7 +82,7 @@ Resumo aqui.
 
 	\begin{figure}[h]
 		\centering
-		\includegraphics[width=13cm, height=!]{figs/cores-top500.pdf}
+		\includegraphics[width=13cm, height=!]{img/cores-top500.pdf}
 		\caption{Número total de núcleos de processamento (\emph{cores}) dos supercomputadores mais poderosos relacionados na lista TOP500.}
 		\label{fig:top500}
 	\end{figure}
@@ -109,7 +109,7 @@ Resumo aqui.
 
 	\begin{figure}[h]
 		\centering
-		\includegraphics[width=10cm, height=!]{figs/arquitetura-multicore.pdf}
+		\includegraphics[width=10cm, height=!]{img/arquitetura-multicore.pdf}
 		\caption{Exemplo de uma arquitetura de memória compartilhada.}
 		\label{fig:arquitetura-multicore}
 	\end{figure}
@@ -240,14 +240,93 @@ void sayhello(int nthreads)
 
 \section{Paralelismo de Dados e Diretivas OpenMP}
 
-	O paralelismo de dados será explorado através do estudo das diretivas de
-	compilação disponíveis no OpenMP para paralelização de laços
-	(\texttt{omp for} e \texttt{omp parallel for}). Além disso, serão
-	discutidas as diferentes estratégias de escalonamento disponíveis no
-	ambiente de execução OpenMP (\texttt{static}, \texttt{dynamic} e
-	\texttt{guided}) assim como as suas vantages e desvantagens. Por fim,
-	será apresentada a cláusula de redução (\texttt{reduction}) juntamente
-	com os seus casos de uso.
+	% Visão Geral
+	No OpenMP, o paralelismo de dados é explorado através de diretivas
+	para paralelização de laços. Nessa seção, o uso dessas diretivas para o
+	projeto de aplicações no projeto de aplicações paralelas será discutido.
+	Primeiro, serão apresentadas as diretivas que possibilitam explorar o
+	paralelismo de dados. Em seguida, as estratégias de escalonamento
+	disponíveis no OpenMP são apresentadas, assim como suas vantagens e
+	desvantagens. Por fim, os mecanismos de redução oferecidos pela API são
+	introduzidos.
+
+	\subsection{Paralelização de Laços}
+	\label{subsection: paralelização de lacos}
+
+		% Visão Geral
+		Duas diretivas de paralelização de laços estão disponíveis no
+		OpenMP: \texttt{omp for} e \texttt{omp parallel for}. A primeira,
+		diretiva instrui que as iterações do laço seguinte de uma região
+		paralela devem ser distribuídas entre as threads do grupo em questão
+		e, então, executadas em paralelo. A segunda diretiva tem o mesmo
+		efeito, porém não necessita que o laço esteja dentro de uma região
+		paralela. O Fragmento de Código (??) ilustra o uso dessa última
+		diretiva na paralelização do algoritmo clássico de multiplicação de
+		matrizes. Nesse exemplo, um grupo de threads é criado para
+		executar os comandos do laço da linha $9$. Cada thread
+		recebe um conjunto distinto de iterações e, assim, a
+		computação é efetuada em paralelo. 
+
+\begin{lstlisting}[frame=single]
+struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
+{
+	struct matrix *c;
+
+	c = matrix_create(a->nrows, b->ncols);
+
+	/* Multiplica matrizes. */
+	#pragma omp parallel for 
+	for (int i = 0; i < a->nrows; i++)
+	{
+		for (int j = 0; j < a->cols; j++)
+		{
+			for (int k = 0; k < a->ncols; k++)
+				MATRIX(c, i, j) += MATRIX(a, i, k)*MATRIX(b, k, j);
+		}
+	}
+
+	return (c);
+}
+\end{lstlisting}
+
+	% Discussão de Granularidade
+	Observe que nesse exemplo, assim como em diversas outras aplicações que
+	também exploram o paralelismo de dados presente em laços, a diretiva de
+	compilação também poderia ter sido colocada no segundo laço mais externo
+	sem perda de semântica. No entanto, as duas abordagens se difeririam
+	quanto à granularidade de paralelização. Na primeira abordagem, o grão
+	de trabalho entregue a cada thread é mais grosso, enquanto na segunda
+	abordagem o grão de trabalho é mais fino. O controle de granularidade
+	consiste em uma técnica importante no projeto de aplicações paralelas
+	eficientes, pois tanto possibilita que a localidade temporal e de dados
+	sejam exploradas; quanto sobrecargas de sincronização e irregularidades na
+	computação sejam contornados. Na Seção (??) as peculiaridades desse
+	assunto serão discutidas em maiores detalhes.
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.50\textwidth]{img/matrix-mult}
+	\end{figure}
+
+	% Análise de Desempenho
+	Para ilustrar o impacto no desempenho que cada uma dessas abordagens
+	teriam no algoritmo clássico de multiplicação de matrizes, foram
+	conduzidos experimentos em uma máquina SMP com 24 núcleos ($2 \times$
+	Xeon X7). Nesses experimentos, foi fixado o tamanho da matriz de entrada
+	em $1680 \times 1680$ e foi variado o número de threads de $2$ a $24$.
+	Com esse simples experimento, pode-se constatar que, para a plataforma e
+	carga considerados, a abordagem de paralelização mais fina conduz a um
+	melhor desempenho. Ademais, para o tamanho da matriz de entrada
+	estudado, percebe-se que o ganho obtido com $14$ threads ou mais não é
+	significante maior do que com $12$ threads. Esse resultado, indica então
+	que utilizar mais que $12$ threads para esse tamanho de problema
+	significa um desperdício de recursos computacionais.
+
+	\subsection{Escalonamento de Iterações}
+	\label{subsection: escalonamento de iteracoes}
+
+	\subsection{Redução de Operações}
+	\label{subsection: reducao de operacoes}
 
 \section{Paralelismo de Tarefas e Diretivas OpenMP}
 
