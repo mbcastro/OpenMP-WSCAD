@@ -6,6 +6,10 @@
 \usepackage[brazilian]{backref}	 % Paginas com as citações na bibl
 \usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
+\usepackage{amsmath}
+
+\usepackage{todonotes}
+
 \author{Márcio Castro, Pedro H. Penna e Alyson D. Pereira\\
 \textit{Departamento de Informática e Estatística (INE)}\\
 \textit{Universidade Federal de Santa Catarina (UFSC)}
@@ -322,10 +326,116 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		que utilizar mais que $12$ threads para esse tamanho de problema
 		significa um desperdício de recursos computacionais.
 
+		\todo[inline]{Inserir resultados de estatística do uso de caches.}
+
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
 
+		% Aplicações Regulares
+		O escalonamento de iterações diz respeito ao modo como iterações de
+		um laço paralelo são atribuídas às threads de um grupo. Por padrão,
+		no OpenMP, o escalonamento de iterações é feito estaticamente e em
+		blocos (ou \textit{chunks}) de mesmo tamanho. Para aplicações que
+		possuem um padrão de computação regular, isto é, o tempo de
+		computação para cada iteração do laço paralelo é o mesmo, essa
+		estratégia conduz a ganhos de desempenhos satisfatórios, pois esse
+		particionamento estático é capaz de distribuir a carga de trabalho
+		de forma uniforme entre as threads. O algoritmo de multiplicação de
+		matrizes apresentado na seção anterior exemplifica a classe de
+		algoritmos regulares. No caso, a carga de trabalho entregue a cada
+		thread é constate e proporcional a:
+		%
+		\begin{align*}
+			\text{Carga de Trabalho} = \dfrac{\text{Numéro de Linhas na Matriz}}%
+			                                 {\text{Número de Threads}}
+		\end{align*}
+
+		% Aplicações Irregulares
+		No entanto, para aplicações que possuem um caráter irregular de
+		computação, isto é, o tempo de computação para cada iteração no laço
+		paralelo difere; ou então para aplicações regulares que possuem
+		afinidade de memória entre diferentes iterações; essa estratégia não
+		se mostra eficiente e escalável~[??]. Então, para atacar esses
+		cenários problemáticos, o OpenMP disponibiliza a cláusula
+		\texttt{schedule}, que possibilita: (i) controlar qual será a
+		estratégia de escalonamento que será empregada para escalonar as
+		iterações de um laço paralelo; e (ii) definir quantas iterações são
+		escalonadas por vez a uma única thread. A estratégia de
+		escalonamento permite contornar o problema do desbalanceamento de
+		carga presente em aplicações irregulares, equanto o controle do
+		tamanho de bloco de iterações a ser escalonado por vez permite
+		ajustar a granularidade de paralelização, possibilitando assim que a
+		afinidade de memória existente entre iterações seja explorada. O
+		tamanho de bloco de iterações pode ser escolhido arbitrariamente,
+		já a estratégia de escalonamento pode ser selecionada dentre as
+		seguintes, em uma implementação padrão do OpenMP:
+		%
+		\begin{itemize}
+			\item static: particiona igualitariamente as iterações de um
+			laço paralelo em chunks de iterações. A atribuição de chunks
+			é feita em tempo de compilação e nenhuma sobrecarga é
+			adicionada a aplicação. Essa estratégia é indicada para
+			aplicações regulares.
+			
+			\item dynamic: atribui chunks de iterações às threads sob
+			demanda em tempo de execução. Para que a atribuição seja feita
+			dinamicamente, durante a execução da aplicação, uma sobrecarga
+			gerência é introduzida na aplicação. Essa estratégia é indicada
+			para uso em aplicações com alto grau de irregularidade.
+
+			\item guided: similar à estratégia dynamic, porém o tamanho do
+			chunk de iterações decresce com o tempo. Essa estratégia
+			também impões uma sobrecarga na execução da aplicação, porém
+			relativamente menor que a estrátégia dynamic. Essa
+			estratégia é indicada para uso em aplicações com baixo e
+			médio graus de irregularidade, onde as iterações iniciais
+			do laço paralelo podem ser atribuídas em chunks maiores, e
+			assim alguma sobrecarga de sincronização evitada.
+		\end{itemize}
 		
+		% Exemplo
+		O Fragmento de Código (??) ilustra o uso desses dois mecanismos na
+		paralelização do algoritmo clássico para multiplicação de matrizes
+		esparsas, um típico representante de uma aplicação irregular. Nesse
+		exemplo, o escalonamento de iterações é feito em blocos de tamanho
+		um e usando a política Dynamic. Uma avaliação quantitativa do
+		desempenho dessa estratégia nessa aplicação particular, frente às
+		estratégias Static e Guided, é apresentada na Figura (??).
+		Experimentos foram conduzidos em uma máquina SMP com 24 cores ($2
+		\times$ Intel Xeon X7) para uma matriz de tamanho $1680 \times
+		1680$. Para essa aplicação, tamanho de problema e plataforma, a
+		análise dos resultados revela que a estratégia de escalonamento
+		Dynamic conduz a maiores ganhos de demsepenho e se mostra mais
+		escalar quando comparada à política Static e Guided.
+
+		\todo[inline]{Inserir resultados matriz esparsa}.
+
+\begin{lstlisting}[frame=single]
+struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
+{
+	struct matrix *c;
+
+	c = matrix_create(a->nrows, b->ncols);
+
+	/* Multiplica matrizes esparsas. */
+	#pragma omp parallel for 
+	for (int i = 0; i < a->nrows; i++)
+	{
+		for (int j = 0; j < a->cols; j++)
+		{
+			for (int k = 0; k < a->ncols; k++)
+			{
+				if (MATRIX(a, i, k) != 0)
+					MATRIX(c, i, j) += MATRIX(a, i, k)*MATRIX(b, k, j);
+			}
+		}
+	}
+
+	return (c);
+}
+\end{lstlisting}
+
+	\todo[inline]{Discussão sobre tamanho do chunk e overhead.}
 
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
