@@ -6,6 +6,10 @@
 \usepackage[brazilian]{backref}	 % Paginas com as citações na bibl
 \usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
+% Figures
+\usepackage{graphicx}
+\usepackage{subcaption}
+
 \usepackage{amsmath}
 
 \usepackage{todonotes}
@@ -307,10 +311,17 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		computação sejam contornados. Na Seção (??) as peculiaridades desse
 		assunto serão discutidas em maiores detalhes.
 
-		\begin{figure}
-			\centering
-			\includegraphics[width=0.50\textwidth]{img/matrix-mult}
-		\end{figure}
+			\begin{figure}[t]
+				\captionsetup[subfigure]{justification=centering}
+				\centering
+					\begin{subfigure}{0.45\linewidth}
+						\includegraphics[width=\linewidth]{img/mm}
+					\end{subfigure}
+					\quad
+					\begin{subfigure}{0.45\linewidth}
+						\includegraphics[width=\linewidth]{img/mm-cache}
+					\end{subfigure}
+			\end{figure}
 
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas abordagens
@@ -325,8 +336,6 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		significante maior do que com $12$ threads. Esse resultado, indica então
 		que utilizar mais que $12$ threads para esse tamanho de problema
 		significa um desperdício de recursos computacionais.
-
-		\todo[inline]{Inserir resultados de estatística do uso de caches.}
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
@@ -408,7 +417,10 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		Dynamic conduz a maiores ganhos de demsepenho e se mostra mais
 		escalar quando comparada à política Static e Guided.
 
-		\todo[inline]{Inserir resultados matriz esparsa}.
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.45\linewidth]{img/smm}
+		\end{figure}
 
 \begin{lstlisting}[frame=single]
 struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
