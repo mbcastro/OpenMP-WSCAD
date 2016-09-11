@@ -1,6 +1,6 @@
 *.aux
 *.log
-*.pdf
+main.pdf
 *.synctex.gz
 .DS_Store
 *.bbl
