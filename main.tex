@@ -23,6 +23,7 @@
 
 % Fragmento de Código
 \usepackage{listings}
+\renewcommand{\lstlistingname}{Código}
 
 \lstset{
   belowcaptionskip=1\baselineskip,
@@ -35,10 +36,13 @@
   tabsize=4,
   showstringspaces=false,
   basicstyle=\scriptsize\ttfamily,
-  otherkeywords={pragma,
-                 omp,
-				 parallel,
-				 num\_threads},
+  otherkeywords={
+  	pragma,
+	omp,
+	parallel,
+	num\_threads,
+	schedule
+  },
   keywordstyle=\bfseries\color{blue},
   commentstyle=\itshape\color{gray},
   identifierstyle=\bfseries\color{black},
@@ -92,7 +96,8 @@ Resumo aqui.
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=13cm, height=!]{img/cores-top500.pdf}
-		\caption{Número total de núcleos de processamento (\emph{cores}) dos supercomputadores mais poderosos relacionados na lista TOP500.}
+		\caption{Número total de núcleos de processamento (\emph{cores}) dos
+		supercomputadores mais poderosos relacionados na lista TOP500.}
 		\label{fig:top500}
 	\end{figure}
 
@@ -165,9 +170,9 @@ Resumo aqui.
 		% Descrição
 		O OpenMP segue o modelo Fork-Join de execução paralela, que é
 		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o programa inicia sua
-		execução com uma única \textit{thread}, denominada \textit{master thread} (Figura~\ref{fig:fork-join}a). A
-		\textit{master thread} executa sequencialmente até encontrar uma
-		região paralela, definida pela diretiva \texttt{omp parallel}
+		execução com uma única \textit{thread}, denominada \textit{master thread}
+		(Figura~\ref{fig:fork-join}a). A \textit{master thread} executa sequencialmente até
+		encontrar uma região paralela, definida pela diretiva \texttt{omp parallel}
 		(Figura~\ref{fig:fork-join}b). Nesse ponto, a \textit{master thread} cria um grupo
 		de \textit{threads} trabalhadoras, denominadas \textit{worker threads}
 		(Figura~\ref{fig:fork-join}c), e cada \textit{worker thread} executa então os
@@ -182,13 +187,13 @@ Resumo aqui.
 		Como observação, é importante deixar claro que a \textit{master
 		thread} também executa os comandos na região paralela. Assim, se
 		quatro \textit{worker threads} são criadas pela \textit{master
-		thread}, um total de cinco threads irão executar a região paralela.
-		No entanto, o é possível fazer uso de estruturas condicionais
+		thread}, um total de cinco \textit{threads} irão executar a região paralela.
+		No entanto, é possível fazer uso de estruturas condicionais
 		alinhadas a funções internas do OpenMP para definir uma execução de
 		comandos diferentes para a \textit{master thread}. Esse assunto será
-		abordado mais adiante, na Seção \ref{section: sincronizacao}. Por
+		abordado mais adiante na Seção \ref{section: sincronizacao}. Por
 		fim, vale ressaltar que, em implementações modernas do OpenMP, a
-		criação das estruturas internas para gerência das threads em regiões
+		criação das estruturas internas para gerência das \textit{threads} em regiões
 		paralelas é feita uma única vez, quando a primeira região paralela é
 		encontrada. Dessa forma, a sobrecarga imposta na aplicação não
 		cresce linearmente com o número de regiões paralelas nela presente.
@@ -203,46 +208,47 @@ Resumo aqui.
 
 		% Descrição.
 		A definição de regiões paralelas no OpenMP é feita através da
-		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento de
-		Código (??). Nesse exemplo, assim que a a \textit{master thread}
+		diretiva \texttt{omp\_parallel}, como é ilustrado no Código~\ref{listing:sayhello}.
+		Nesse exemplo, assim que a a \textit{master thread}
 		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
 		\textit{worker threads} para executar os comandos especificados. Ao
 		final da região paralela, uma barreira implícita força a
-		sincronização das threads.
+		sincronização das \textit{threads}.
 		
 		% Controle do Número de Threads
-		Por padrão, o número de threads no grupo que executará uma região
+		Por padrão, o número de \textit{threads} no grupo que executará uma região
 		paralela será igual ao número de núcleos de processamento no
 		processador. No entanto, esse fator pode ser controlador através da
-		cláusula  \texttt{num\_threads())}, pela invocação da função
+		cláusula \texttt{num\_threads()}, pela invocação da função
 		utilitária \texttt{omp\_set\_num\_threads()}, ou então pela
-		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}. No
-		grupo, a \textit{master thread} possui o identificador zero, e o
-		identificar das demais threads pode ser recuperador através da
+		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}. Em uma região paralela
+		as threads são identificadas por um número único entre $0$ e o número total de \textit{threads}$-1$.
+		O identificador de cada \textit{thread} pode ser recuperado através da
 		função utilitária do OpenMP \texttt{omp\_get\_thread\_num()}.
 
 		% Controle de Escopo de Dados 
 		Variáveis declaradas fora da região paralela são compartilhadas entre
-		todas as threads por padrão. No entanto, a cláusula \texttt{private()}
+		todas as \textit{threads} por padrão. No entanto, a cláusula \texttt{private()}
 		pode ser usada para a especificação de variáveis locais privadas, e a
 		diretiva \texttt{omp threadprivate} pode ser empregada para a definição
 		de variáveis globais privadas. Alternativamente, é possível alterar o
 		comportamento padrão para variáveis locais através da cláusula
 		\texttt{default()}, definindo todas elas como privadas, e então
-		especificar	as variáveis locais compartilhadas pela cláusula
+		especificar as variáveis locais compartilhadas pela cláusula
 		\texttt{shared()}.
 
 		% Programação de Alto Desempenho
 		O uso dos mecanismos apresentados anteriormente é fundamental no
 		desenvolvimento de aplicações paralelas eficientes. O ajuste do
-		número de threads em uma região paralela evita o desperdício de
+		número de \textit{threads} em uma região paralela evita o desperdício de
 		recursos computacionais e possibilita um ajuste da granularidade de
-		tarefas. A identificação de threads é necessária para a correta
+		tarefas. A identificação de \textit{threads} é necessária para a correta
 		coordenação e atribuição de tarefas em uma aplicação. Por fim,
 		mecanismos de controle de escopo de dados são inerentemente
 		necessários em aplicações paralelas.
 
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single, caption=Um exemplo simples com uma região paralela.,
+label=listing:sayhello]
 void sayhello(int nthreads)
 {
 	void tids[nthreads]
@@ -267,31 +273,32 @@ void sayhello(int nthreads)
 	% Visão Geral
 	No OpenMP, o paralelismo de dados é explorado através de diretivas
 	para paralelização de laços. Nessa seção, o uso dessas diretivas para o
-	projeto de aplicações no projeto de aplicações paralelas será discutido.
+	projeto de aplicações paralelas será discutido.
 	Primeiro, serão apresentadas as diretivas que possibilitam explorar o
 	paralelismo de dados. Em seguida, as estratégias de escalonamento
 	disponíveis no OpenMP são apresentadas, assim como suas vantagens e
-	desvantagens. Por fim, os mecanismos de redução oferecidos pela API são
-	introduzidos.
+	desvantagens. Por fim, os mecanismos de redução oferecidos pela API
+	OpenMP são introduzidos.
 
 	\subsection{Paralelização de Laços}
 	\label{subsection: paralelização de lacos}
 
 		% Visão Geral
 		Duas diretivas de paralelização de laços estão disponíveis no
-		OpenMP: \texttt{omp for} e \texttt{omp parallel for}. A primeira,
+		OpenMP: \texttt{omp for} e \texttt{omp parallel for}. A primeira
 		diretiva instrui que as iterações do laço seguinte de uma região
-		paralela devem ser distribuídas entre as threads do grupo em questão
+		paralela devem ser distribuídas entre as \textit{threads} do grupo em questão
 		e, então, executadas em paralelo. A segunda diretiva tem o mesmo
 		efeito, porém não necessita que o laço esteja dentro de uma região
-		paralela. O Fragmento de Código (??) ilustra o uso dessa última
+		paralela. O Código~\ref{listing:matrixmult} ilustra o uso dessa última
 		diretiva na paralelização do algoritmo clássico de multiplicação de
-		matrizes. Nesse exemplo, um grupo de threads é criado para
-		executar os comandos do laço da linha $9$. Cada thread
+		matrizes. Nesse exemplo, um grupo de \textit{threads} é criado para
+		executar os comandos do laço da linha $9$. Cada \textit{thread}
 		recebe um conjunto distinto de iterações e, assim, a
 		computação é efetuada em paralelo. 
 
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single, caption=Exemplo do uso da diretiva \texttt{omp parallel for}
+para paralelização da multiplicação de matrizes., label=listing:matrixmult]
 struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 {
 	struct matrix *c;
@@ -319,12 +326,12 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		compilação também poderia ter sido colocada no segundo laço mais externo
 		sem perda de semântica. No entanto, as duas abordagens se difeririam
 		quanto à granularidade de paralelização. Na primeira abordagem, o grão
-		de trabalho entregue a cada thread é mais grosso, enquanto na segunda
+		de trabalho entregue a cada \textit{thread} é mais grosso, enquanto na segunda
 		abordagem o grão de trabalho é mais fino. O controle de granularidade
 		consiste em uma técnica importante no projeto de aplicações paralelas
-		eficientes, pois tanto possibilita que a localidade temporal e de dados
-		sejam exploradas; quanto sobrecargas de sincronização e irregularidades na
-		computação sejam contornados. Na Seção (??) as peculiaridades desse
+		eficientes, pois possibilita que a localidade temporal e de dados sejam efetivamente
+		exploradas além de evitar sobrecargas de sincronização e contornar desbalanceamentos
+		de carga durante a computação. Na Seção (??) as peculiaridades desse
 		assunto serão discutidas em maiores detalhes.
 
 			\begin{figure}[t]
@@ -332,11 +339,15 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 				\centering
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/mm}
+						\caption{Tempo de execução.}
 					\end{subfigure}
 					\quad
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/mm-cache}
+						\caption{Número de faltas de \textit{cache}.}
 					\end{subfigure}
+					\caption{Tempo de execução e faltas de \textit{cache} das soluções de paralelização
+					no laço externo e interno da multiplicação de matrizes.}
 			\end{figure}
 
 		% Análise de Desempenho
@@ -344,31 +355,33 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		teriam no algoritmo clássico de multiplicação de matrizes, foram
 		conduzidos experimentos em uma máquina SMP com 24 núcleos ($2 \times$
 		Xeon X7). Nesses experimentos, foi fixado o tamanho da matriz de entrada
-		em $1680 \times 1680$ e foi variado o número de threads de $2$ a $24$.
+		em $1680 \times 1680$ e foi variado o número de \textit{threads} de $2$ a $24$.
 		Com esse simples experimento, pode-se constatar que, para a plataforma e
 		carga considerados, a abordagem de paralelização mais fina conduz a um
 		melhor desempenho. Ademais, para o tamanho da matriz de entrada
-		estudado, percebe-se que o ganho obtido com $14$ threads ou mais não é
-		significante maior do que com $12$ threads. Esse resultado, indica então
-		que utilizar mais que $12$ threads para esse tamanho de problema
+		estudado, percebe-se que o ganho obtido com $14$ \textit{threads} ou mais não é
+		significante maior do que com $12$ \textit{threads}. Esse resultado, indica então
+		que utilizar mais que $12$ \textit{threads} para esse tamanho de problema
 		significa um desperdício de recursos computacionais.
+
+		\todo[inline]{Faltou comentar os cache missses.}
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
 
 		% Aplicações Regulares
 		O escalonamento de iterações diz respeito ao modo como iterações de
-		um laço paralelo são atribuídas às threads de um grupo. Por padrão,
+		um laço paralelo são atribuídas às \textit{threads} de um grupo. Por padrão,
 		no OpenMP, o escalonamento de iterações é feito estaticamente e em
 		blocos (ou \textit{chunks}) de mesmo tamanho. Para aplicações que
 		possuem um padrão de computação regular, isto é, o tempo de
 		computação para cada iteração do laço paralelo é o mesmo, essa
 		estratégia conduz a ganhos de desempenhos satisfatórios, pois esse
 		particionamento estático é capaz de distribuir a carga de trabalho
-		de forma uniforme entre as threads. O algoritmo de multiplicação de
+		de forma uniforme entre as \textit{threads}. O algoritmo de multiplicação de
 		matrizes apresentado na seção anterior exemplifica a classe de
 		algoritmos regulares. No caso, a carga de trabalho entregue a cada
-		thread é constate e proporcional a:
+		\textit{thread} é constate e proporcional à:
 		%
 		\begin{align*}
 			\text{Carga de Trabalho} = \dfrac{\text{Numéro de Linhas na Matriz}}%
@@ -382,63 +395,60 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		afinidade de memória entre diferentes iterações; essa estratégia não
 		se mostra eficiente e escalável~[??]. Então, para atacar esses
 		cenários problemáticos, o OpenMP disponibiliza a cláusula
-		\texttt{schedule}, que possibilita: (i) controlar qual será a
-		estratégia de escalonamento que será empregada para escalonar as
+		\texttt{schedule()} que possibilita: (i) selecionar a estratégia de
+		escalonamento a ser empregada para escalonar as
 		iterações de um laço paralelo; e (ii) definir quantas iterações são
-		escalonadas por vez a uma única thread. A estratégia de
-		escalonamento permite contornar o problema do desbalanceamento de
-		carga presente em aplicações irregulares, equanto o controle do
-		tamanho de bloco de iterações a ser escalonado por vez permite
-		ajustar a granularidade de paralelização, possibilitando assim que a
-		afinidade de memória existente entre iterações seja explorada. O
-		tamanho de bloco de iterações pode ser escolhido arbitrariamente,
+		escalonadas por vez a uma única \textit{thread} (\textit{chunk size}).
+		A estratégia de escalonamento permite contornar o problema do
+		desbalanceamento de carga presente em aplicações irregulares,
+		enquanto o controle do tamanho de bloco de iterações a ser escalonado
+		por vez permite ajustar a granularidade de paralelização, possibilitando
+		assim que a afinidade de memória existente entre iterações seja explorada.
+		O tamanho de bloco de iterações pode ser escolhido arbitrariamente,
 		já a estratégia de escalonamento pode ser selecionada dentre as
 		seguintes, em uma implementação padrão do OpenMP:
 		%
 		\begin{itemize}
-			\item static: particiona igualitariamente as iterações de um
-			laço paralelo em chunks de iterações. A atribuição de chunks
+			\item \texttt{static}: particiona igualitariamente as iterações de um
+			laço paralelo em \textit{chunks} de iterações. A atribuição de \textit{chunks}
 			é feita em tempo de compilação e nenhuma sobrecarga é
 			adicionada a aplicação. Essa estratégia é indicada para
 			aplicações regulares.
 			
-			\item dynamic: atribui chunks de iterações às threads sob
+			\item \texttt{dynamic}: atribui \textit{chunks} de iterações às \textit{threads} sob
 			demanda em tempo de execução. Para que a atribuição seja feita
-			dinamicamente, durante a execução da aplicação, uma sobrecarga
+			dinamicamente durante a execução da aplicação, uma sobrecarga de
 			gerência é introduzida na aplicação. Essa estratégia é indicada
 			para uso em aplicações com alto grau de irregularidade.
 
-			\item guided: similar à estratégia dynamic, porém o tamanho do
-			chunk de iterações decresce com o tempo. Essa estratégia
-			também impões uma sobrecarga na execução da aplicação, porém
-			relativamente menor que a estrátégia dynamic. Essa
+			\item \texttt{guided}: similar à estratégia \texttt{dynamic}, porém o tamanho do
+			\textit{chunk} de iterações decresce com o tempo. Essa estratégia
+			também impõe uma sobrecarga na execução da aplicação, porém
+			relativamente menor que a estratégia \texttt{dynamic}. Essa
 			estratégia é indicada para uso em aplicações com baixo e
 			médio graus de irregularidade, onde as iterações iniciais
-			do laço paralelo podem ser atribuídas em chunks maiores, e
-			assim alguma sobrecarga de sincronização evitada.
+			do laço paralelo podem ser atribuídas em \textit{chunks} maiores, e
+			assim alguma sobrecarga de sincronização é evitada durante uma porção
+			significativa do tempo total de execução da aplicação.
 		\end{itemize}
 		
 		% Exemplo
-		O Fragmento de Código (??) ilustra o uso desses dois mecanismos na
+		O Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois mecanismos na
 		paralelização do algoritmo clássico para multiplicação de matrizes
 		esparsas, um típico representante de uma aplicação irregular. Nesse
-		exemplo, o escalonamento de iterações é feito em blocos de tamanho
-		um e usando a política Dynamic. Uma avaliação quantitativa do
-		desempenho dessa estratégia nessa aplicação particular, frente às
-		estratégias Static e Guided, é apresentada na Figura (??).
-		Experimentos foram conduzidos em uma máquina SMP com 24 cores ($2
+		exemplo, o escalonamento de iterações é feito em blocos (\textit{chunks}) de tamanho
+		1 com a política de escalonamento \texttt{dynamic}. Uma avaliação quantitativa do
+		desempenho dessa estratégia nessa aplicação particular, frente às estratégias 
+		\texttt{static} e \texttt{guided}, é apresentada na Figura~\ref{fig:static-dynamic-guided}.
+		Os experimentos foram conduzidos em uma máquina SMP com 24 cores ($2
 		\times$ Intel Xeon X7) para uma matriz de tamanho $1680 \times
 		1680$. Para essa aplicação, tamanho de problema e plataforma, a
 		análise dos resultados revela que a estratégia de escalonamento
-		Dynamic conduz a maiores ganhos de demsepenho e se mostra mais
-		escalar quando comparada às política Static e Guided.
+		\texttt{dynamic} conduz a maiores ganhos de desempenho e se mostra mais
+		escalar quando comparada às estratégias \texttt{static} e \texttt{guided}.
 
-		\begin{figure}
-			\centering
-			\includegraphics[width=0.45\linewidth]{img/smm}
-		\end{figure}
-
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
+label=listing:sparsematrixmult]
 struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 {
 	struct matrix *c;
@@ -446,7 +456,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 	c = matrix_create(a->nrows, b->ncols);
 
 	/* Multiplica matrizes esparsas. */
-	#pragma omp parallel for 
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int i = 0; i < a->nrows; i++)
 	{
 		for (int j = 0; j < a->cols; j++)
@@ -463,6 +473,15 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 }
 \end{lstlisting}
 
+		\begin{figure}[b]
+			\centering
+			\includegraphics[width=0.5\linewidth]{img/smm}
+			\caption{Comparação do desempenho da multiplicação de matrizes esparsas com
+			diferentes estratégias de escalonamento disponíveis no OpenMP.}
+			\label{fig:static-dynamic-guided}
+		\end{figure}
+
+	\todo[inline]{Faltou o resultado com Guided!}
 	\todo[inline]{Discussão sobre tamanho do chunk e overhead.}
 
 	\subsection{Redução de Operações}
@@ -480,7 +499,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 \section{Sincronização}
 \label{section: sincronizacao}
 
-	Nesse capítulo serão discutidas as diretivas de sincronização de threads
+	Nesse capítulo serão discutidas as diretivas de sincronização de \textit{threads}
 	disponíveis no OpenMP: serialização de código (\texttt{omp single} e
 	\texttt{omp master}), exclusão mútua (\texttt{omp critical}) e barreiras
 	(\texttt{omp barrier}).
