@@ -7,6 +7,7 @@
 \usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
 % Figures
+\usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
 
@@ -22,7 +23,7 @@
 
 % Fragmento de Código
 \usepackage{listings}
-\usepackage[dvipsnames]{xcolor}
+
 \lstset{
   belowcaptionskip=1\baselineskip,
   breaklines=true,
@@ -88,7 +89,7 @@ Resumo aqui.
 	compartilhados como por exemplo \emph{cores}, memória principal,
 	memórias \emph{cache}, entre outros.
 
-	\begin{figure}[h]
+	\begin{figure}[t]
 		\centering
 		\includegraphics[width=13cm, height=!]{img/cores-top500.pdf}
 		\caption{Número total de núcleos de processamento (\emph{cores}) dos supercomputadores mais poderosos relacionados na lista TOP500.}
@@ -111,26 +112,35 @@ Resumo aqui.
 	Programming Interface} -- API) bastante completa para paralelização de
 	aplicações para arquiteturas de memória compartilhada. Nesse tipo de
 	arquitetura, diversos processadores ou \textit{cores} tem acesso a uma
-	memória principal compartilhada em um único espaço de endereçamento. A
-	Figura~\ref{fig:arquitetura-multicore} apresenta uma visão geral de uma
-	arquitetura de memória compartilhada.
+	memória principal compartilhada em um único espaço de endereçamento.
+	A Figura~\ref{fig:uma-numa} apresenta uma visão geral de duas arquiteturas
+	de memória compartilhada.
 
-	\begin{figure}[h]
-		\centering
-		\includegraphics[width=10cm, height=!]{img/arquitetura-multicore.pdf}
-		\caption{Exemplo de uma arquitetura de memória compartilhada.}
-		\label{fig:arquitetura-multicore}
-	\end{figure}
+			\begin{figure}[t]
+				\captionsetup[subfigure]{justification=centering}
+				\centering
+					\begin{subfigure}{0.45\linewidth}
+						\includegraphics[width=\linewidth]{img/uma}
+						\caption{UMA}
+					\end{subfigure}
+					\quad\quad
+					\begin{subfigure}{0.45\linewidth}
+						\includegraphics[width=\linewidth]{img/numa}
+						\caption{NUMA}
+					\end{subfigure}
+				\caption{Exemplos de arquiteturas de memória compartilhada.}
+				\label{fig:uma-numa}
+			\end{figure}
 
 	Existem duas grandes classes de arquiteturas de memória compartilhada. A
 	principal diferença entre elas está relacionado ao tempo de acesso dos
 	processadores à memória principal. Em arquiteturas do tipo
 	\textit{Uniform Memory Access} (UMA), o tempo de acesso entre o
-	processador ou \textit{core} e a memória principal é constante. Por
-	outro lado, em arquiteturas do tipo \textit{Non-Uniform Memory Access}
+	processador ou \textit{core} e a memória principal é constante (Figure~\ref{fig:uma-numa}a).
+	Por outro lado, em arquiteturas do tipo \textit{Non-Uniform Memory Access}
 	(NUMA) o tempo de acesso entre o processador ou \textit{core} não é
-	constante. A diferença no tempo de acesso vem do fato de que cada
-	processador ou \textit{core} tem acesso a bancos de memória local
+	constante (Figura~\ref{fig:uma-numa}b). A diferença no tempo de acesso vem
+	do fato de que cada processador ou \textit{core} tem acesso a bancos de memória local
 	(próximos a ele) e também a bancos de memória remotos (distantes a ele
 	mas próximos de outro processador ou \textit{core}). Nesse sentido, o
 	tempo de acesso à memória principal pode ser pequeno (acesso a um banco
@@ -154,16 +164,16 @@ Resumo aqui.
 
 		% Descrição
 		O OpenMP segue o modelo Fork-Join de execução paralela, que é
-		ilustrado na Figura (??). Nesse modelo, o programa inicia sua
-		execução com uma única thread, denominada \textit{master thread}. A
+		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o programa inicia sua
+		execução com uma única \textit{thread}, denominada \textit{master thread} (Figura~\ref{fig:fork-join}a). A
 		\textit{master thread} executa sequencialmente até encontrar uma
 		região paralela, definida pela diretiva \texttt{omp parallel}
-		(Figura (??)). Nesse ponto, a \textit{master thread} cria um grupo
-		de threads trabalhadoras, denominadas \textit{worker threads}
-		(Figura (??)), e cada \textit{worker thread} executa então os
-		comandos delimitados pela região paralela. Ao concluirem seu
+		(Figura~\ref{fig:fork-join}b). Nesse ponto, a \textit{master thread} cria um grupo
+		de \textit{threads} trabalhadoras, denominadas \textit{worker threads}
+		(Figura~\ref{fig:fork-join}c), e cada \textit{worker thread} executa então os
+		comandos delimitados pela região paralela. Ao concluírem seu
 		trabalho, as \textit{worker threads} sincronizam suas atividades e
-		terminam (Figura (??)). A \textit{master thread} retoma então a
+		terminam (Figura~\ref{fig:fork-join}d). A \textit{master thread} retoma então a
 		execução sequencial do programa até que uma nova região paralela
 		seja encontrada, momento em que todo esse processo se repete
 		novamente.
@@ -182,6 +192,12 @@ Resumo aqui.
 		paralelas é feita uma única vez, quando a primeira região paralela é
 		encontrada. Dessa forma, a sobrecarga imposta na aplicação não
 		cresce linearmente com o número de regiões paralelas nela presente.
+
+			\begin{figure}[t]
+				\centering
+				\includegraphics[width=0.8\linewidth]{img/fork-join}
+				\caption{Visão geral do modelo Fork-Join.}\label{fig:fork-join}
+			\end{figure}
 
 	\subsection{Regiões Paralelas e Compartilhamento de Dados}
 
