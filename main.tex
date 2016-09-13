@@ -297,8 +297,9 @@ void sayhello(int nthreads)
 		recebe um conjunto distinto de iterações e, assim, a
 		computação é efetuada em paralelo. 
 
-\begin{lstlisting}[frame=single, caption=Exemplo do uso da diretiva \texttt{omp parallel for}
-para paralelização da multiplicação de matrizes., label=listing:matrixmult]
+\begin{lstlisting}[frame=single, caption=Paralelização da multiplicação de
+matrizes no OpenMP.,
+, label=listing:matrixmult]
 struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 {
 	struct matrix *c;
@@ -348,29 +349,30 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 						\caption{Número de faltas de \textit{cache}.}
 						\label{figure: cache misses mm}
 					\end{subfigure}
-					\caption{Tempo de execução e faltas de \textit{cache} das soluções de paralelização
-					no laço externo e interno da multiplicação de matrizes.}
+					\caption{Resultados das soluções de paralelização para a
+					multiplicação de matrizes.}
 			\end{figure}
 
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas abordagens
-		teriam no algoritmo clássico de multiplicação de matrizes, foram
-		conduzidos experimentos em uma máquina SMP com 24 núcleos ($2 \times$
-		Xeon X7). Nesses experimentos, foi fixado o tamanho da matriz de entrada
-		em $1680 \times 1680$ e foi variado o número de \textit{threads} de $2$ a $24$.
-		Com esse simples experimento, pode-se constatar que, para a plataforma e
-		carga considerados, a abordagem de paralelização mais fina conduz a um
-		melhor desempenho. Ademais, para o tamanho da matriz de entrada
-		estudado, percebe-se que o ganho obtido com $14$ \textit{threads} ou mais não é
-		significante maior do que com $12$ \textit{threads}. Esse resultado, indica então
-		que utilizar mais que $12$ \textit{threads} para esse tamanho de problema
-		significa um desperdício de recursos computacionais. Além disso,
-		estatísticas dea \textit{cache} coletadas (Figura \ref{figure: cache
-		misses mm} evidenciam que uma paralelização
-		do laço interno conduz a uma menor quantidade de faltas na
-		\textit{cache} L2. Esse resultado aponta que essa última estratégia pode
-		conduzir a ganhos ainda mais expressivos sobre a outra abordagem por
-		melhorar explorar a localidade de dados.
+		teriam no algoritmo clássico de multiplicação de matrizes,
+		experimentos foram conduzidos em uma máquina SMP com 24 núcleos ($4
+		\times$ Xeon X7). Nesses experimentos, o tamanho da matriz de
+		entrada foi fixado em $1680 \times 1680$, o número de
+		\textit{threads} foi variado de $2$ a $24$, e estatísticas de tempo
+		de execução e número de faltas na \textit{cache} L2 foram coletadas.
+		A análise dos resultados de faltas na \textit{cache} L2 (Figura
+		\ref{figure: cache misses mm}) revela que a abordagem de
+		paralelização mais grossa conduz a um menor número de faltas, em
+		contraste a estratégia de paralelização do laço mais interno, para a
+		plataforma e tamanho de problema considerados. Essa diferença conduz
+		a um ganho de desempenho que é evidenciado nos resultados de tempo
+		de execução da aplicação (Figura \ref{figure: time mm}). Além disso,
+		é possível constatar que o ganho obtido com mais que $12$
+		\textit{threads} não é significantemente superior do que quando
+		menos \textit{threads} são usadas, indicando assim que na
+		plataforma considerada o tamanho de problema não escala linearmente
+		com o número de \textit{threads}.
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
@@ -438,20 +440,33 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 			significativa do tempo total de execução da aplicação.
 		\end{itemize}
 		
-		% Exemplo
-		O Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois mecanismos na
-		paralelização do algoritmo clássico para multiplicação de matrizes
-		esparsas, um típico representante de uma aplicação irregular. Nesse
-		exemplo, o escalonamento de iterações é feito em blocos (\textit{chunks}) de tamanho
-		1 com a política de escalonamento \texttt{dynamic}. Uma avaliação quantitativa do
-		desempenho dessa estratégia nessa aplicação particular, frente às estratégias 
-		\texttt{static} e \texttt{guided}, é apresentada na Figura~\ref{fig:static-dynamic-guided}.
-		Os experimentos foram conduzidos em uma máquina SMP com 24 cores ($2
-		\times$ Intel Xeon X7) para uma matriz de tamanho $1680 \times
-		1680$. Para essa aplicação, tamanho de problema e plataforma, a
-		análise dos resultados revela que a estratégia de escalonamento
-		\texttt{dynamic} conduz a maiores ganhos de desempenho e se mostra mais
-		escalar quando comparada às estratégias \texttt{static} e \texttt{guided}.
+		% Análise de Desempenho
+		O Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois
+		mecanismos na paralelização do algoritmo clássico para multiplicação
+		de matrizes esparsas, um típico representante de uma aplicação
+		irregular. Nesse exemplo, o escalonamento de iterações é feito em
+		blocos (\textit{chunks}) de tamanho 1 com a política de
+		escalonamento \texttt{dynamic}. Uma avaliação quantitativa do
+		desempenho dessa estratégia nesse algoritmo particular, frente à
+		estratégia \texttt{static}, é apresentada na
+		Figura~\ref{fig:static-dynamic-guided}. Os experimentos foram
+		conduzidos em uma máquina SMP com 24 cores ($4 \times$ Intel Xeon
+		X7) para uma matriz de tamanho $1680 \times 1680$. O número de
+		\textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
+		\textit{chunks} foi fixado em $1680/n$ e $1$, para as estratégias
+		escalonamento \texttt{static} e \texttt{dynamic}, respectivamente.
+		Para essa aplicação, tamanho de problema e plataforma, a análise dos
+		resultados revela que a estratégia de escalonamento \texttt{dynamic}
+		conduz a um melhor desempenho do que que a estratégia
+		\texttt{static}, se mostrando assim mais escalável.  De fato, esse
+		comportamento é recorrente em aplicações irregulares e pode ser
+		utilizado para guiar o projeto de soluções paralelas eficientes
+		nesse nicho específico. No entanto, é pertinente observar que a
+		granularidade de \textit{chunks} consiste em um fator que impacta
+		diretamente no desempenho entregue pela estratégia \texttt{dynamic}
+		e, então, deve ser cuidadosamente considerado. 
+
+		% Granularidade de Chunks
 
 \begin{lstlisting}[frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
 label=listing:sparsematrixmult]
@@ -492,7 +507,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 					\includegraphics[width=\linewidth]{img/chunk-size}
 					\caption{Desempenho para diferentes tamanhos de
 					\textit{chunks} das estratégia de escalonamento.}
-					\label{fig:static-dynamic-guided}
+					\label{fig:chunk-size}
 				\end{subfigure}
 		\end{figure}
 
