@@ -529,13 +529,39 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 			\label{fig:tasks}
 		\end{figure}
 	
-	
 	O paralelismo de tarefas será explorado através do estudo das diretivas
 	de compilação disponíveis no OpenMP para paralelização de trechos de
 	códigos. Serão discutidas duas construções: seções (\texttt{omp
 	sections}) e tarefas (\texttt{omp task} e \texttt{omp taskwait}). A
 	utilização de tarefas será abordada com o auxilio de problemas
 	recursivos clássicos.
+
+\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva para a soma da sequencia de Fibonacci usando tarefas.,
+label=listing:fibonacci]
+long fibonacci(int n)
+{
+	long f1, f2, fn;
+
+	/* Condicao de parada da recursao. */
+	if (n == 0 || n == 1) return (n);
+
+	/* Condicao de parada da criacao de tarefas. */
+	if (n < 20) return (fibonacci(n-1) + fibonacci(n-2));
+	else
+	{
+		#pragma omp task shared(f1)
+		f1 = fibonacci(n-1);
+
+		#pragma omp task shared(f2)
+		f2 = fibonacci(n-2);
+		
+		#pragma omp taskwait
+		fn = f1 + f2;
+			
+		return (fn);
+	}
+}
+\end{lstlisting}
 
 \section{Conclusão}
 
