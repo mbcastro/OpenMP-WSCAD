@@ -43,10 +43,10 @@
 	num\_threads,
 	schedule
   },
-  keywordstyle=\bfseries\color{blue},
+  keywordstyle=\color{blue},
   commentstyle=\itshape\color{gray},
-  identifierstyle=\bfseries\color{black},
-  stringstyle=\bfseries\color{purple},
+  identifierstyle=\color{black},
+  stringstyle=\color{purple},
 }
 
 \begin{document}
@@ -126,12 +126,12 @@ Resumo aqui.
 				\centering
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/uma}
-						\caption{UMA}
+						\caption{UMA.}
 					\end{subfigure}
 					\quad\quad
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/numa}
-						\caption{NUMA}
+						\caption{NUMA.}
 					\end{subfigure}
 				\caption{Exemplos de arquiteturas de memória compartilhada.}
 				\label{fig:uma-numa}
@@ -499,15 +499,6 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
 
-\section{Paralelismo de Tarefas e Diretivas OpenMP}
-
-	O paralelismo de tarefas será explorado através do estudo das diretivas
-	de compilação disponíveis no OpenMP para paralelização de trechos de
-	códigos. Serão discutidas duas construções: seções (\texttt{omp
-	sections}) e tarefas (\texttt{omp task} e \texttt{omp taskwait}). A
-	utilização de tarefas será abordada com o auxilio de problemas
-	recursivos clássicos.
-
 \section{Sincronização}
 \label{section: sincronizacao}
 
@@ -515,6 +506,36 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 	disponíveis no OpenMP: serialização de código (\texttt{omp single} e
 	\texttt{omp master}), exclusão mútua (\texttt{omp critical}) e barreiras
 	(\texttt{omp barrier}).
+
+\section{Paralelismo de Tarefas e Diretivas OpenMP}
+
+	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no OpenMP.
+	No OpenMP a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
+	serem criadas, as tarefas que ainda não foram computadas são inseridas em uma
+	estrutura de dados compartilhada entre as \textit{threads}. Dentro de uma região paralela,
+	as \textit{threads} retiram tarefas ainda não computadas e as processam uma a uma.
+	Isso é feito sob demanda seguindo um modelo clássico \textit{bag of tasks}. A
+	Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
+	no OpenMP.
+	
+		\begin{figure}[t]
+			\centering
+			\includegraphics[width=0.6\linewidth]{img/tasks}
+			\caption{Paralelismo de tarefas do OpenMP: uma ou mais \textit{threads} criam
+			tarefas, as quais são inseridas em uma estrutura de dados compartilhada
+			que contém tarefas ainda não computadas. \textit{Threads} ociosas em
+			uma região paralela retiram tarefas dessa estrutura e as processam uma a
+			uma.}
+			\label{fig:tasks}
+		\end{figure}
+	
+	
+	O paralelismo de tarefas será explorado através do estudo das diretivas
+	de compilação disponíveis no OpenMP para paralelização de trechos de
+	códigos. Serão discutidas duas construções: seções (\texttt{omp
+	sections}) e tarefas (\texttt{omp task} e \texttt{omp taskwait}). A
+	utilização de tarefas será abordada com o auxilio de problemas
+	recursivos clássicos.
 
 \section{Conclusão}
 
