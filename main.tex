@@ -578,7 +578,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	
 \begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva da soma da sequencia de Fibonacci usando tarefas.,
 label=listing:fibonacci]
-long fibonacci(int n)
+long recursive_fibonacci(int n)
 {
 	long f1, f2, fn;
 
@@ -586,14 +586,14 @@ long fibonacci(int n)
 	if (n == 0 || n == 1) return (n);
 
 	/* Condicao de parada da criacao de tarefas. */
-	if (n < 20) return (fibonacci(n-1) + fibonacci(n-2));
+	if (n < 20) return (recursive_fibonacci(n-1) + recursive_fibonacci(n-2));
 	else
 	{
 		#pragma omp task shared(f1)
-		f1 = fibonacci(n-1);
+		f1 = recursive_fibonacci(n-1);
 
 		#pragma omp task shared(f2)
-		f2 = fibonacci(n-2);
+		f2 = recursive_fibonacci(n-2);
 		
 		#pragma omp taskwait
 		fn = f1 + f2;
@@ -602,22 +602,17 @@ long fibonacci(int n)
 	}
 }
 
-int main(int argc, char **argv)
+int fibonacci(int n)
 {
-	int resultado, n;
+	int result;
 	
-	if (argc == 2) n = atoi(argv[1]);
-	else return (1);
-
 	#pragma omp parallel
   	{
 		#pragma omp single nowait
-		resultado = fibonacci(n);
+		result = recursive_fibonacci(n);
 	}
-	
-	printf("Finonacci(%d) = %ld\n", n, resultado);
-	
-	return (0);
+		
+	return (result);
 }
 \end{lstlisting}
 
