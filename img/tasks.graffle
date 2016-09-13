@@ -571,17 +571,21 @@
 			<integer>116</integer>
 			<key>Points</key>
 			<array>
-				<string>{395.61916692442844, 259.85998378695137}</string>
-				<string>{460.97333382295153, 288.19836220803063}</string>
+				<string>{395.61918203057519, 259.85996652637749}</string>
+				<string>{460.97334883440874, 288.19832754254713}</string>
 			</array>
 			<key>Style</key>
 			<dict>
 				<key>stroke</key>
 				<dict>
+					<key>Cap</key>
+					<integer>0</integer>
 					<key>HeadArrow</key>
 					<string>FilledArrow</string>
 					<key>Legacy</key>
 					<true/>
+					<key>Pattern</key>
+					<integer>11</integer>
 					<key>TailArrow</key>
 					<string>0</string>
 					<key>Width</key>
@@ -606,8 +610,8 @@
 			<integer>115</integer>
 			<key>Points</key>
 			<array>
-				<string>{403.08690362380554, 220.9815343732709}</string>
-				<string>{533.64634316604224, 220.95670237444762}</string>
+				<string>{403.10077028376969, 220.99835590680127}</string>
+				<string>{533.64631641122708, 220.99614553252835}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -641,17 +645,21 @@
 			<integer>114</integer>
 			<key>Points</key>
 			<array>
-				<string>{208.52775020341548, 247.38285500813959}</string>
-				<string>{152.59737334780482, 262.52155372712502}</string>
+				<string>{213.93384929809659, 238.06683969568303}</string>
+				<string>{129.28358528435507, 253.75895319348245}</string>
 			</array>
 			<key>Style</key>
 			<dict>
 				<key>stroke</key>
 				<dict>
+					<key>Cap</key>
+					<integer>0</integer>
 					<key>HeadArrow</key>
 					<string>FilledArrow</string>
 					<key>Legacy</key>
 					<true/>
+					<key>Pattern</key>
+					<integer>11</integer>
 					<key>TailArrow</key>
 					<string>0</string>
 					<key>Width</key>
@@ -671,7 +679,7 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{95.365852334776889, 254.81299741594847}, {48, 34}}</string>
+					<string>{{71.349592575606749, 242.9999862495406}, {48, 34}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -727,7 +735,7 @@ thread}</string>
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{85.365852334776889, 237.81299741594847}, {68, 68}}</string>
+					<string>{{61.349592575606749, 225.9999862495406}, {68, 68}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -880,17 +888,21 @@ thread}</string>
 			<integer>17</integer>
 			<key>Points</key>
 			<array>
-				<string>{383.67846063335566, 167.85435134116489}</string>
-				<string>{422.81969836392699, 141.07490113656544}</string>
+				<string>{393.17160631940811, 175.77506395746059}</string>
+				<string>{454.9846491637536, 143.70623986137554}</string>
 			</array>
 			<key>Style</key>
 			<dict>
 				<key>stroke</key>
 				<dict>
+					<key>Cap</key>
+					<integer>2</integer>
 					<key>HeadArrow</key>
 					<string>0</string>
 					<key>Legacy</key>
 					<true/>
+					<key>Pattern</key>
+					<integer>24</integer>
 					<key>TailArrow</key>
 					<string>FilledArrow</string>
 					<key>Width</key>
@@ -968,17 +980,21 @@ thread}</string>
 			<integer>15</integer>
 			<key>Points</key>
 			<array>
-				<string>{158.09504088019125, 153.97967730409522}</string>
-				<string>{214.01046311714555, 179.41426636045702}</string>
+				<string>{158.10826219562239, 153.95056426960238}</string>
+				<string>{214.06897269332694, 179.34320125217428}</string>
 			</array>
 			<key>Style</key>
 			<dict>
 				<key>stroke</key>
 				<dict>
+					<key>Cap</key>
+					<integer>2</integer>
 					<key>HeadArrow</key>
 					<string>FilledArrow</string>
 					<key>Legacy</key>
 					<true/>
+					<key>Pattern</key>
+					<integer>24</integer>
 					<key>TailArrow</key>
 					<string>0</string>
 					<key>Width</key>
@@ -1135,7 +1151,7 @@ thread}</string>
 			<array>
 				<dict>
 					<key>Bounds</key>
-					<string>{{426.87824696622715, 103.99187166303629}, {48, 34}}</string>
+					<string>{{461.31707218257668, 110.24999238976851}, {48, 34}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FitText</key>
@@ -1191,7 +1207,7 @@ thread}</string>
 				</dict>
 				<dict>
 					<key>Bounds</key>
-					<string>{{416.87824696622715, 86.991871663036292}, {68, 68}}</string>
+					<string>{{451.31707218257668, 93.249992389768508}, {68, 68}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>FontInfo</key>
@@ -1380,7 +1396,7 @@ thread}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2016-09-13 20:22:24 +0000</string>
+	<string>2016-09-13 20:58:01 +0000</string>
 	<key>Modifier</key>
 	<string>Márcio Castro</string>
 	<key>NotesVisible</key>
@@ -1475,7 +1491,7 @@ thread}</string>
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-31, -16.999999999999996}, {844.71543405555428, 594.30893387354195}}</string>
+		<string>{{-31, -17}, {844.71543405555428, 593.49592575606789}}</string>
 		<key>Zoom</key>
 		<real>1.2300000190734863</real>
 		<key>ZoomValues</key>

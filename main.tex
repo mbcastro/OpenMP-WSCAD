@@ -31,7 +31,7 @@
   frame=L,
   xleftmargin=\parindent,
   numbers=left,
-  stepnumber=2,
+  stepnumber=1,
   language=C,
   tabsize=4,
   showstringspaces=false,
@@ -46,7 +46,9 @@
 	private,
 	shared,
 	task,
-	taskwait
+	taskwait,
+	single,
+	nowait
   },
   keywordstyle=\color{blue},
   commentstyle=\itshape\color{gray},
@@ -549,9 +551,15 @@ int scalar_product(struct vector *a, struct vector *b)
 	serem criadas, as tarefas que ainda não foram computadas são inseridas em uma
 	estrutura de dados compartilhada entre as \textit{threads}. Dentro de uma região paralela,
 	as \textit{threads} retiram tarefas ainda não computadas e as processam uma a uma.
-	Isso é feito sob demanda seguindo um modelo clássico \textit{bag of tasks}. A
-	Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
-	no OpenMP.
+	Isso é feito sob demanda seguindo um modelo clássico \textit{bag of tasks}. 
+	
+	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
+	no OpenMP. Nesse exemplo, algumas \textit{threads} somente criam tarefas (representadas
+	por flechas unidirecionais com linhas tracejadas) enquanto outras somente executam tarefas
+	(representadas por flechas unidirecionais com linhas pontilhadas). É permitido também que,
+	ao executar uma tarefa, uma \textit{thread} possa criar novas tarefas (representadas por
+	flechas bidirecionais com linhas contínuas). A possibilidade de uma tarefa criar novas tarefas
+	permite que o algoritmo a ser paralelizado possa ser recursivo.
 	
 		\begin{figure}[t]
 			\centering
@@ -563,15 +571,12 @@ int scalar_product(struct vector *a, struct vector *b)
 			uma.}
 			\label{fig:tasks}
 		\end{figure}
-	
-	O paralelismo de tarefas será explorado através do estudo das diretivas
-	de compilação disponíveis no OpenMP para paralelização de trechos de
-	códigos. Serão discutidas duas construções: seções (\texttt{omp
-	sections}) e tarefas (\texttt{omp task} e \texttt{omp taskwait}). A
-	utilização de tarefas será abordada com o auxilio de problemas
-	recursivos clássicos.
 
-\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva para a soma da sequencia de Fibonacci usando tarefas.,
+	\todo[inline]{Explicar as diretivas \texttt{omp task} e \texttt{omp taskwait}. Explicar como deve
+	ser usada a primitiva }
+	\todo[inline]{Explicar a paralelização da implementação recursiva da soma da sequencia de Fibonacci.}
+	
+\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva da soma da sequencia de Fibonacci usando tarefas.,
 label=listing:fibonacci]
 long fibonacci(int n)
 {
@@ -595,6 +600,24 @@ long fibonacci(int n)
 			
 		return (fn);
 	}
+}
+
+int main(int argc, char **argv)
+{
+	int resultado, n;
+	
+	if (argc == 2) n = atoi(argv[1]);
+	else return (1);
+
+	#pragma omp parallel
+  	{
+		#pragma omp single nowait
+		resultado = fibonacci(n);
+	}
+	
+	printf("Finonacci(%d) = %ld\n", n, resultado);
+	
+	return (0);
 }
 \end{lstlisting}
 
