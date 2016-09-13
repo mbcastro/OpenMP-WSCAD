@@ -340,11 +340,13 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/mm}
 						\caption{Tempo de execução.}
+						\label{figure: time mm}
 					\end{subfigure}
 					\quad
 					\begin{subfigure}{0.45\linewidth}
 						\includegraphics[width=\linewidth]{img/mm-cache}
 						\caption{Número de faltas de \textit{cache}.}
+						\label{figure: cache misses mm}
 					\end{subfigure}
 					\caption{Tempo de execução e faltas de \textit{cache} das soluções de paralelização
 					no laço externo e interno da multiplicação de matrizes.}
@@ -362,9 +364,13 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		estudado, percebe-se que o ganho obtido com $14$ \textit{threads} ou mais não é
 		significante maior do que com $12$ \textit{threads}. Esse resultado, indica então
 		que utilizar mais que $12$ \textit{threads} para esse tamanho de problema
-		significa um desperdício de recursos computacionais.
-
-		\todo[inline]{Faltou comentar os cache missses.}
+		significa um desperdício de recursos computacionais. Além disso,
+		estatísticas dea \textit{cache} coletadas (Figura \ref{figure: cache
+		misses mm} evidenciam que uma paralelização
+		do laço interno conduz a uma menor quantidade de faltas na
+		\textit{cache} L2. Esse resultado aponta que essa última estratégia pode
+		conduzir a ganhos ainda mais expressivos sobre a outra abordagem por
+		melhorar explorar a localidade de dados.
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
@@ -473,16 +479,22 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 }
 \end{lstlisting}
 
-		\begin{figure}[b]
+		\begin{figure}[t]
+			\captionsetup[subfigure]{justification=centering}
 			\centering
-			\includegraphics[width=0.5\linewidth]{img/smm}
-			\caption{Comparação do desempenho da multiplicação de matrizes esparsas com
-			diferentes estratégias de escalonamento disponíveis no OpenMP.}
-			\label{fig:static-dynamic-guided}
+				\begin{subfigure}{0.45\linewidth}
+					\includegraphics[width=\linewidth]{img/smm}
+					\caption{Desempenho de diferentes estratégias de escalonamento disponíveis no OpenMP.}
+					\label{fig:static-dynamic-guided}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.45\linewidth}
+					\includegraphics[width=\linewidth]{img/chunk-size}
+					\caption{Desempenho para diferentes tamanhos de
+					\textit{chunks} das estratégia de escalonamento.}
+					\label{fig:static-dynamic-guided}
+				\end{subfigure}
 		\end{figure}
-
-	\todo[inline]{Faltou o resultado com Guided!}
-	\todo[inline]{Discussão sobre tamanho do chunk e overhead.}
 
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
