@@ -1,3 +1,6 @@
+set boxwidth 0.4
+set style fill solid
+
 # Line styles.
 set style line 1 linetype -1 linecolor rgb "#228B22" linewidth 3
 set style line 2 linetype -1 linecolor rgb "#FF0000" linewidth 3
