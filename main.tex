@@ -401,10 +401,10 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		algoritmos regulares. No caso, a carga de trabalho entregue a cada
 		\textit{thread} é constate e proporcional à:
 		%
-		\begin{align*}
+		\begin{equation}
 			\text{Carga de Trabalho} = \dfrac{\text{Numéro de Linhas na Matriz}}%
 			                                 {\text{Número de Threads}}
-		\end{align*}
+		\end{equation}
 
 		\todo[inline]{Adicionar referencia no parágrafo abaixo.}
 		
@@ -599,9 +599,9 @@ int scalar_product(struct vector *a, struct vector *b)
 	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no OpenMP.
 	No OpenMP a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
 	serem criadas, as tarefas que ainda não foram computadas são inseridas em uma
-	estrutura de dados compartilhada entre as \textit{threads}. Dentro de uma região paralela,
-	as \textit{threads} retiram tarefas ainda não computadas e as processam uma a uma.
-	Isso é feito sob demanda seguindo um modelo clássico \textit{bag of tasks}. 
+	estrutura de dados compartilhada entre as \textit{threads} denominada ``saco de tarefas''
+	(\textit{bag of tasks}). Dentro de uma região paralela, ao ficarem ociosas, as \textit{threads}
+	retiram tarefas ainda não computadas do saco de tarefas e as processam uma a uma.
 	
 	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
 	no OpenMP. Nesse exemplo, algumas \textit{threads} somente criam tarefas (representadas
@@ -622,12 +622,72 @@ int scalar_product(struct vector *a, struct vector *b)
 			\label{fig:tasks}
 		\end{figure}
 
-	\todo[inline]{Explicar as diretivas \texttt{omp task} e \texttt{omp taskwait}. Explicar como deve
-	ser usada a primitiva }
-	\todo[inline]{Explicar a paralelização da implementação recursiva da soma da sequencia de Fibonacci.}
+	A criação e execução de tarefas pelas \textit{threads} é sempre feita dentro de uma região paralela
+	criada com o uso da diretiva \texttt{omp parallel}. Dentro de uma região paralela, \textit{threads} podem
+	criar tarefas a serem computadas através do uso da diretiva \texttt{omp task}. Quando uma tarefa é criada,
+	a mesma é inserida no saco de tarefas e fica disponível para ser computada por qualquer \textit{worker thread}
+	ociosa dentro da região paralela.
+
+	Em muitos problemas computacionais paralelizados com o uso de tarefas, determinadas tarefas não podem
+	ser computadas pois dependem de resultados de outras tarefas ainda não finalizadas. Essas dependencias
+	podem ser vistas na forma de um grafo direcionado de dependências, onde cada nó do grafo representa
+	uma tarefa e as arestas representam as dependências entre elas. A dependência entre tarefas é determinada
+	no OpenMP através da diretiva \texttt{omp taskwait}. Essa diretiva permite que uma instrução ou um bloco de
+	instruções em uma tarefa só seja executado após o término de todas as tarefas criadas anteriormente.
 	
-\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva da soma da sequencia de Fibonacci usando tarefas.,
-label=listing:fibonacci]
+	Um exemplo clássico de um problema recursivo que pode ser paralelizado com o uso de tarefas é a soma da
+	sequência de Fibonacci. Matematicamente, os números da sequência de Fibonacci são gerados através da
+	seguinte fórmula recursiva:
+	
+	\begin{equation}
+		F_n = F_{n-1} + F_{n-2} \text{, onde } F_1=1 \text{ e } F_2=1
+	\end{equation}
+
+	Se considerarmos que para calcular $F_n$ são necessárias duas tarefas $F_{n-1}$ e $F_{n-2}$, é evidente que
+	os resultados de $F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término de ambas tarefas. Nesse caso,
+	nota-se que $F_n$ depende de $F_{n-1}$ e $F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um
+	grafo de dependências de tarefas para o cálculo da soma da sequência de Fibonacci usando tarefas. Nesse
+	exemplo, cada tarefa representa uma chamada recursiva à $F_{n-1}$ e $F_{n-2}$.
+
+		\begin{figure}[t]
+			\centering
+			\includegraphics[width=0.8\linewidth]{img/fibonacci}
+			\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
+			de Fibonacci.}\label{fig:fibonacci}
+		\end{figure}
+
+	O Código~\ref{listing:fibonacci} mostra um exemplo de implementação básica para o cálculo da soma da sequência
+	de Fibonacci usando tarefas em OpenMP. Primeiramente é criada uma região paralela com o uso da diretiva
+	\texttt{omp parallel} (linha 5). Para permitir que somente uma única \textit{worker thread} inicie a computação, e
+	consequentemente, a criação das primeiras tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A primeira
+	\textit{worker thread} que ganhar acesso à região \texttt{omp single} executa uma chamada à função recursiva 
+	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite que as demais \textit{worker threads} avancem até
+	a barreira implícita ao final da região paralela. Na função \texttt{recursive\_fibonacci()}, tarefas correspondentes ao
+	cálculo $F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp task} (linhas 25--26 e 28--29) assim
+	como as dependências são criadas com a diretiva \texttt{omp taskwait} (linhas 31--32).
+	
+	Note que o Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 22),
+	evitando-se explicitamente a criação de tarefas quando o valor de $n$ é inferior a um valor específico (20 nesse exemplo).
+	Basicamente, essa condição garante uma carga \textit{mínima} para computação de uma tarefa. Nesse caso, a carga
+	mínima de uma tarefa é referente à computação de $F_{19}$. Em outras palavras, a computação será realizada sequencialmente
+	por cada \textit{worker thread} quando $n<20$. Essa condição de parada para criação de tarefas é muito importante, tendo em vista
+	que a criação e gestão de tarefas no OpenMP possui um sobrecusto.
+
+\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva da soma da sequencia de Fibonacci
+usando tarefas., label=listing:fibonacci]
+int fibonacci(int n)
+{
+	int result;
+	
+	#pragma omp parallel
+  	{
+		#pragma omp single nowait
+		result = recursive_fibonacci(n);
+	}
+		
+	return (result);
+}
+
 long recursive_fibonacci(int n)
 {
 	long f1, f2, fn;
@@ -651,20 +711,12 @@ long recursive_fibonacci(int n)
 		return (fn);
 	}
 }
-
-int fibonacci(int n)
-{
-	int result;
-	
-	#pragma omp parallel
-  	{
-		#pragma omp single nowait
-		result = recursive_fibonacci(n);
-	}
-		
-	return (result);
-}
 \end{lstlisting}
+
+	Para avaliar o sobrecusto e o ganho de desempenho obtido com a utilização dessa condição de parada para criação de
+	tarefas foram realizados experimentos em um...
+	
+	\todo[inline]{Gerar resultados na idkonn!}
 
 \section{Conclusão}
 
