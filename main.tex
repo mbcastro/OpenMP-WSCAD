@@ -463,8 +463,8 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		estratégia \texttt{static}, é apresentada na
 		Figura~\ref{fig:static-dynamic-guided}. Os experimentos foram
 		conduzidos em uma máquina SMP com 24 cores ($4 \times$ Intel Xeon
-		X7) para uma matriz de tamanho $1.680 \times 1.680$. O número de
-		\textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
+		X7 com 6 núcleos cada) para uma matriz de tamanho $1.680 \times 1.680$. 
+		O número de \textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
 		\textit{chunks} foi fixado em $1.680/n$ e $1$, para as estratégias
 		escalonamento \texttt{static} e \texttt{dynamic}, respectivamente.
 		Para essa aplicação, tamanho de problema e plataforma, a análise dos
@@ -663,47 +663,52 @@ int scalar_product(struct vector *a, struct vector *b)
 	\textit{worker thread} que ganhar acesso à região \texttt{omp single} executa uma chamada à função recursiva 
 	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite que as demais \textit{worker threads} avancem até
 	a barreira implícita ao final da região paralela. Na função \texttt{recursive\_fibonacci()}, tarefas correspondentes ao
-	cálculo $F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp task} (linhas 25--26 e 28--29) assim
-	como as dependências são criadas com a diretiva \texttt{omp taskwait} (linhas 31--32).
+	cálculo $F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp task} (linhas 27--28 e 30--31) assim
+	como as dependências são criadas com a diretiva \texttt{omp taskwait} (linhas 33--34).
 	
-	Note que o Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 22),
-	evitando-se explicitamente a criação de tarefas quando o valor de $n$ é inferior a um valor específico (20 nesse exemplo).
-	Basicamente, essa condição garante uma carga \textit{mínima} para computação de uma tarefa. Nesse caso, a carga
-	mínima de uma tarefa é referente à computação de $F_{19}$. Em outras palavras, a computação será realizada sequencialmente
-	por cada \textit{worker thread} quando $n<20$. Essa condição de parada para criação de tarefas é muito importante, tendo em vista
-	que a criação e gestão de tarefas no OpenMP possui um sobrecusto.
+	Note que o Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 23),
+	evitando-se explicitamente a criação de tarefas quando o valor da variável \texttt{n} é inferior a um valor específico (\texttt{stop}). 
+	Basicamente, essa condição garante uma carga \textit{mínima} para computação de uma tarefa. Em outras palavras, a
+	computação será realizada sequencialmente por cada \textit{worker thread} quando \texttt{n < stop}. Portanto,
+	a variável \texttt{stop} pode ser vista como uma forma de controle de granularidade das tarefas da aplicação.
+	A condição de parada para criação de tarefas é muito importante, tendo em vista que a criação e gestão de tarefas no
+	OpenMP possui um sobrecusto significativo. Logo, é importante que as tarefas tenham uma carga grande o suficiente de forma
+	a reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas contendo cargas extremamente grandes podem gerar
+	desbalanceamentos de carga entre as \textit{worker threads}.
 
-\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva da soma da sequencia de Fibonacci
+\begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva simples da soma da sequencia de Fibonacci
 usando tarefas., label=listing:fibonacci]
-int fibonacci(int n)
+int fibonacci(int n, int stop)
 {
 	int result;
 	
 	#pragma omp parallel
   	{
 		#pragma omp single nowait
-		result = recursive_fibonacci(n);
+		result = recursive_fibonacci(n, stop);
 	}
 		
 	return (result);
 }
 
-long recursive_fibonacci(int n)
+long recursive_fibonacci(int n, int stop)
 {
 	long f1, f2, fn;
 
 	/* Condicao de parada da recursao. */
-	if (n == 0 || n == 1) return (n);
+	if (n == 0 || n == 1) 
+		return (n);
 
 	/* Condicao de parada da criacao de tarefas. */
-	if (n < 20) return (recursive_fibonacci(n-1) + recursive_fibonacci(n-2));
+	if (n < stop) 
+		return (recursive_fibonacci(n-1, stop) + recursive_fibonacci(n-2, stop));
 	else
-	{
+	{	/* Criacao de tarefas e suas dependencias. */
 		#pragma omp task shared(f1)
-		f1 = recursive_fibonacci(n-1);
+		f1 = recursive_fibonacci(n-1, stop);
 
 		#pragma omp task shared(f2)
-		f2 = recursive_fibonacci(n-2);
+		f2 = recursive_fibonacci(n-2, stop);
 		
 		#pragma omp taskwait
 		fn = f1 + f2;
@@ -713,10 +718,18 @@ long recursive_fibonacci(int n)
 }
 \end{lstlisting}
 
-	Para avaliar o sobrecusto e o ganho de desempenho obtido com a utilização dessa condição de parada para criação de
-	tarefas foram realizados experimentos em um...
-	
-	\todo[inline]{Gerar resultados na idkonn!}
+	Uma avaliação do impacto da granularidade das tarefas no desempenho da aplicação é apresentada na
+	Figura~\ref{fig:grao-tarefas}. Os experimentos foram conduzidos em uma máquina SMP com 24 cores
+	($4 \times$ Intel Xeon X7 com 6 núcleos cada). Nesses experimentos, o número de \textit{threads} foi fixado
+	em 12 e o valor da variável \texttt{n} foi fixado em 50.
+
+%	\begin{figure}[t]
+%		\centering
+%		\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
+%		\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
+%		de Fibonacci.}
+%		\label{fig:grao-tarefas}
+%	\end{figure}
 
 \section{Conclusão}
 
