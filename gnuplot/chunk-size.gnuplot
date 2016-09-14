@@ -26,7 +26,5 @@ set grid ytics
 # Legend
 set key inside right top height 1 width 1 box lw 1
 
-plot  "results/chunk-static.csv" using 0:2:3 with yerrorbars title "Escalonador Static" ls 5, \
-	 '' using 0:2 with lines ls 5 notitle,                      \
-	 "results/chunk-dynamic.csv" using 0:2:3 with yerrorbars title "Escalonador Dynamic" ls 6,   \
-	 '' using 0:2 with lines ls 6 notitle
+plot  "results/chunk-static.csv" using 0:2 with linespoints title "Escalonador Static" ls 5, \
+	 "results/chunk-dynamic.csv" using 0:2 with linespoints title "Escalonador Dynamic" ls 6 \
