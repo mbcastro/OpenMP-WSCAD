@@ -11,6 +11,10 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 
+% Acrônimos
+\usepackage{xspace}
+\input{acronimos.tex}
+
 \usepackage{amsmath}
 
 \usepackage{todonotes}
@@ -19,7 +23,7 @@
 \textit{Departamento de Informática e Estatística (INE)}\\
 \textit{Universidade Federal de Santa Catarina (UFSC)}
 }
-\title{Desenvolvimento de Aplicações Paralelas Eficientes com OpenMP}
+\title{Desenvolvimento de Aplicações Paralelas Eficientes com \openmp}
 
 % Fragmento de Código
 \usepackage{listings}
@@ -117,9 +121,9 @@ Resumo aqui.
 	\textit{threads} ou processos.
 
 	Nesse capítulo será apresentado um dos modelos de programação paralela
-	muito utilizados na academia e na indústria denominado OpenMP. Esse
+	muito utilizados na academia e na indústria denominado \openmp. Esse
 	modelo oferece diretivas de compilação que permitem realizar a
-	paralelização de trechos de código de maneira transparente. O OpenMP
+	paralelização de trechos de código de maneira transparente. O \openmp
 	oferece uma Interface de Programação de Aplicações (\textit{Application
 	Programming Interface} -- API) bastante completa para paralelização de
 	aplicações para arquiteturas de memória compartilhada. Nesse tipo de
@@ -167,15 +171,15 @@ Resumo aqui.
 \section{Conceitos Básicos}
 
 	Essa seção irá abordar os conceitos básicos de programação paralela com
-	OpenMP. Primeiramente, será apresentado o modelo base dessa API, em
+	\openmp. Primeiramente, será apresentado o modelo base dessa API, em
 	seguida será apresentada a diretiva básica para a criação de regiões
 	paralelas no código com as formas de compartilhamento de dados
-	oferecidas pelo OpenMP.
+	oferecidas pelo \openmp.
 
 	\subsection{Modelo Fork-Join}
 
 		% Descrição
-		O OpenMP segue o modelo Fork-Join de execução paralela, que é
+		O \openmp segue o modelo Fork-Join de execução paralela, que é
 		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o programa inicia sua
 		execução com uma única \textit{thread}, denominada \textit{master thread}
 		(Figura~\ref{fig:fork-join}a). A \textit{master thread} executa sequencialmente até
@@ -196,10 +200,10 @@ Resumo aqui.
 		quatro \textit{worker threads} são criadas pela \textit{master
 		thread}, um total de cinco \textit{threads} irão executar a região paralela.
 		No entanto, é possível fazer uso de estruturas condicionais
-		alinhadas a funções internas do OpenMP para definir uma execução de
+		alinhadas a funções internas do \openmp para definir uma execução de
 		comandos diferentes para a \textit{master thread}. Esse assunto será
 		abordado mais adiante na Seção \ref{section: sincronizacao}. Por
-		fim, vale ressaltar que, em implementações modernas do OpenMP, a
+		fim, vale ressaltar que, em implementações modernas do \openmp, a
 		criação das estruturas internas para gerência das \textit{threads} em regiões
 		paralelas é feita uma única vez, quando a primeira região paralela é
 		encontrada. Dessa forma, a sobrecarga imposta na aplicação não
@@ -214,7 +218,7 @@ Resumo aqui.
 	\subsection{Regiões Paralelas e Compartilhamento de Dados}
 
 		% Descrição.
-		A definição de regiões paralelas no OpenMP é feita através da
+		A definição de regiões paralelas no \openmp é feita através da
 		diretiva \texttt{omp\_parallel}, como é ilustrado no Código~\ref{listing:sayhello}.
 		Nesse exemplo, assim que a a \textit{master thread}
 		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
@@ -231,7 +235,7 @@ Resumo aqui.
 		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}. Em uma região paralela
 		as threads são identificadas por um número único entre $0$ e o número total de \textit{threads}$-1$.
 		O identificador de cada \textit{thread} pode ser recuperado através da
-		função utilitária do OpenMP \texttt{omp\_get\_thread\_num()}.
+		função utilitária do \openmp \texttt{omp\_get\_thread\_num()}.
 
 		% Controle de Escopo de Dados 
 		Variáveis declaradas fora da região paralela são compartilhadas entre
@@ -275,24 +279,24 @@ void sayhello(int nthreads)
 }
 \end{lstlisting}
 
-\section{Paralelismo de Dados e Diretivas OpenMP}
+\section{Paralelismo de Dados e Diretivas \openmp}
 
 	% Visão Geral
-	No OpenMP, o paralelismo de dados é explorado através de diretivas
+	No \openmp, o paralelismo de dados é explorado através de diretivas
 	para paralelização de laços. Nessa seção, o uso dessas diretivas para o
 	projeto de aplicações paralelas será discutido.
 	Primeiro, serão apresentadas as diretivas que possibilitam explorar o
 	paralelismo de dados. Em seguida, as estratégias de escalonamento
-	disponíveis no OpenMP são apresentadas, assim como suas vantagens e
+	disponíveis no \openmp são apresentadas, assim como suas vantagens e
 	desvantagens. Por fim, os mecanismos de redução oferecidos pela API
-	OpenMP são introduzidos.
+	\openmp são introduzidos.
 
 	\subsection{Paralelização de Laços}
 	\label{subsection: paralelização de lacos}
 
 		% Visão Geral
 		Duas diretivas de paralelização de laços estão disponíveis no
-		OpenMP: \texttt{omp for} e \texttt{omp parallel for}. A primeira
+		\openmp: \texttt{omp for} e \texttt{omp parallel for}. A primeira
 		diretiva instrui que as iterações do laço seguinte de uma região
 		paralela devem ser distribuídas entre as \textit{threads} do grupo em questão
 		e, então, executadas em paralelo. A segunda diretiva tem o mesmo
@@ -305,7 +309,7 @@ void sayhello(int nthreads)
 		computação é efetuada em paralelo. 
 
 \begin{lstlisting}[frame=single, caption=Paralelização da multiplicação de
-matrizes no OpenMP.,
+matrizes no \openmp.,
 , label=listing:matrixmult]
 struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 {
@@ -387,7 +391,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		% Aplicações Regulares
 		O escalonamento de iterações diz respeito ao modo como iterações de
 		um laço paralelo são atribuídas às \textit{threads} de um grupo. Por padrão,
-		no OpenMP, o escalonamento de iterações é feito estaticamente e em
+		no \openmp, o escalonamento de iterações é feito estaticamente e em
 		blocos (ou \textit{chunks}) de mesmo tamanho. Para aplicações que
 		possuem um padrão de computação regular, isto é, o tempo de
 		computação para cada iteração do laço paralelo é o mesmo, essa
@@ -410,7 +414,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		paralelo difere; ou então para aplicações regulares que possuem
 		afinidade de memória entre diferentes iterações; essa estratégia não
 		se mostra eficiente e escalável~\cite{Carino2008a}. Então, para atacar esses
-		cenários problemáticos, o OpenMP disponibiliza a cláusula
+		cenários problemáticos, o \openmp disponibiliza a cláusula
 		\texttt{schedule()} que possibilita: (i) selecionar a estratégia de
 		escalonamento a ser empregada para escalonar as
 		iterações de um laço paralelo; e (ii) definir quantas iterações são
@@ -422,7 +426,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		assim que a afinidade de memória existente entre iterações seja explorada.
 		O tamanho de bloco de iterações pode ser escolhido arbitrariamente,
 		já a estratégia de escalonamento pode ser selecionada dentre as
-		seguintes, em uma implementação padrão do OpenMP:
+		seguintes, em uma implementação padrão do \openmp:
 		%
 		\begin{itemize}
 			\item \texttt{static}: particiona igualitariamente as iterações de um
@@ -544,7 +548,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		combinem seus resultados privados de forma a produzir um
 		resultado final para o problema sendo computado. Um suporte
 		eficiente a essa operação, denominada redução, é oferecido pelo
-		OpenMP através da cláusula \texttt{reduction}. O Código~\ref{listing:prodescalar}
+		\openmp através da cláusula \texttt{reduction}. O Código~\ref{listing:prodescalar}
 		ilustra o uso da operação de redução para o cálculo
 		paralelo do produto escalar de um vetor. Nesse exemplo, cada
 		\textit{thread} executa o produto de um subconjunto dos
@@ -553,12 +557,12 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		o cálculo do resultado final.
 
 		% Discussão
-		Por padrão, o OpenMP oferece suporte  para redução de operações
+		Por padrão, o \openmp oferece suporte  para redução de operações
 		aritméticas básicas sobre tipos primitivos da linguagem. Para
 		tanto, um cópia privada da variável a ser reduzida é criada em
 		cada \textit{thread} e, então, ao final da computação as
 		variáveis são combinadas hierarquicamente segundo o operador
-		especificado. Para tipos e operadores que o OpenMP não oferece
+		especificado. Para tipos e operadores que o \openmp não oferece
 		suporte, é possível fornecer uma implementação eficiente e
 		portável fazendo o uso de um laço paralelo, que efetua a
 		computação de interesse, seguido por um laço sequencial que
@@ -583,16 +587,16 @@ int scalar_product(struct vector *a, struct vector *b)
 \label{section: sincronizacao}
 
 	Além de oferecer diretivas úteis para paralelização de porções de código, a API
-	OpenMP também oferece diretivas para sincronização de \textit{worker threads}. Essas
+	\openmp também oferece diretivas para sincronização de \textit{worker threads}. Essas
 	diretivas são utilizadas dentro de regiões paralelas para: (i) indicar a necessidade de serialização
 	de um trecho de código; (ii) garantir exclusão mútua ao acesso a dados compartilhados; ou
 	(iii) realizar uma sincronização global entre \textit{worker threads}. A seguir, são discutidas
-	as principais diretivas de sincronização disponíveis na API OpenMP.
+	as principais diretivas de sincronização disponíveis na API \openmp.
 	
 	\begin{description}
 		\item[\textbf{Serialização.}] A diretiva \texttt{omp single} permite que a execução de um trecho
 		de código dentro de uma região paralela seja serializada, ou seja, seja executada por apenas
-		uma \textit{worker thread}. O OpenMP implementa uma ou diretiva similar para serialização
+		uma \textit{worker thread}. O \openmp implementa uma ou diretiva similar para serialização
 		de trechos de código denominada \texttt{omp master}. A diferença entre as primitivas \texttt{omp single}
 		e \texttt{omp master} reside no fato de que, na primeira, qualquer \textit{worker thread} pode executar
 		o trecho de código serializado, ao passo que, na segunda, somente a \textit{master thread} executará
@@ -602,21 +606,21 @@ int scalar_product(struct vector *a, struct vector *b)
 		de uma região paralela por todas as \textit{worker threads}. Nesses trechos de código, denominados
 		\textit{seções críticas}, faz-se necessária a utilização e um mecanismo de exclusão mútua para evitar
 		que duas ou mais \textit{worker threads} tenham acesso simultaneamente aos dados compartilhados.
-		Para esses casos, a API OpenMP oferece duas diretivas principais. A primeira delas, denominada
+		Para esses casos, a API \openmp oferece duas diretivas principais. A primeira delas, denominada
 		\texttt{omp critical}, implementa um mecanismo de exclusão mútua clássico com uso de \textit{locks}
 		similar ao \textit{mutex}. A segunda delas, denominada \texttt{omp atomic}, é semelhante à primeira, 
 		porém somente pode ser utilizada para proteger operações simples sobre uma variável compartilhada.
 		Por exemplo, para uma variável compartilhada \texttt{x}, as operações permitidas pela diretiva
-		\texttt{omp atomic} são: (i) \textbf{leitura}, e.g., \texttt{v = x}; (ii) \textbf{escrita}, e.g., \texttt{x =} \textit{expr}
-		(onde \textit{expr} é uma expressão aritmética); (iii) \textbf{atualização}, e.g., \texttt{x++}; ou (iv) 
-		\textbf{incremento/decremento}, e.g., \texttt{v = x++}. A lista completa de operações permitidas está
-		disponível na especificação OpenMP\footnote{Disponível em \url{http://openmp.org/wp/openmp-specifications/}}.
+		\texttt{omp atomic} são: (i) \textbf{leitura}, \eg \texttt{v = x}; (ii) \textbf{escrita}, \eg \texttt{x =} \textit{expr}
+		(onde \textit{expr} é uma expressão aritmética); (iii) \textbf{atualização}, \eg \texttt{x++}; ou (iv) 
+		\textbf{incremento/decremento}, \eg \texttt{v = x++}. A lista completa de operações permitidas está
+		disponível na especificação \openmp\footnote{Disponível em \url{http://openmp.org/wp/openmp-specifications/}}.
 		É importante notar que, para o caso de uma seção crítica contendo uma única operação aritmética,
 		amas as diretivas podem ser utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic} oferecerá
 		um melhor desempenho, pois a sua implementação utiliza \textit{spin-locks} e instruções de \textit{hardware}
 		para garantir a atomicidade das operações.
 		
-		\item[\textbf{Sincronização global.}] O OpenMP também oferece uma diretiva que permite realizar uma
+		\item[\textbf{Sincronização global.}] O \openmp também oferece uma diretiva que permite realizar uma
 		sincronização global entre as \textit{worker threads} na forma de uma \textit{barreira}. Essa primitiva,
 		denominada \texttt{omp barrier}, garante que todas as \textit{worker threads} somente possam executar
 		as instruções posteriores à barreira quando todas as \textit{worker threads} tiverem chegado a ela.
@@ -624,17 +628,17 @@ int scalar_product(struct vector *a, struct vector *b)
 	
 	Na seção seguinte também será discutida uma diretiva de sincronização específica para o paralelismo de tarefas.
 
-\section{Paralelismo de Tarefas e Diretivas OpenMP}
+\section{Paralelismo de Tarefas e Diretivas \openmp}
 
-	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no OpenMP.
-	No OpenMP a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
+	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no \openmp.
+	No \openmp a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
 	serem criadas, as tarefas que ainda não foram computadas são inseridas em uma
 	estrutura de dados compartilhada entre as \textit{threads} denominada ``saco de tarefas''
 	(\textit{bag of tasks}). Dentro de uma região paralela, ao ficarem ociosas, as \textit{threads}
 	retiram tarefas ainda não computadas do saco de tarefas e as processam uma a uma.
 	
 	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
-	no OpenMP. Nesse exemplo, algumas \textit{threads} somente criam tarefas (representadas
+	no \openmp. Nesse exemplo, algumas \textit{threads} somente criam tarefas (representadas
 	por flechas unidirecionais com linhas tracejadas) enquanto outras somente executam tarefas
 	(representadas por flechas unidirecionais com linhas pontilhadas). É permitido também que,
 	ao executar uma tarefa, uma \textit{thread} possa criar novas tarefas (representadas por
@@ -644,7 +648,7 @@ int scalar_product(struct vector *a, struct vector *b)
 		\begin{figure}[t]
 			\centering
 			\includegraphics[width=0.6\linewidth]{img/tasks}
-			\caption{Paralelismo de tarefas do OpenMP: uma ou mais \textit{threads} criam
+			\caption{Paralelismo de tarefas do \openmp: uma ou mais \textit{threads} criam
 			tarefas, as quais são inseridas em uma estrutura de dados compartilhada
 			que contém tarefas ainda não computadas. \textit{Threads} ociosas em
 			uma região paralela retiram tarefas dessa estrutura e as processam uma a
@@ -664,7 +668,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	dependênncias podem ser vistas na forma de um grafo direcionado de
 	dependências, onde cada nó do grafo representa uma tarefa e as
 	arestas representam as dependências entre elas. A dependência entre
-	tarefas é determinada no OpenMP através da diretiva \texttt{omp
+	tarefas é determinada no \openmp através da diretiva \texttt{omp
 	taskwait}. Essa diretiva permite que uma instrução ou um bloco de
 	instruções em uma tarefa só seja executado após o término de todas
 	as tarefas criadas anteriormente.
@@ -695,7 +699,7 @@ int scalar_product(struct vector *a, struct vector *b)
 		\end{figure}
 
 	O Código~\ref{listing:fibonacci} mostra um exemplo de implementação básica para o cálculo da soma da sequência
-	de Fibonacci usando tarefas em OpenMP. Primeiramente é criada uma região paralela com o uso da diretiva
+	de Fibonacci usando tarefas em \openmp. Primeiramente é criada uma região paralela com o uso da diretiva
 	\texttt{omp parallel} (linha 5). Para permitir que somente uma única \textit{worker thread} inicie a computação, e
 	consequentemente, a criação das primeiras tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A primeira
 	\textit{worker thread} que ganhar acesso à região \texttt{omp single} executa uma chamada à função recursiva 
@@ -710,7 +714,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	computação será realizada sequencialmente por cada \textit{worker thread} quando \texttt{n < stop}. Portanto,
 	a variável \texttt{stop} pode ser vista como uma forma de controle de granularidade das tarefas da aplicação.
 	A condição de parada para criação de tarefas é muito importante, tendo em vista que a criação e gestão de tarefas no
-	OpenMP possui um sobrecusto significativo. Logo, é importante que as tarefas tenham uma carga grande o suficiente de forma
+	\openmp possui um sobrecusto significativo. Logo, é importante que as tarefas tenham uma carga grande o suficiente de forma
 	a reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas contendo cargas extremamente grandes podem gerar
 	desbalanceamentos de carga entre as \textit{worker threads}.
 
