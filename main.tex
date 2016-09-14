@@ -168,7 +168,7 @@ Resumo aqui.
 
 	Essa seção irá abordar os conceitos básicos de programação paralela com
 	OpenMP. Primeiramente, será apresentado o modelo base dessa API, em
-	seguida será apresentada a primitiva básica para a criação de regiões
+	seguida será apresentada a diretiva básica para a criação de regiões
 	paralelas no código com as formas de compartilhamento de dados
 	oferecidas pelo OpenMP.
 
@@ -589,10 +589,37 @@ int scalar_product(struct vector *a, struct vector *b)
 \section{Sincronização}
 \label{section: sincronizacao}
 
+	Além de oferecer diretivas úteis para paralelização de porções de código, a API
+	OpenMP também oferece diretivas para sincronização de \textit{worker threads}. Essas
+	diretivas são utilizadas dentro de regiões paralelas para: (i) indicar a necessidade de serialização
+	de um trecho de código; (ii) garantir exclusão mútua ao acesso a dados compartilhados; ou
+	(iii) realizar uma sincronização global entre \textit{worker threads}. A seguir, são discutidas
+	as principais diretivas de sincronização disponíveis na API OpenMP.
+	
+	\begin{description}
+		\item[\textbf{Serialização.}] A diretiva \texttt{omp single} permite que a execução de um trecho
+		de código dentro de uma região paralela seja serializada, ou seja, seja executada por apenas
+		uma \textit{worker thread}. O OpenMP implementa uma ou diretiva similar para serialização
+		de trechos de código denominada \texttt{omp master}. A diferença entre as primitivas \texttt{omp single}
+		e \texttt{omp master} reside no fato de que, na primeira, qualquer \textit{worker thread} pode executar
+		o trecho de código serializado, ao passo que, na segunda, somente a \textit{master thread} executará
+		o trecho de código serializado.
+		
+		\item[\textbf{Exclusão mútua.}] Em muitos casos, dados compartilhados necessitam modificados dentro
+		de uma região paralela por todas as \textit{worker threads}. Nesses trechos de código, denominados
+		\textit{seções críticas}, faz-se necessária a utilização e um mecanismo de exclusão mútua para evitar
+		que duas ou mais \textit{worker threads} tenham acesso simultaneamente aos dados compartilhados.
+		Para esses casos, a API OpenMP oferece duas diretivas principais. A primeira delas, denominada
+		\texttt{omp critical}...
+	\end{description}
+	
 	Nesse capítulo serão discutidas as diretivas de sincronização de \textit{threads}
 	disponíveis no OpenMP: serialização de código (\texttt{omp single} e
 	\texttt{omp master}), exclusão mútua (\texttt{omp critical}) e barreiras
 	(\texttt{omp barrier}).
+
+	Na seção seguinte também será discutida uma diretiva de sincronização específica
+	para o paralelismo de tarefas.
 
 \section{Paralelismo de Tarefas e Diretivas OpenMP}
 
