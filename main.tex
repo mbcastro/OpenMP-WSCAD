@@ -535,6 +535,32 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
 
+		% Visão Geral
+		Em aplicações que exploram o paralelismo de dados,
+		frequentemente existe uma necessidade de que as \textit{threads}
+		combinem seus resultados privados de forma a produzir um
+		resultado final para o problema sendo computado. Suporte
+		eficiente a essa operação, denominada redução, é oferecida pelo
+		OpenMP através da cláusula \texttt{reduction}. O Fragmento de
+		Código (??) ilustra o uso da operação de redução para o cálculo
+		paralelo do produto escalar de um vetor. Nesse exemplo, cada
+		\textit{thread} executa o produto de um subconjunto dos
+		elementos do vetor por um escalar e, em seguida, os resultados
+		parciais encontrados por cada \textit{thread} são somados, para
+		o cálculo do resultado final.
+
+		% Discussão
+		Por padrão, o OpenMP oferece suporte  para redução de operações
+		aritméticas básicas sobre tipos primitivos da linguagem. Para
+		tanto, um cópia privada da variável a ser reduzida é criada em
+		cada \textit{thread} e, então, ao final da computação as
+		variáveis são combinadas hierarquicamente segundo o operador
+		especificado. Para tipos e operadores que o OpenMP não oferece
+		suporte, é possível fornecer uma implementação eficiente e
+		portável fazendo o uso de um laço paralelo, que efetua a
+		computação de interesse, seguido por um laço sequencial que
+		realiza a redução dos valores parciais computados.
+
 \begin{lstlisting}[frame=single, caption=Produto escalar.,
 label=listing:prodescalar]
 int scalar_product(struct vector *a, struct vector *b)
