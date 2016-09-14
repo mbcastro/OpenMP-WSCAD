@@ -468,12 +468,26 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		\texttt{static}, se mostrando assim mais escalável.  De fato, esse
 		comportamento é recorrente em aplicações irregulares e pode ser
 		utilizado para guiar o projeto de soluções paralelas eficientes
-		nesse nicho específico. No entanto, é pertinente observar que a
+		nesse domínio. No entanto, é pertinente observar que a
 		granularidade de \textit{chunks} consiste em um fator que impacta
 		diretamente no desempenho entregue pela estratégia \texttt{dynamic}
 		e, então, deve ser cuidadosamente considerado. 
 
 		% Granularidade de Chunks
+		Para enfatizar a influência do tamanho do \textit{chunk} no
+		desempenho do escalonador \textit{dynamic}, experimentos com um
+		\textit{kernel} sintético que realiza uma computação regular,
+		uma soma de um conjunto (grande) de números inteiros, foram
+		conduzidos. Diferentes tamanhos de \textit{chunks} foram
+		analisados e as estratégias de escalonamento de iterações
+		\texttt{static} e \texttt{dynamic} foram consideradas. Os
+		resultados obtidos são apresentados na Figura \ref{fig: chunk
+		size} e evidenciam que na estratégia \texttt{dynamic},
+		\textit{chunks} muito pequenos introduzem uma expressiva
+		sobrecarga na execução, que diminui com o aumento do tamanho do
+		\textit{chunk}. Em contraste, a estratégia \texttt{static}
+		entrega um desempenho constante à aplicação, independente do
+		tamanho do \textit{chunk}.
 
 \begin{lstlisting}[frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
 label=listing:sparsematrixmult]
