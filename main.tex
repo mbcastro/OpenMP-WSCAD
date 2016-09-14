@@ -652,32 +652,40 @@ int scalar_product(struct vector *a, struct vector *b)
 			\label{fig:tasks}
 		\end{figure}
 
-	A criação e execução de tarefas pelas \textit{threads} é sempre feita dentro de uma região paralela
-	criada com o uso da diretiva \texttt{omp parallel}. Dentro de uma região paralela, \textit{threads} podem
-	criar tarefas a serem computadas através do uso da diretiva \texttt{omp task}. Quando uma tarefa é criada,
-	a mesma é inserida no saco de tarefas e fica disponível para ser computada por qualquer \textit{worker thread}
-	ociosa dentro da região paralela.
+	A criação e execução de tarefas pelas \textit{threads} é feita
+	dentro de uma região paralela utilizando a diretiva \texttt{omp
+	task}. Quando uma tarefa é criada, a mesma é inserida no saco de
+	tarefas e fica disponível para ser computada por qualquer
+	\textit{worker thread} ociosa dentro da região paralela.
 
-	Em muitos problemas computacionais paralelizados com o uso de tarefas, determinadas tarefas não podem
-	ser computadas pois dependem de resultados de outras tarefas ainda não finalizadas. Essas dependencias
-	podem ser vistas na forma de um grafo direcionado de dependências, onde cada nó do grafo representa
-	uma tarefa e as arestas representam as dependências entre elas. A dependência entre tarefas é determinada
-	no OpenMP através da diretiva \texttt{omp taskwait}. Essa diretiva permite que uma instrução ou um bloco de
-	instruções em uma tarefa só seja executado após o término de todas as tarefas criadas anteriormente.
+	Em muitos problemas computacionais paralelizados com o uso de
+	tarefas, determinadas tarefas não podem ser computadas pois dependem
+	de resultados de outras tarefas ainda não finalizadas. Essas
+	dependênncias podem ser vistas na forma de um grafo direcionado de
+	dependências, onde cada nó do grafo representa uma tarefa e as
+	arestas representam as dependências entre elas. A dependência entre
+	tarefas é determinada no OpenMP através da diretiva \texttt{omp
+	taskwait}. Essa diretiva permite que uma instrução ou um bloco de
+	instruções em uma tarefa só seja executado após o término de todas
+	as tarefas criadas anteriormente.
 	
-	Um exemplo clássico de um problema recursivo que pode ser paralelizado com o uso de tarefas é a soma da
-	sequência de Fibonacci. Matematicamente, os números da sequência de Fibonacci são gerados através da
-	seguinte fórmula recursiva:
+	Um exemplo clássico de um problema recursivo que pode ser
+	paralelizado com o uso de tarefas é a soma da sequência de
+	Fibonacci. Matematicamente, os números da sequência de Fibonacci são
+	gerados através da seguinte fórmula recursiva:
 	
-	\begin{equation}
+	\begin{align*}
 		F_n = F_{n-1} + F_{n-2} \text{, onde } F_1=1 \text{ e } F_2=1
-	\end{equation}
+	\end{align*}
 
-	Se considerarmos que para calcular $F_n$ são necessárias duas tarefas $F_{n-1}$ e $F_{n-2}$, é evidente que
-	os resultados de $F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término de ambas tarefas. Nesse caso,
-	nota-se que $F_n$ depende de $F_{n-1}$ e $F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um
-	grafo de dependências de tarefas para o cálculo da soma da sequência de Fibonacci usando tarefas. Nesse
-	exemplo, cada tarefa representa uma chamada recursiva à $F_{n-1}$ e $F_{n-2}$.
+	Se considerarmos que para calcular $F_n$ são necessárias duas
+	tarefas $F_{n-1}$ e $F_{n-2}$, é evidente que os resultados de
+	$F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término de ambas
+	tarefas. Nesse caso, nota-se que $F_n$ depende de $F_{n-1}$ e
+	$F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um
+	grafo de dependências de tarefas para o cálculo da soma da sequência
+	de Fibonacci usando tarefas. Nesse exemplo, cada tarefa representa
+	uma chamada recursiva à $F_{n-1}$ e $F_{n-2}$.
 
 		\begin{figure}[t]
 			\centering
