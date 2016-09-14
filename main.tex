@@ -360,9 +360,6 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 					multiplicação de matrizes.}
 			\end{figure}
 			
-		\todo[inline]{Usar diferentes markers para cada curva em todas as figuras de
-		resultados.}
-
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas abordagens
 		teriam no algoritmo clássico de multiplicação de matrizes,
@@ -406,14 +403,13 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 			                                 {\text{Número de Threads}}
 		\end{equation}
 
-		\todo[inline]{Adicionar referencia no parágrafo abaixo.}
 		
 		% Aplicações Irregulares
 		No entanto, para aplicações que possuem um caráter irregular de
 		computação, isto é, o tempo de computação para cada iteração no laço
 		paralelo difere; ou então para aplicações regulares que possuem
 		afinidade de memória entre diferentes iterações; essa estratégia não
-		se mostra eficiente e escalável~[??]. Então, para atacar esses
+		se mostra eficiente e escalável~\cite{Carino2008a}. Então, para atacar esses
 		cenários problemáticos, o OpenMP disponibiliza a cláusula
 		\texttt{schedule()} que possibilita: (i) selecionar a estratégia de
 		escalonamento a ser empregada para escalonar as

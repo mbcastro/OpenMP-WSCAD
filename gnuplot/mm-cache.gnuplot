@@ -16,6 +16,7 @@ set xtics ('2' 0,'4' 1, '6' 2, '8' 3, '10' 4, '12' 5, '14' 6, '16' 7, '18' 8, '2
 set xlabel "Número de Threads"
 
 # Y Axis
+set yrange [-100000000:350000000]
 set ylabel "Cache Misses"
 
 # Grid
