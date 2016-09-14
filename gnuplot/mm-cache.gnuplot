@@ -25,7 +25,5 @@ set grid ytics
 # Legend
 set key inside right bottom height 1 width 1 box lw 1
 
-plot  "results/mm1-L2.csv" using 0:2:3 with yerrorbars title "Laço Externo" ls 5, \
-	 '' using 0:2 with lines ls 5 notitle,                      \
-	 "results/mm2-L2.csv" using 0:2:3 with yerrorbars title "Laço Interno" ls 6,   \
-	 '' using 0:2 with lines ls 6 notitle
+plot  "results/mm1-L2.csv" using 0:2 with linespoints title "Laço Externo" ls 5, \
+	 "results/mm2-L2.csv" using 0:2 with linespoints title "Laço Interno" ls 6   \
