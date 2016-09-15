@@ -1,70 +1,85 @@
 \documentclass{SBCbookchapter}
+
+% Codificação
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[brazilian]{babel}
-\usepackage{graphicx}
-\usepackage[brazilian]{backref}	 % Paginas com as citações na bibl
-\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
-% Figures
+% Idioma
+\usepackage[brazilian]{babel}
+
+% Referências
+\usepackage[brazilian]{backref}
+\usepackage[alf]{abntex2cite}
+
+% Figuras
 \usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
+
+% Matemática
+\usepackage{amsmath}
+
+% Anotações
+\usepackage{todonotes}
+
+% Texto Aleatório
+\usepackage{lipsum}
 
 % Acrônimos
 \usepackage{xspace}
 \input{acronimos.tex}
 
-\usepackage{amsmath}
-
-\usepackage{todonotes}
-
-\author{Márcio Castro, Pedro H. Penna e Alyson D. Pereira\\
-\textit{Departamento de Informática e Estatística (INE)}\\
-\textit{Universidade Federal de Santa Catarina (UFSC)}
-}
-\title{Desenvolvimento de Aplicações Paralelas Eficientes com \openmp}
-
 % Fragmento de Código
 \usepackage{listings}
-\renewcommand{\lstlistingname}{Código}
-
+\renewcommand{\lstlistingname}{Fragment de Código}
 \lstset{
-  belowcaptionskip=1\baselineskip,
-  breaklines=true,
-  frame=L,
-  xleftmargin=\parindent,
-  numbers=left,
-  stepnumber=1,
-  language=C,
-  tabsize=4,
-  showstringspaces=false,
-  basicstyle=\scriptsize\ttfamily,
-  otherkeywords={
-  	pragma,
-	omp,
-	parallel,
-	num\_threads,
-	schedule,
-	reduction,
-	private,
-	shared,
-	task,
-	taskwait,
-	single,
-	nowait
-  },
-  keywordstyle=\color{blue},
-  commentstyle=\itshape\color{gray},
-  identifierstyle=\color{black},
-  stringstyle=\color{purple},
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	frame=L,
+	xleftmargin=\parindent,
+	numbers=left,
+	stepnumber=1,
+	language=C,
+	tabsize=4,
+	showstringspaces=false,
+	basicstyle=\scriptsize\ttfamily,
+	otherkeywords={
+		pragma,
+		omp,
+		parallel,
+		num\_threads,
+		schedule,
+		reduction,
+		private,
+		shared,
+		task,
+		taskwait,
+		single,
+		nowait
+	},
+	keywordstyle=\color{blue},
+	commentstyle=\itshape\color{gray},
+	identifierstyle=\color{black},
+	stringstyle=\color{purple},
 }
 
+% Autores e Instituição
+\author{%
+	Márcio Castro, Pedro H. Penna e Alyson D. Pereira                  \\
+	\textit{Laboratório de Pesquisa em Sistemas Distribuídos (LaPeSD)} \\
+	\textit{Departamento de Informática e Estatística (INE)}           \\
+	\textit{Universidade Federal de Santa Catarina (UFSC)}
+}
+
+% Título
+\title{Desenvolvimento de Aplicações Paralelas\\Eficientes com \openmp}
+
 \begin{document}
+
 \maketitle
 
 \begin{resumo}
-Resumo aqui.
+	\lipsum[1]
 \end{resumo}
 
 \section{Introdução}
