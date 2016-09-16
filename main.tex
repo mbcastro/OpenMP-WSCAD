@@ -29,9 +29,12 @@
 \usepackage{xspace}
 \input{acronimos.tex}
 
+% Tabelas
+\usepackage{booktabs}
+
 % Fragmento de Código
 \usepackage{listings}
-\renewcommand{\lstlistingname}{Fragment de Código}
+\renewcommand{\lstlistingname}{Fragmento de Código}
 \lstset{
 	belowcaptionskip=1\baselineskip,
 	breaklines=true,
@@ -267,7 +270,7 @@
 
 		% Descrição.
 		A definição de regiões paralelas no \openmp é feita através da
-		diretiva \texttt{omp\_parallel}, como é ilustrado no Código~\ref{listing:sayhello}.
+		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento de Código~\ref{listing:sayhello}.
 		Nesse exemplo, assim que a a \textit{master thread}
 		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
 		\textit{worker threads} para executar os comandos especificados. Ao
@@ -350,7 +353,7 @@ void sayhello(int nthreads)
 		paralela devem ser distribuídas entre as \textit{threads} do grupo em questão
 		e, então, executadas em paralelo. A segunda diretiva tem o mesmo
 		efeito, porém não necessita que o laço esteja dentro de uma região
-		paralela. O Código~\ref{listing:matrixmult} ilustra o uso dessa última
+		paralela. O Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa última
 		diretiva na paralelização do algoritmo clássico de multiplicação de
 		matrizes. Nesse exemplo, um grupo de \textit{threads} é criado para
 		executar os comandos do laço da linha $9$. Cada \textit{thread}
@@ -502,7 +505,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		\end{itemize}
 		
 		% Análise de Desempenho
-		O Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois
+		O Fragmento de Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois
 		mecanismos na paralelização do algoritmo clássico para multiplicação
 		de matrizes esparsas, um típico representante de uma aplicação
 		irregular. Nesse exemplo, o escalonamento de iterações é feito em
@@ -597,7 +600,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		combinem seus resultados privados de forma a produzir um
 		resultado final para o problema sendo computado. Um suporte
 		eficiente a essa operação, denominada redução, é oferecido pelo
-		\openmp através da cláusula \texttt{reduction}. O Código~\ref{listing:prodescalar}
+		\openmp através da cláusula \texttt{reduction}. O Fragmento de Código~\ref{listing:prodescalar}
 		ilustra o uso da operação de redução para o cálculo
 		paralelo do produto escalar de um vetor. Nesse exemplo, cada
 		\textit{thread} executa o produto de um subconjunto dos
@@ -744,7 +747,7 @@ int scalar_product(struct vector *a, struct vector *b)
 			de Fibonacci.}\label{fig:fibonacci}
 		\end{figure}
 
-	O Código~\ref{listing:fibonacci} mostra um exemplo de implementação básica para o cálculo da soma da sequência
+	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de implementação básica para o cálculo da soma da sequência
 	de Fibonacci usando tarefas em \openmp. Primeiramente é criada uma região paralela com o uso da diretiva
 	\texttt{omp parallel} (linha 5). Para permitir que somente uma única \textit{worker thread} inicie a computação, e
 	consequentemente, a criação das primeiras tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A primeira
@@ -754,7 +757,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	cálculo $F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp task} (linhas 27--28 e 30--31) assim
 	como as dependências são criadas com a diretiva \texttt{omp taskwait} (linhas 33--34).
 	
-	Note que o Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 23),
+	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 23),
 	evitando-se explicitamente a criação de tarefas quando o valor da variável \texttt{n} é inferior a um valor específico (\texttt{stop}). 
 	Basicamente, essa condição garante uma carga \textit{mínima} para computação de uma tarefa. Em outras palavras, a
 	computação será realizada sequencialmente por cada \textit{worker thread} quando \texttt{n < stop}. Portanto,
@@ -810,14 +813,58 @@ long recursive_fibonacci(int n, int stop)
 	Figura~\ref{fig:grao-tarefas}. Os experimentos foram conduzidos em uma máquina SMP com 24 cores
 	($4 \times$ Intel Xeon X7 com 6 \textit{cores} cada). Nesses experimentos, o número de \textit{threads} foi fixado
 	em 12 e o valor da variável \texttt{n} foi fixado em 50.
+	
+	O resultado mostra um ganho significativo de desempenho quando a granularidade das tarefas é aumentada (i.e.,
+	valor usado na variável \texttt{stop} é aumentada) de $14$ para $26$ (ganho de desempenho de $19,8\times$).
+	Com \texttt{stop=26} tem-se então o melhor compromisso entre sobrecusto da geração/controle de tarefas e
+	desbalanceamento de carga entre as \textit{threads}. A partir desse ponto, o desempenho da aplicação volta a
+	piorar ligeiramente. Esse comportamento é esperando pois um grão muito grande pode gerar importantes
+	desbalanceamentos de carga entre as \textit{threads}.
 
-	\begin{figure}[t]
-		\centering
-		\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
-		\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
+	\todo[inline]{1) remover a legenda; 2) alterar o label do eixo x para ``Task Grain Size''. }
+	
+%	\begin{figure}[t]
+%		\centering
+%		\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
+%		\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
+%		de Fibonacci.}
+%		\label{fig:grao-tarefas}
+%	\end{figure}
+
+			\begin{figure}[t]
+				\captionsetup[subfigure]{justification=centering}
+				\centering
+					\begin{subfigure}{0.45\linewidth}
+						\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
+						\label{fig:grao-tarefas-tempo}
+						\caption{Tempos de execução.}
+					\end{subfigure}
+					\quad\quad\quad
+					\begin{subfigure}{0.45\linewidth}
+						\centering
+						\resizebox{0.8\linewidth}{!}{
+            						\begin{tabular}{cc}
+            							\toprule
+            							\texttt{stop} 	& Ganho (sobre \texttt{stop=14}) \\ \midrule					
+            							16			& 2,79\\
+            							18			& 8,37\\
+            							20			& 17,15\\
+            							22			& 18,82\\
+            							24			& 18,56\\
+            							26			& 19,80\\
+            							28			& 18,99\\
+            							30			& 19,33\\
+            							32			& 19,03\\ \bottomrule
+            						\end{tabular}
+						}
+						\label{fig:grao-tarefas-ganho}
+						\caption{Ganhos de desempenho.}
+					\end{subfigure}
+				\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
 		de Fibonacci.}
-		\label{fig:grao-tarefas}
-	\end{figure}
+				\label{fig:grao-tarefas}
+			\end{figure}
+
 
 \section{Conclusão}
 \label{sec:conclusao}
