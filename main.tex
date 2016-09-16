@@ -124,7 +124,11 @@
 	Interface de Programação de Aplicações (\textit{Aplication
 	Programming Interface} -- API) para arquiteturas paralelas de
 	memória compartilhada que é largamente utilizada pela indústria e
-	academia.
+	academia.Nesse tipo de arquitetura, diversos
+	processadores ou \textit{cores} tem acesso a uma memória principal
+	compartilhada em um único espaço de endereçamento.  A
+	Figura~\ref{fig:uma-numa} apresenta uma visão geral de duas
+	arquiteturas de memória compartilhada.
 
 	\todo[inline]{Estou achando muito desconexo a introdução. Achei
 	meio nada a ver essa discussao no final das arquiteturas paralelas.
@@ -138,19 +142,6 @@
 		mais poderosos relacionados na lista TOP500.}
 		\label{fig:top500}
 	\end{figure}
-
-	Nesse capítulo, um modelo de programação paralela \openmp, que é
-	largamente utilizado na indústria e academia, será apresentado. Esse
-	modelo oferece diretivas de compilação que permitem realizar a
-	paralelização de trechos de código de maneira transparente. O
-	\openmp oferece uma Interface de Programação de Aplicações
-	(\textit{Application Programming Interface} -- API) bastante
-	completa para paralelização de aplicações para arquiteturas de
-	memória compartilhada. Nesse tipo de arquitetura, diversos
-	processadores ou \textit{cores} tem acesso a uma memória principal
-	compartilhada em um único espaço de endereçamento.  A
-	Figura~\ref{fig:uma-numa} apresenta uma visão geral de duas
-	arquiteturas de memória compartilhada.
 
 			\begin{figure}[t]
 				\captionsetup[subfigure]{justification=centering}
