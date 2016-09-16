@@ -84,46 +84,52 @@
 
 \section{Introdução}
 
-	% Advento de Processadores Multicore
-	Durante as três últimas décadas, avanços constantes de pesquisa na
+	% Processadores Multicore
+	Durante as três últimas décadas, avanços constantes, de pesquisa na
 	área de arquitetura de computadores e de tecnologia na fabricação de
-	semicondutores  possibilitaram que o desempenho de um único
+	semicondutores, possibilitaram que o desempenho de um único
 	processador crescesse linearmente a uma taxa anual de $40\%$ a
-	$50\%$~\cite{LARUS08}, com o aumento da sua frequência de operação.
-	No entanto, a dissipação de potência no \textit{chip}, inerente ao
-	crescente número de transistores, impôs um limite físico ao
-	desempenho máximo possível a ser alcançado com essa abordagem.
-	Então, para contornar esse problema, grande parte da indústria de
-	processadores agora investe na produção de processadores com
-	diversos núcleos de processamento (\textit{multicores}).
+	$50\%$~\cite{LARUS08}. No entanto, a dissipação de potência no
+	\textit{chip}, inerente ao crescente número de transistores, impôs
+	um limite físico ao desempenho máximo possível a ser alcançado.
+	Então, para contornar esse problema, grande parte da indústria agora
+	investe no projeto de processadores com diversos núcleos de
+	processamento (processadores \textit{multicores}).
 
+	% Computação de Alto Desempenho
 	De fato, processadores \textit{multicore} já são largamente
-	utilizados para a Computação de Alto Desempenho \cite{Asanovic09}.
-	Porém, observa-se nessas arquiteturas uma grande disparidade entre o
-	alto crescimento do número de \textit{cores} por processador e o
-	baixo número de conexões entre processadores e o restante dos
-	dispositivos.  Essa crescente disparidade faz com que o tempo de
-	acesso a um dado armazenado na memória seja muito maior que o tempo
-	necessário para processá-lo, o que conduz ao conhecido
-	``\textit{memory wall problem}'' \cite{McKee-MemWall:2004}. Esse
-	problema é atenuado atualmente através do uso de uma hierarquia de
-	memórias \textit{cache} entre os processadores e a memória
-	principal, que explora o princípio da localidade e permite assim
-	acesso mais rápido aos dados e, consequentemente, uma melhora no
-	desempenho global.
+	utilizados na Computação de Alto Desempenho~\cite{Asanovic09}.
+	Nesse nicho, a tendência atual é o emprego de centenas, ou até mesmo
+	milhares, desses processadores no projeto de arquiteturas paralelas
+	com uma quantidade massiva de \textit{cores}. Essa tendência é
+	confirmada pelo \textit{website}
+	Top500~\footnote{\url{www.top500.org}}, que provê um
+	\textit{ranking} atualizado	dos 500 supercomputadores mais poderosos
+	do mundo, e é sumarizada na Figura (??).
+		
+	% Motivação
+	No entanto, ao passo que uma quantidade massiva de \textit{cores}
+	entrega um grande poder computacional a essas arquiteturas
+	paralelas, a alta latência de acesso aos demais dispositivos, como
+	memórias e unidades de armazenamento, impõe um desafio arquitetural
+	no uso pleno de sua capacidade de desempenho. Então, para que essa
+	barreira seja superada, o desenvolvimento de aplicações paralelas
+	eficientes consiste em um requisito obrigatório. Esse objetivo pode
+	ser alcançado através do uso de bibliotecas de programação paralela,
+	que oferece uma abstração para criação, gerenciamento, sincronização
+	e comunicação de \textit{threads} e processos.
 
-	A tendência atual da construção de arquiteturas \textit{multicore} é
-	de um crescimento contínuo do número de \textit{cores}, resultando
-	em arquiteturas compostas por dezenas ou até mesmo milhares de
-	cores. Essa tendência é confirmada pelo \textit{website}
-	TOP500\footnote{\url{http://www.top500.org}}
-	(Figura~\ref{fig:top500}), que provê um \textit{ranking} atualizado
-	dos 500 supercomputadores mais poderosos do mundo. Nessas
-	arquiteturas o problema de escalabilidade é ainda maior, pois
-	centenas ou milhares de processos (ou \textit{threads}) em execução
-	simultânea disputam acesso a diversos recursos compartilhados como
-	por exemplo \textit{cores}, memória principal, memórias
-	\textit{cache}, entre outros.
+	Nesse contexto, esse capítulo apresenta uma discussão de como
+	desenvolver aplicações paralelas eficientes usando o \openmp, uma
+	Interface de Programação de Aplicações (\textit{Aplication
+	Programming Interface} -- API) para arquiteturas paralelas de
+	memória compartilhada que é largamente utilizada pela indústria e
+	academia.
+
+	\todo[inline]{Estou achando muito desconexo a introdução. Achei
+	meio nada a ver essa discussao no final das arquiteturas paralelas.
+	Acho que pode ser feito numa seção posterior, ou antes dos
+	parágrafos anteriores.}
 
 	\begin{figure}[t]
 		\centering
@@ -132,14 +138,6 @@
 		mais poderosos relacionados na lista TOP500.}
 		\label{fig:top500}
 	\end{figure}
-
-	O desenvolvimento de aplicações paralelas eficientes é um requisito
-	obrigatório para que seja possível utilizar todo o potencial dessas.
-	Para atingir esse objetivo é necessário o uso de modelos de programação
-	paralela. Idealmente, esses modelos devem oferecer um nível de abstração
-	alto aos desenvolvedores. Ao mesmo tempo, eles devem fornecer mecanismos
-	eficientes para a criação, gerenciamento e orquestração de
-	\textit{threads} ou processos.
 
 	Nesse capítulo, um modelo de programação paralela \openmp, que é
 	largamente utilizado na indústria e academia, será apresentado. Esse
