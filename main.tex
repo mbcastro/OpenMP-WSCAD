@@ -821,49 +821,45 @@ long recursive_fibonacci(int n, int stop)
 	piorar ligeiramente. Esse comportamento é esperando pois um grão muito grande pode gerar importantes
 	desbalanceamentos de carga entre as \textit{threads}.
 
-	\todo[inline]{1) remover a legenda; 2) alterar o label do eixo x para ``Task Grain Size''. }
+	\todo[inline]{1) remover a legenda; 2) alterar o label do eixo x para ``Task Grain Size''.}
 	
-%	\begin{figure}[t]
-%		\centering
-%		\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
-%		\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
-%		de Fibonacci.}
-%		\label{fig:grao-tarefas}
-%	\end{figure}
-
-			\begin{figure}[t]
-				\captionsetup[subfigure]{justification=centering}
-				\centering
-					\begin{subfigure}{0.45\linewidth}
-						\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
-						\label{fig:grao-tarefas-tempo}
-						\caption{Tempos de execução.}
-					\end{subfigure}
-					\quad\quad\quad
-					\begin{subfigure}{0.45\linewidth}
-						\centering
-						\resizebox{0.8\linewidth}{!}{
-            						\begin{tabular}{cc}
-            							\toprule
-            							\texttt{stop} 	& Ganho (sobre \texttt{stop=14}) \\ \midrule					
-            							16			& 2,79\\
-            							18			& 8,37\\
-            							20			& 17,15\\
-            							22			& 18,82\\
-            							24			& 18,56\\
-            							26			& 19,80\\
-            							28			& 18,99\\
-            							30			& 19,33\\
-            							32			& 19,03\\ \bottomrule
-            						\end{tabular}
-						}
-						\label{fig:grao-tarefas-ganho}
-						\caption{Ganhos de desempenho.}
-					\end{subfigure}
-				\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
-		de Fibonacci.}
-				\label{fig:grao-tarefas}
-			\end{figure}
+		\begin{figure}[t]
+			\captionsetup[subfigure]{justification=centering}
+			\centering
+				\begin{subfigure}{0.45\linewidth}
+					\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
+					\label{fig:grao-tarefas-tempo}
+					\caption{Tempos de execução.}
+				\end{subfigure}
+				\quad\quad\quad
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\resizebox{0.725\linewidth}{!}{
+            					\begin{tabular}{cc}
+            						\toprule
+            						\texttt{stop} 	& Ganho (sobre \texttt{stop=14}) \\ \midrule					
+            						16			& 2,79\\
+            						18			& 8,37\\
+            						20			& 17,15\\
+            						22			& 18,82\\
+            						24			& 18,56\\
+            						\textbf{26}			& \textbf{19,80}\\
+            						28			& 18,99\\
+            						30			& 19,33\\
+            						32			& 19,03\\ 
+							34			& 19,52\\
+							36			& 18,82\\ 
+							38			& 19,62\\
+							40			& 18,62\\ \bottomrule
+            					\end{tabular}
+					}
+					\label{fig:grao-tarefas-ganho}
+					\caption{Ganhos de desempenho.}
+				\end{subfigure}
+			\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
+				de Fibonacci.}
+			\label{fig:grao-tarefas}
+		\end{figure}
 
 
 \section{Conclusão}
