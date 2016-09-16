@@ -161,7 +161,7 @@
 		computacionais. Uma API bastante utilizada em \textit{clusters} é a \textit{Message Passing
 		Interface} (MPI).
 		
-		Em sistemas de memória compartilhada, diversos processadores ou \textit{cores} tem acesso
+		Por outro lado, em sistemas de memória compartilhada, diversos processadores ou \textit{cores} tem acesso
 		a uma memória principal compartilhada entre eles. Em todo o sistema há somente uma instância
 		de um sistema operacional o qual é responsável por escalonar processos ou \textit{threads} nos
 		processadores ou \textit{cores}. Existem duas classes de arquiteturas de memória compartilhada.
@@ -212,17 +212,17 @@
                 	tipo UMA. Porém, arquiteturas paralelas mais complexas que possuem
                 	várias dezenas de \textit{cores} são normalmente do tipo NUMA.
 
-		Por fim, sistemas de memória compartilhada e distribuída temos a existência
-		de ambos os modelos de memória (compartilhada e distribuída) em um único
-		sistema. Por exemplo, em processadores \textit{manycore} recentes, os \textit{cores}
-		são usualmente agrupados em \textit{clusters}. Dentro de um \textit{cluster}, todos
-		os \textit{cores} compartilham o acesso a uma memória. Porém, um \textit{cluster}
-		necessita realizar comunicações via rede para que possa acessar a memória de outros
-		\textit{clusters}.
+		Por fim, os sistemas de memória compartilhada e distribuída possuem uma organização
+		mista da memória (compartilhada e distribuída) em um único sistema. Por exemplo, em
+		processadores \textit{manycore} recentes, os \textit{cores} são usualmente agrupados em
+		\textit{clusters}. Dentro de um \textit{cluster}, todos os \textit{cores} compartilham o acesso
+		a uma memória. Porém, um \textit{cluster} necessita realizar comunicações via rede para
+		que possa acessar a memória de outros \textit{clusters}.
 		
 		A API \openmp, discutida nesse minicurso, pressupõe a existência de um sistema de
 		memória compartilhada e utiliza o conceito de \textit{threads} para permitir o
-		compartilhamento de dados em memória.
+		compartilhamento de dados em memória. Por tanto, a API pode ser utilizada tanto
+		para arquiteturas UMA quanto para arquiteturas NUMA.
 		
 	\subsection{Modelo Fork-Join}
 
