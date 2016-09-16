@@ -85,14 +85,14 @@
 \section{Introdução}
 
 	% Processadores Multicore
-	Durante as três últimas décadas, avanços constantes, de pesquisa na
+	Durante as três últimas décadas, avanços constantes de pesquisa na
 	área de arquitetura de computadores e de tecnologia na fabricação de
-	semicondutores, possibilitaram que o desempenho de um único
+	semicondutores possibilitaram que o desempenho de um único
 	processador crescesse linearmente a uma taxa anual de $40\%$ a
 	$50\%$~\cite{LARUS08}. No entanto, a dissipação de potência no
 	\textit{chip}, inerente ao crescente número de transistores, impôs
 	um limite físico ao desempenho máximo possível a ser alcançado.
-	Então, para contornar esse problema, grande parte da indústria agora
+	Para contornar esse problema, grande parte da indústria agora
 	investe no projeto de processadores com diversos núcleos de
 	processamento (processadores \textit{multicores}).
 
@@ -100,49 +100,81 @@
 	De fato, processadores \textit{multicore} já são largamente
 	utilizados na Computação de Alto Desempenho~\cite{Asanovic09}.
 	Nesse nicho, a tendência atual é o emprego de centenas, ou até mesmo
-	milhares, desses processadores no projeto de arquiteturas paralelas
+	milhares desses processadores no projeto de arquiteturas paralelas
 	com uma quantidade massiva de \textit{cores}. Essa tendência é
 	confirmada pelo \textit{website}
 	Top500~\footnote{\url{www.top500.org}}, que provê um
 	\textit{ranking} atualizado	dos 500 supercomputadores mais poderosos
-	do mundo, e é sumarizada na Figura (??).
+	do mundo, conforme mostrado na Figura~\ref{fig:top500}.
 		
 	% Motivação
 	No entanto, ao passo que uma quantidade massiva de \textit{cores}
 	entrega um grande poder computacional a essas arquiteturas
 	paralelas, a alta latência de acesso aos demais dispositivos, como
 	memórias e unidades de armazenamento, impõe um desafio arquitetural
-	no uso pleno de sua capacidade de desempenho. Então, para que essa
+	no uso pleno de sua capacidade de desempenho. Para que essa
 	barreira seja superada, o desenvolvimento de aplicações paralelas
 	eficientes consiste em um requisito obrigatório. Esse objetivo pode
 	ser alcançado através do uso de bibliotecas de programação paralela,
-	que oferece uma abstração para criação, gerenciamento, sincronização
+	as quais oferecem uma abstração para criação, gerenciamento, sincronização
 	e comunicação de \textit{threads} e processos.
 
 	Nesse contexto, esse capítulo apresenta uma discussão de como
 	desenvolver aplicações paralelas eficientes usando o \openmp, uma
 	Interface de Programação de Aplicações (\textit{Aplication
-	Programming Interface} -- API) para arquiteturas paralelas de
-	memória compartilhada que é largamente utilizada pela indústria e
-	academia.Nesse tipo de arquitetura, diversos
-	processadores ou \textit{cores} tem acesso a uma memória principal
-	compartilhada em um único espaço de endereçamento.  A
-	Figura~\ref{fig:uma-numa} apresenta uma visão geral de duas
-	arquiteturas de memória compartilhada.
+	Programming Interface} -- API) largamente utilizada pela indústria e
+	academia. 
+	
+	Este minicurso está organizado da seguinte forma. a Seção~\ref{sec:conceitos
+	basicos} apresenta uma introdução ao modelo de programação \openmp.
+	A Seção~\ref{sec:paralelismo dados} apresenta e discute as diretivas do
+	\openmp que podem ser utilizadas para realizar o paralelismo de dados.
+	Então, a Seção~\ref{section: sincronizacao} apresenta os mecanismos de
+	sincronização básicos disponíveis no \openmp. A Seção~\ref{sec:paralelismo
+	tarefas} apresenta e discute as diretivas do \openmp que podem ser utilizadas para 
+	realizar o paralelismo de tarefas. Por fim, a Seção~\ref{sec:conclusao} apresenta
+	as conclusões finais.
 
-	\todo[inline]{Estou achando muito desconexo a introdução. Achei
-	meio nada a ver essa discussao no final das arquiteturas paralelas.
-	Acho que pode ser feito numa seção posterior, ou antes dos
-	parágrafos anteriores.}
+\section{Conceitos Básicos}
+\label{sec:conceitos basicos}
 
-	\begin{figure}[t]
-		\centering
-		\includegraphics[width=13cm, height=!]{img/cores-top500.pdf}
-		\caption{Número total de \textit{cores} dos supercomputadores
-		mais poderosos relacionados na lista TOP500.}
-		\label{fig:top500}
-	\end{figure}
+	Essa seção irá abordar os conceitos básicos de programação paralela com
+	\openmp. Primeiramente, será apresentada uma discussão sobre as diferentes
+	classes de arquiteturas paralelas, salientando-se aquelas em que \openmp
+	poderá ser aplicado.	Em seguida, será apresentado o modelo base dessa API.
+	Por fim, será apresentada a diretiva básica para a criação de regiões paralelas
+	no código com as formas de compartilhamento de dados oferecidas pelo \openmp.
 
+	\subsection{Arquiteturas Alvo}
+
+		De um modo geral, as arquiteturas paralelas podem ser classificadas em três
+		grandes classes de acordo com a organização da memória principal: (i) sistemas de memória
+		distribuída; (ii) sistemas de memória compartilhada; (iii) sistemas de memória compartilhada
+		e distribuída.
+		
+		Em sistemas de memória distribuída, computadores independentes, denominados nós
+		computacionais (contendo ou não um ou mais processadores paralelos), são interconectados
+		através de uma rede. Nesses sistemas, denominados \textit{clusters}, cada nó computacional
+		executa uma instância de um sistema operacional e, portanto, possui um acesso exclusivo à sua
+		memória principal. Aplicações paralelas para \textit{clusters} normalmente são desenvolvidas
+		com o uso de APIs que implementam algoritmos otimizados para comunicação entre os nós
+		computacionais. Uma API bastante utilizada em \textit{clusters} é a \textit{Message Passing
+		Interface} (MPI).
+		
+		Em sistemas de memória compartilhada, diversos processadores ou \textit{cores} tem acesso
+		a uma memória principal compartilhada entre eles. Em todo o sistema há somente uma instância
+		de um sistema operacional o qual é responsável por escalonar processos ou \textit{threads} nos
+		processadores ou \textit{cores}. Existem duas classes de arquiteturas de memória compartilhada.
+		A Figura~\ref{fig:uma-numa} apresenta uma visão geral dessas duas classes.
+
+                        	\begin{figure}[t]
+                        		\centering
+                        		\includegraphics[width=13cm, height=!]{img/cores-top500.pdf}
+                        		\caption{Número total de \textit{cores} dos supercomputadores
+                        		mais poderosos relacionados na lista TOP500.}
+                        		\label{fig:top500}
+                        	\end{figure}
+            
 			\begin{figure}[t]
 				\captionsetup[subfigure]{justification=centering}
 				\centering
@@ -159,36 +191,39 @@
 				\label{fig:uma-numa}
 			\end{figure}
 
-	Existem duas grandes classes de arquiteturas de memória
-	compartilhada. A principal diferença entre elas está relacionado ao
-	tempo de acesso dos processadores à memória principal. Em
-	arquiteturas do tipo \textit{Uniform Memory Access} (UMA), o tempo
-	de acesso entre o processador ou \textit{core} e a memória principal
-	é constante (Figure~\ref{fig:uma-numa}a).  Por outro lado, em
-	arquiteturas do tipo \textit{Non-Uniform Memory Access} (NUMA) o
-	tempo de acesso entre o processador ou \textit{core} não é constante
-	(Figura~\ref{fig:uma-numa}b). A diferença no tempo de acesso vem do
-	fato de que cada processador ou \textit{core} tem acesso a bancos de
-	memória local (próximos a ele) e também a bancos de memória remotos
-	(distantes a ele mas próximos de outro processador ou
-	\textit{core}). Nesse sentido, o tempo de acesso à memória principal
-	pode ser pequeno (acesso a um banco de memória local) ou grande
-	(acesso a um banco de memória remoto), dependendo da distância entre
-	o processador ou \textit{core} e o banco de memória que esse
-	processador ou \textit{core} está acessando.  Arquiteturas
-	utilizadas em \textit{notebooks}, \textit{desktops} ou em pequenos
-	servidores que contenham poucas dezenas de \textit{cores} são do
-	tipo UMA. Porém, arquiteturas paralelas mais complexas que possuem
-	várias dezenas de \textit{cores} são normalmente do tipo NUMA.
+                	 A principal diferença entre as classes mostrada na Figura~\ref{fig:uma-numa}
+	 	está relacionada ao tempo de acesso dos processadores à memória principal.
+		Em arquiteturas do tipo \textit{Uniform Memory Access} (UMA), o tempo
+                	de acesso entre o processador ou \textit{core} e a memória principal
+                	é constante (Figure~\ref{fig:uma-numa}a).  Por outro lado, em
+                	arquiteturas do tipo \textit{Non-Uniform Memory Access} (NUMA) o
+                	tempo de acesso entre o processador ou \textit{core} não é constante
+                	(Figura~\ref{fig:uma-numa}b). A diferença no tempo de acesso vem do
+                	fato de que cada processador ou \textit{core} tem acesso a bancos de
+                	memória local (próximos a ele) e também a bancos de memória remotos
+                	(distantes a ele mas próximos de outro processador ou
+                	\textit{core}). Nesse sentido, o tempo de acesso à memória principal
+                	pode ser pequeno (acesso a um banco de memória local) ou grande
+                	(acesso a um banco de memória remoto), dependendo da distância entre
+                	o processador ou \textit{core} e o banco de memória que esse
+                	processador ou \textit{core} está acessando.  Arquiteturas
+                	utilizadas em \textit{notebooks}, \textit{desktops} ou em pequenos
+                	servidores que contenham poucas dezenas de \textit{cores} são do
+                	tipo UMA. Porém, arquiteturas paralelas mais complexas que possuem
+                	várias dezenas de \textit{cores} são normalmente do tipo NUMA.
 
-\section{Conceitos Básicos}
-
-	Essa seção irá abordar os conceitos básicos de programação paralela com
-	\openmp. Primeiramente, será apresentado o modelo base dessa API, em
-	seguida será apresentada a diretiva básica para a criação de regiões
-	paralelas no código com as formas de compartilhamento de dados
-	oferecidas pelo \openmp.
-
+		Por fim, sistemas de memória compartilhada e distribuída temos a existência
+		de ambos os modelos de memória (compartilhada e distribuída) em um único
+		sistema. Por exemplo, em processadores \textit{manycore} recentes, os \textit{cores}
+		são usualmente agrupados em \textit{clusters}. Dentro de um \textit{cluster}, todos
+		os \textit{cores} compartilham o acesso a uma memória. Porém, um \textit{cluster}
+		necessita realizar comunicações via rede para que possa acessar a memória de outros
+		\textit{clusters}.
+		
+		A API \openmp, discutida nesse minicurso, pressupõe a existência de um sistema de
+		memória compartilhada e utiliza o conceito de \textit{threads} para permitir o
+		compartilhamento de dados em memória.
+		
 	\subsection{Modelo Fork-Join}
 
 		% Descrição
@@ -293,6 +328,7 @@ void sayhello(int nthreads)
 \end{lstlisting}
 
 \section{Paralelismo de Dados e Diretivas \openmp}
+\label{sec:paralelismo dados}
 
 	% Visão Geral
 	No \openmp, o paralelismo de dados é explorado através de diretivas
@@ -638,6 +674,7 @@ int scalar_product(struct vector *a, struct vector *b)
 		as instruções posteriores à barreira quando todas as \textit{worker threads} tiverem chegado a ela.
 	
 \section{Paralelismo de Tarefas e Diretivas \openmp}
+\label{sec:paralelismo tarefas}
 
 	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no \openmp.
 	No \openmp a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
@@ -783,6 +820,7 @@ long recursive_fibonacci(int n, int stop)
 	\end{figure}
 
 \section{Conclusão}
+\label{sec:conclusao}
 
 	Esse capítulo apresentará um apanhado geral do minicurso, ressaltando os
 	principais pontos abordados no texto.
