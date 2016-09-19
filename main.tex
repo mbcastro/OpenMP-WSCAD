@@ -309,30 +309,34 @@
 
 		% Descrição.
 		A definição de regiões paralelas no \openmp é feita através da
-		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento de Código~\ref{listing:sayhello}.
-		Nesse exemplo, assim que a a \textit{master thread}
-		atinge a região paralela (linhas 7 a 12), ela cria um grupo de
-		\textit{worker threads} para executar os comandos especificados. Ao
-		final da região paralela, uma barreira implícita força a
-		sincronização das \textit{threads}.
+		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento
+		de Código~\ref{listing:sayhello}.  Nesse exemplo, assim que a a
+		\textit{master thread} atinge a região paralela (linhas 7 a 12),
+		ela cria um grupo de \textit{worker threads} para executar os
+		comandos especificados. Ao final da região paralela, uma
+		barreira implícita força a sincronização das \textit{threads}.
 		
 		% Controle do Número de Threads
-		Por padrão, o número de \textit{threads} no grupo que executará uma região
-		paralela será igual ao número de \textit{cores} de processamento no
-		processador. No entanto, esse fator pode ser controlador através da
-		cláusula \texttt{num\_threads()}, pela invocação da função
-		utilitária \texttt{omp\_set\_num\_threads()}, ou então pela
-		definição da variável de ambiente \texttt{OMP\_NUM\_THREADS}. Em uma região paralela
-		as threads são identificadas por um número único entre $0$ e o número total de \textit{threads}$-1$.
-		O identificador de cada \textit{thread} pode ser recuperado através da
-		função utilitária do \openmp \texttt{omp\_get\_thread\_num()}.
+		Por padrão, o número de \textit{threads} no grupo que executará
+		uma região paralela será igual ao número de \textit{cores} de
+		processamento no processador. No entanto, esse fator pode ser
+		controlador através da cláusula \texttt{num\_threads()}, pela
+		invocação da função utilitária
+		\texttt{omp\_set\_num\_threads()}, ou então pela definição da
+		variável de ambiente \texttt{OMP\_NUM\_THREADS}. Em uma região
+		paralela as \textit{threads} são identificadas por um número
+		único entre $0$ e o número total de $\textit{threads} - 1$.
+		Esse identificador pode ser recuperado em tempo de execução por
+		cada \textit{thread} através da função utilitária do \openmp
+		\texttt{omp\_get\_thread\_num()}.
 
 		% Controle de Escopo de Dados 
-		Variáveis declaradas fora da região paralela são compartilhadas entre
-		todas as \textit{threads} por padrão. No entanto, a cláusula \texttt{private()}
-		pode ser usada para a especificação de variáveis locais privadas, e a
-		diretiva \texttt{omp threadprivate} pode ser empregada para a definição
-		de variáveis globais privadas. Alternativamente, é possível alterar o
+		Variáveis declaradas fora da região paralela são compartilhadas
+		entre todas as \textit{threads} por padrão. No entanto, a
+		cláusula \texttt{private()} pode ser usada para a especificação
+		de variáveis locais privadas, e a diretiva \texttt{omp
+		threadprivate} pode ser empregada para a definição de variáveis
+		globais privadas. Alternativamente, é possível alterar o
 		comportamento padrão para variáveis locais através da cláusula
 		\texttt{default()}, definindo todas elas como privadas, e então
 		especificar as variáveis locais compartilhadas pela cláusula
@@ -458,7 +462,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas abordagens
 		teriam no algoritmo clássico de multiplicação de matrizes,
-		experimentos foram conduzidos em uma máquina SMP com 24 \textit{cores} ($4
+		experimentos foram conduzidos em uma máquina UMA com 24 \textit{cores} ($4
 		\times$ Xeon X7). Nesses experimentos, o tamanho da matriz de
 		entrada foi fixado em $1.680 \times 1.680$, o número de
 		\textit{threads} foi variado de $2$ a $24$, e estatísticas de tempo
@@ -501,89 +505,97 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		
 		% Aplicações Irregulares
 		No entanto, para aplicações que possuem um caráter irregular de
-		computação, isto é, o tempo de computação para cada iteração no laço
-		paralelo difere; ou então para aplicações regulares que possuem
-		afinidade de memória entre diferentes iterações; essa estratégia não
-		se mostra eficiente e escalável~\cite{Carino2008a}. Então, para atacar esses
-		cenários problemáticos, o \openmp disponibiliza a cláusula
-		\texttt{schedule()} que possibilita: (i) selecionar a estratégia de
-		escalonamento a ser empregada para escalonar as
-		iterações de um laço paralelo; e (ii) definir quantas iterações são
-		escalonadas por vez a uma única \textit{thread} (\textit{chunk size}).
-		A estratégia de escalonamento permite contornar o problema do
-		desbalanceamento de carga presente em aplicações irregulares,
-		enquanto o controle do tamanho de bloco de iterações a ser escalonado
-		por vez permite ajustar a granularidade de paralelização, possibilitando
-		assim que a afinidade de memória existente entre iterações seja explorada.
-		O tamanho de bloco de iterações pode ser escolhido arbitrariamente,
-		já a estratégia de escalonamento pode ser selecionada dentre as
-		seguintes, em uma implementação padrão do \openmp:
+		computação, isto é, o tempo de computação para cada iteração no
+		laço paralelo difere; ou então para aplicações regulares que
+		possuem afinidade de memória entre diferentes iterações; essa
+		estratégia não se mostra eficiente e
+		escalável~\cite{Carino2008a}. Então, para atacar esses cenários
+		problemáticos, o \openmp disponibiliza a cláusula
+		\texttt{schedule()} que possibilita: (i) selecionar a estratégia
+		de escalonamento a ser empregada para escalonar as iterações de
+		um laço paralelo; e (ii) definir quantas iterações são
+		escalonadas por vez a uma única \textit{thread} (tamanho do
+		\textit{chunk}).  A estratégia de escalonamento permite
+		contornar o problema do desbalanceamento de carga presente em
+		aplicações irregulares, enquanto o controle do tamanho de bloco
+		de iterações a ser escalonado por vez permite ajustar a
+		granularidade de paralelização, possibilitando assim que a
+		afinidade de memória existente entre iterações seja explorada.
+		O tamanho de bloco de iterações pode ser escolhido
+		arbitrariamente, já a estratégia de escalonamento pode ser
+		selecionada dentre as seguintes, em uma implementação padrão do
+		\openmp:
 		%
 		\begin{itemize}
-			\item \texttt{static}: particiona igualitariamente as iterações de um
-			laço paralelo em \textit{chunks} de iterações. A atribuição de \textit{chunks}
-			é feita em tempo de compilação e nenhuma sobrecarga é
-			adicionada a aplicação. Essa estratégia é indicada para
-			aplicações regulares.
+			\item \texttt{static}: particiona igualitariamente as
+			iterações de um laço paralelo em \textit{chunks} de
+			iterações. A atribuição de \textit{chunks} é feita em tempo
+			de compilação e nenhuma sobrecarga é adicionada a aplicação.
+			Essa estratégia é indicada para aplicações regulares.
 			
-			\item \texttt{dynamic}: atribui \textit{chunks} de iterações às \textit{threads} sob
-			demanda em tempo de execução. Para que a atribuição seja feita
-			dinamicamente durante a execução da aplicação, uma sobrecarga de
-			gerência é introduzida na aplicação. Essa estratégia é indicada
-			para uso em aplicações com alto grau de irregularidade.
+			\item \texttt{dynamic}: atribui \textit{chunks} de iterações
+			às \textit{threads} sob demanda em tempo de execução. Para
+			que a atribuição seja feita dinamicamente durante a execução
+			da aplicação, uma sobrecarga de gerência é introduzida na
+			aplicação. Essa estratégia é indicada para uso em aplicações
+			com alto grau de irregularidade.
 
-			\item \texttt{guided}: similar à estratégia \texttt{dynamic}, porém o tamanho do
-			\textit{chunk} de iterações decresce com o tempo. Essa estratégia
-			também impõe uma sobrecarga na execução da aplicação, porém
-			relativamente menor que a estratégia \texttt{dynamic}. Essa
-			estratégia é indicada para uso em aplicações com baixo e
-			médio graus de irregularidade, onde as iterações iniciais
-			do laço paralelo podem ser atribuídas em \textit{chunks} maiores, e
-			assim alguma sobrecarga de sincronização é evitada durante uma porção
-			significativa do tempo total de execução da aplicação.
+			\item \texttt{guided}: similar à estratégia
+			\texttt{dynamic}, porém o tamanho do \textit{chunk} de
+			iterações decresce com o tempo. Essa estratégia também impõe
+			uma sobrecarga na execução da aplicação, porém relativamente
+			menor que a estratégia \texttt{dynamic}. Essa estratégia é
+			indicada para uso em aplicações com baixo e médio graus de
+			irregularidade, onde as iterações iniciais do laço paralelo
+			podem ser atribuídas em \textit{chunks} maiores, e assim
+			alguma sobrecarga de sincronização é evitada durante uma
+			porção significativa do tempo total de execução da
+			aplicação.
 		\end{itemize}
 		
 		% Análise de Desempenho
-		O Fragmento de Código~\ref{listing:sparsematrixmult} ilustra o uso desses dois
-		mecanismos na paralelização do algoritmo clássico para multiplicação
-		de matrizes esparsas, um típico representante de uma aplicação
-		irregular. Nesse exemplo, o escalonamento de iterações é feito em
-		blocos (\textit{chunks}) de tamanho 1 com a política de
-		escalonamento \texttt{dynamic}. Uma avaliação quantitativa do
-		desempenho dessa estratégia nesse algoritmo particular, frente à
-		estratégia \texttt{static}, é apresentada na
-		Figura~\ref{fig:static-dynamic-guided}. Os experimentos foram
-		conduzidos em uma máquina SMP com 24 cores ($4 \times$ Intel Xeon
-		X7 com 6 \textit{cores} cada) para uma matriz de tamanho $1.680 \times 1.680$. 
-		O número de \textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
-		\textit{chunks} foi fixado em $1.680/n$ e $1$, para as estratégias
-		escalonamento \texttt{static} e \texttt{dynamic}, respectivamente.
-		Para essa aplicação, tamanho de problema e plataforma, a análise dos
-		resultados revela que a estratégia de escalonamento \texttt{dynamic}
-		conduz a um melhor desempenho do que que a estratégia
-		\texttt{static}, se mostrando assim mais escalável.  De fato, esse
-		comportamento é recorrente em aplicações irregulares e pode ser
-		utilizado para guiar o projeto de soluções paralelas eficientes
-		nesse domínio. No entanto, é pertinente observar que a
-		granularidade de \textit{chunks} consiste em um fator que impacta
-		diretamente no desempenho entregue pela estratégia \texttt{dynamic}
-		e, então, deve ser cuidadosamente considerado. 
+		O Fragmento de Código~\ref{listing:sparsematrixmult} ilustra o
+		uso desses dois mecanismos na paralelização do algoritmo
+		clássico para multiplicação de matrizes esparsas, um típico
+		representante de uma aplicação irregular. Nesse exemplo, o
+		escalonamento de iterações é feito em blocos (\textit{chunks})
+		de tamanho 1 com a política de escalonamento \texttt{dynamic}.
+		Uma avaliação quantitativa do desempenho dessa estratégia nesse
+		algoritmo particular, frente à estratégia \texttt{static}, é
+		apresentada na Figura~\ref{fig:static-dynamic-guided}. Os
+		experimentos foram conduzidos em uma máquina UMA com 24 cores
+		($4 \times$ Intel Xeon X7 com 6 \textit{cores} cada) para uma
+		matriz de tamanho $1.680 \times 1.680$.  O número de
+		\textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
+		\textit{chunks} foi fixado em $1.680/n$ e $1$, para as
+		estratégias escalonamento \texttt{static} e \texttt{dynamic},
+		respectivamente.  Para essa aplicação, tamanho de problema e
+		plataforma, a análise dos resultados revela que a estratégia de
+		escalonamento \texttt{dynamic} conduz a um melhor desempenho do
+		que que a estratégia \texttt{static}, se mostrando assim mais
+		escalável.  De fato, esse comportamento é recorrente em
+		aplicações irregulares e pode ser utilizado para guiar o projeto
+		de soluções paralelas eficientes nesse domínio. No entanto, é
+		pertinente observar que a granularidade de \textit{chunks}
+		consiste em um fator que impacta diretamente no desempenho
+		entregue pela estratégia \texttt{dynamic} e, então, deve ser
+		cuidadosamente considerado. 
 
 		% Granularidade de Chunks
 		Para enfatizar a influência do tamanho do \textit{chunk} no
-		desempenho do escalonador \textit{dynamic}, experimentos com um
-		\textit{kernel} sintético que realiza uma computação regular,
-		uma soma de um conjunto (grande) de números inteiros, foram
-		conduzidos. Diferentes tamanhos de \textit{chunks} foram
+		desempenho do escalonador \textit{dynamic}, experimentos foram
+		conduzidos com um \textit{kernel} sintético que realiza uma
+		computação regular, uma soma de um conjunto (grande) de números
+		inteiros. Diferentes tamanhos de \textit{chunks} foram
 		analisados e as estratégias de escalonamento de iterações
 		\texttt{static} e \texttt{dynamic} foram consideradas. Os
-		resultados obtidos são apresentados na Figura \ref{fig:chunk-size}
-		e evidenciam que na estratégia \texttt{dynamic},
-		\textit{chunks} muito pequenos introduzem uma expressiva
-		sobrecarga na execução, que diminui com o aumento do tamanho do
-		\textit{chunk}. Em contraste, a estratégia \texttt{static}
-		entrega um desempenho constante à aplicação, independente do
-		tamanho do \textit{chunk}.
+		resultados obtidos são apresentados na Figura
+		\ref{fig:chunk-size} e evidenciam que na estratégia
+		\texttt{dynamic}, \textit{chunks} muito pequenos introduzem uma
+		expressiva sobrecarga de sincronização na execução, que diminui
+		com o aumento do tamanho do \textit{chunk}. Em contraste, a
+		estratégia \texttt{static} entrega um desempenho constante à
+		aplicação, independente do tamanho do \textit{chunk}.
 
 \begin{lstlisting}[frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
 label=listing:sparsematrixmult]
@@ -701,12 +713,12 @@ int scalar_product(struct vector *a, struct vector *b)
 		similar ao \textit{mutex}. A segunda delas, denominada \texttt{omp atomic}, é semelhante à primeira, 
 		porém somente pode ser utilizada para proteger operações simples sobre uma variável compartilhada.
 		Por exemplo, para uma variável compartilhada \texttt{x}, as operações permitidas pela diretiva
-		\texttt{omp atomic} são: (i) \textbf{leitura}, \eg \texttt{v = x}; (ii) \textbf{escrita}, \eg \texttt{x =} \textit{expr}
-		(onde \textit{expr} é uma expressão aritmética); (iii) \textbf{atualização}, \eg \texttt{x++}; ou (iv) 
-		\textbf{incremento/decremento}, \eg \texttt{v = x++}. A lista completa de operações permitidas está
+		\texttt{omp atomic} são: (i) leitura, \eg \texttt{v = x}; (ii) escrita, \eg \texttt{x =} \textit{expr}
+		(onde \textit{expr} é uma expressão aritmética); (iii) atualização, \eg \texttt{x++}; ou (iv) 
+		incremento/decremento, \eg \texttt{v = x++}. A lista completa de operações permitidas está
 		disponível na especificação \openmp\footnote{Disponível em \url{http://openmp.org/wp/openmp-specifications/}}.
 		É importante notar que, para o caso de uma seção crítica contendo uma única operação aritmética,
-		amas as diretivas podem ser utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic} oferecerá
+		ambas as diretivas podem ser utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic} oferecerá
 		um melhor desempenho, pois a sua implementação utiliza \textit{spin-locks} e instruções de \textit{hardware}
 		para garantir a atomicidade das operações.
 		
@@ -725,14 +737,19 @@ int scalar_product(struct vector *a, struct vector *b)
 	(\textit{bag of tasks}). Dentro de uma região paralela, ao ficarem ociosas, as \textit{threads}
 	retiram tarefas ainda não computadas do saco de tarefas e as processam uma a uma.
 	
-	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de tarefas implementado
-	no \openmp. Nesse exemplo, algumas \textit{threads} somente criam tarefas (representadas
-	por flechas unidirecionais com linhas tracejadas) enquanto outras somente executam tarefas
-	(representadas por flechas unidirecionais com linhas pontilhadas). É permitido também que,
-	ao executar uma tarefa, uma \textit{thread} possa criar novas tarefas (representadas por
-	flechas bidirecionais com linhas contínuas). A possibilidade de uma tarefa criar novas tarefas
-	permite que o algoritmo a ser paralelizado possa ser recursivo.
-	
+	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de
+	tarefas implementado no \openmp. Algumas \textit{threads} somente
+	criam tarefas (representadas por flechas unidirecionais com linhas
+	tracejadas), outras somente executam tarefas (representadas por
+	flechas unidirecionais com linhas pontilhadas), e podem haver
+	\textit{threads} que criam e executam tarefas (representadas por
+	flechas bidirecionais com linhas contínuas).  A criação e execução
+	de tarefas pelas \textit{threads} é feita dentro de uma região
+	paralela utilizando a diretiva \texttt{omp task}. Quando uma tarefa
+	é criada, a mesma é inserida no saco de tarefas e fica disponível
+	para ser computada por qualquer \textit{worker thread} ociosa dentro
+	da região paralela.
+
 		\begin{figure}[t]
 			\centering
 			\includegraphics[width=0.6\linewidth]{img/tasks}
@@ -744,11 +761,6 @@ int scalar_product(struct vector *a, struct vector *b)
 			\label{fig:tasks}
 		\end{figure}
 
-	A criação e execução de tarefas pelas \textit{threads} é feita
-	dentro de uma região paralela utilizando a diretiva \texttt{omp
-	task}. Quando uma tarefa é criada, a mesma é inserida no saco de
-	tarefas e fica disponível para ser computada por qualquer
-	\textit{worker thread} ociosa dentro da região paralela.
 
 	Em muitos problemas computacionais paralelizados com o uso de
 	tarefas, determinadas tarefas não podem ser computadas pois dependem
@@ -849,7 +861,7 @@ long recursive_fibonacci(int n, int stop)
 \end{lstlisting}
 
 	Uma avaliação do impacto da granularidade das tarefas no desempenho da aplicação é apresentada na
-	Figura~\ref{fig:grao-tarefas}. Os experimentos foram conduzidos em uma máquina SMP com 24 cores
+	Figura~\ref{fig:grao-tarefas}. Os experimentos foram conduzidos em uma máquina UMA com 24 cores
 	($4 \times$ Intel Xeon X7 com 6 \textit{cores} cada). Nesses experimentos, o número de \textit{threads} foi fixado
 	em 12 e o valor da variável \texttt{n} foi fixado em 50.
 	
@@ -859,41 +871,41 @@ long recursive_fibonacci(int n, int stop)
 	desbalanceamento de carga entre as \textit{threads}. A partir desse ponto, o desempenho da aplicação volta a
 	piorar ligeiramente. Esse comportamento é esperando pois um grão muito grande pode gerar importantes
 	desbalanceamentos de carga entre as \textit{threads}.
-
-	\todo[inline]{1) remover a legenda; 2) alterar o label do eixo x para ``Task Grain Size''.}
 	
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
 				\begin{subfigure}{0.45\linewidth}
-					\includegraphics[width=8cm, height=!]{img/fibonacci-task-grain}
+					\includegraphics[width=\linewidth]{img/fibonacci-task-grain}
 					\label{fig:grao-tarefas-tempo}
 					\caption{Tempos de execução.}
 				\end{subfigure}
-				\quad\quad\quad
-				\begin{subfigure}{0.45\linewidth}
+				\quad
+				\begin{subfigure}{0.50\linewidth}
 					\centering
-					\resizebox{0.725\linewidth}{!}{
-            					\begin{tabular}{cc}
+					\resizebox{0.4\linewidth}{!}{
+            					\begin{tabular}{c c}
             						\toprule
-            						\texttt{stop} 	& Ganho (sobre \texttt{stop=14}) \\ \midrule					
+            						\textbf{\texttt{stop}} 	& \textbf{Ganho} \\
+									\midrule					
             						16			& 2,79\\
             						18			& 8,37\\
             						20			& 17,15\\
             						22			& 18,82\\
             						24			& 18,56\\
-            						\textbf{26}			& \textbf{19,80}\\
+            						26			& 19,80\\
             						28			& 18,99\\
             						30			& 19,33\\
             						32			& 19,03\\ 
-							34			& 19,52\\
-							36			& 18,82\\ 
-							38			& 19,62\\
-							40			& 18,62\\ \bottomrule
+									34			& 19,52\\
+									36			& 18,82\\ 
+									38			& 19,62\\
+									40			& 18,62\\
+									\bottomrule
             					\end{tabular}
 					}
 					\label{fig:grao-tarefas-ganho}
-					\caption{Ganhos de desempenho.}
+					\caption{Ganhos de desempenho sobre $\texttt{stop} = 14$.}
 				\end{subfigure}
 			\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
 				de Fibonacci.}
