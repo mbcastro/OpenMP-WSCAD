@@ -267,34 +267,37 @@
 
 		% Descrição
 		O \openmp segue o modelo Fork-Join de execução paralela, que é
-		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o programa inicia sua
-		execução com uma única \textit{thread}, denominada \textit{master thread}
-		(Figura~\ref{fig:fork-join}a). A \textit{master thread} executa sequencialmente até
-		encontrar uma região paralela, definida pela diretiva \texttt{omp parallel}
-		(Figura~\ref{fig:fork-join}b). Nesse ponto, a \textit{master thread} cria um grupo
-		de \textit{threads} trabalhadoras, denominadas \textit{worker threads}
-		(Figura~\ref{fig:fork-join}c), e cada \textit{worker thread} executa então os
-		comandos delimitados pela região paralela. Ao concluírem seu
-		trabalho, as \textit{worker threads} sincronizam suas atividades e
-		terminam (Figura~\ref{fig:fork-join}d). A \textit{master thread} retoma então a
-		execução sequencial do programa até que uma nova região paralela
-		seja encontrada, momento em que todo esse processo se repete
-		novamente.
+		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o
+		programa inicia sua execução com uma única \textit{thread},
+		denominada \textit{master thread} (Figura~\ref{fig:fork-join}a).
+		A \textit{master thread} executa sequencialmente até encontrar
+		uma região paralela (Figura~\ref{fig:fork-join}b). Nesse ponto, a
+		\textit{master thread} cria um grupo de \textit{threads}
+		trabalhadoras, denominadas \textit{worker threads}
+		(Figura~\ref{fig:fork-join}c), e cada \textit{worker thread}
+		executa então os comandos delimitados pela região paralela. Ao
+		concluírem seu trabalho, as \textit{worker threads} sincronizam
+		suas atividades e terminam (Figura~\ref{fig:fork-join}d). A
+		\textit{master thread} retoma então a execução sequencial do
+		programa até que uma nova região paralela seja encontrada,
+		momento em que todo esse processo se repete novamente.
 		
 		% Comentários
 		Como observação, é importante deixar claro que a \textit{master
 		thread} também executa os comandos na região paralela. Assim, se
 		quatro \textit{worker threads} são criadas pela \textit{master
-		thread}, um total de cinco \textit{threads} irão executar a região paralela.
-		No entanto, é possível fazer uso de estruturas condicionais
-		alinhadas a funções internas do \openmp para definir uma execução de
-		comandos diferentes para a \textit{master thread}. Esse assunto será
-		abordado mais adiante na Seção \ref{section: sincronizacao}. Por
-		fim, vale ressaltar que, em implementações modernas do \openmp, a
-		criação das estruturas internas para gerência das \textit{threads} em regiões
-		paralelas é feita uma única vez, quando a primeira região paralela é
-		encontrada. Dessa forma, a sobrecarga imposta na aplicação não
-		cresce linearmente com o número de regiões paralelas nela presente.
+		thread}, um total de cinco \textit{threads} irão executar a
+		região paralela.  No entanto, é possível fazer uso de estruturas
+		condicionais alinhadas a funções internas do \openmp para
+		definir uma execução de comandos diferentes para a
+		\textit{master thread}. Esse assunto será abordado mais adiante
+		na Seção \ref{section: sincronizacao}. Por fim, vale ressaltar
+		que, em implementações modernas do \openmp, a criação das
+		estruturas internas para gerência das \textit{threads} em
+		regiões paralelas é feita uma única vez, quando a primeira
+		região paralela é encontrada. Dessa forma, a sobrecarga imposta
+		na aplicação para a criação das \textit{threads} não cresce
+		linearmente com o número de regiões paralelas presentes.
 
 			\begin{figure}[t]
 				\centering
