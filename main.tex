@@ -867,7 +867,7 @@ long recursive_fibonacci(int n, int stop)
 	
 	O resultado mostra um ganho significativo de desempenho quando a granularidade das tarefas é aumentada (i.e.,
 	valor usado na variável \texttt{stop} é aumentada) de $14$ para $26$ (ganho de desempenho de $19,8\times$).
-	Com \texttt{stop=26} tem-se então o melhor compromisso entre sobrecusto da geração/controle de tarefas e
+	Com $\texttt{stop} = 26$ tem-se então o melhor compromisso entre sobrecusto da geração/controle de tarefas e
 	desbalanceamento de carga entre as \textit{threads}. A partir desse ponto, o desempenho da aplicação volta a
 	piorar ligeiramente. Esse comportamento é esperando pois um grão muito grande pode gerar importantes
 	desbalanceamentos de carga entre as \textit{threads}.
