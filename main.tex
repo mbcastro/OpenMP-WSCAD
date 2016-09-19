@@ -153,12 +153,13 @@
 \section{Conceitos Básicos}
 \label{sec:conceitos basicos}
 
-	Essa seção irá abordar os conceitos básicos de programação paralela com
-	\openmp. Primeiramente, será apresentada uma discussão sobre as diferentes
-	classes de arquiteturas paralelas, salientando-se aquelas em que \openmp
-	poderá ser aplicado.	Em seguida, será apresentado o modelo base dessa API.
-	Por fim, será apresentada a diretiva básica para a criação de regiões paralelas
-	no código com as formas de compartilhamento de dados oferecidas pelo \openmp.
+	Essa seção irá abordar os conceitos básicos de programação paralela
+	com \openmp. Primeiramente, será apresentada uma discussão sobre as
+	diferentes classes de arquiteturas paralelas, salientando-se aquelas
+	em que \openmp poderá ser aplicado.	Em seguida, será apresentado o
+	modelo base dessa API.  Por fim, será apresentada a diretiva básica
+	para a criação de regiões paralelas no código com as formas de
+	compartilhamento de dados oferecidas pelo \openmp.
 
 	\subsection{Arquiteturas Alvo}
 
@@ -228,17 +229,18 @@
 		(Figure~\ref{subfigure: uma}). Por outro lado, em arquiteturas
 		do tipo \textit{Non-Uniform Memory Access} (NUMA), esse tempo
 		varia em função da organização da memória em
-		bancos~(Figura~\ref{subfigure: numa}). Bancos de memória locais
-		(próximos ao \textit{core}) possuem uma latência de memória
-		menor que bancos de memória remotos (distantes do
+		bancos~(Figura~\ref{subfigure: numa}). Bancos de memória
+		locais (próximos ao \textit{core}) possuem uma latência de
+		memória menor que bancos de memória remotos (distantes do
 		\textit{core}).  Nesse sentido, o tempo de acesso à memória
-		principal pode ser pequeno (acesso a um banco de memória local)
-		ou grande (acesso a um banco de memória remoto), dependendo da
-		distância entre o processador ou \textit{core} e o banco de
-		memória que esse processador ou \textit{core} está acessando.  
-		Arquiteturas do tipo NUMA possuem maior potencial de
-		escalabilidade que arquiteturas UMA, porém, em contrapartida são
-		mais complexas, caras e de difícil programação.
+		principal pode ser pequeno (acesso a um banco de memória
+		local) ou grande (acesso a um banco de memória remoto),
+		dependendo da distância entre o processador ou \textit{core}
+		e o banco de memória que esse processador ou \textit{core}
+		está acessando.  Arquiteturas do tipo NUMA possuem maior
+		potencial de escalabilidade que arquiteturas UMA, porém, em
+		contrapartida são mais complexas, caras e de difícil
+		programação.
 
 		Por fim, os sistemas de memória compartilhada e distribuída
 		apresentam uma organização mista da memória (compartilhada e
@@ -271,8 +273,8 @@
 		programa inicia sua execução com uma única \textit{thread},
 		denominada \textit{master thread} (Figura~\ref{fig:fork-join}a).
 		A \textit{master thread} executa sequencialmente até encontrar
-		uma região paralela (Figura~\ref{fig:fork-join}b). Nesse ponto, a
-		\textit{master thread} cria um grupo de \textit{threads}
+		uma região paralela (Figura~\ref{fig:fork-join}b). Nesse ponto,
+		a \textit{master thread} cria um grupo de \textit{threads}
 		trabalhadoras, denominadas \textit{worker threads}
 		(Figura~\ref{fig:fork-join}c), e cada \textit{worker thread}
 		executa então os comandos delimitados pela região paralela. Ao
@@ -299,11 +301,11 @@
 		na aplicação para a criação das \textit{threads} não cresce
 		linearmente com o número de regiões paralelas presentes.
 
-			\begin{figure}[t]
-				\centering
-				\includegraphics[width=0.8\linewidth]{img/fork-join}
-				\caption{Visão geral do modelo Fork-Join.}\label{fig:fork-join}
-			\end{figure}
+		\begin{figure}[t]
+			\centering
+			\includegraphics[width=0.8\linewidth]{img/fork-join}
+			\caption{Visão geral do modelo Fork-Join.}\label{fig:fork-join}
+		\end{figure}
 
 	\subsection{Regiões Paralelas e Compartilhamento de Dados}
 
@@ -345,12 +347,12 @@
 		% Programação de Alto Desempenho
 		O uso dos mecanismos apresentados anteriormente é fundamental no
 		desenvolvimento de aplicações paralelas eficientes. O ajuste do
-		número de \textit{threads} em uma região paralela evita o desperdício de
-		recursos computacionais e possibilita um ajuste da granularidade de
-		tarefas. A identificação de \textit{threads} é necessária para a correta
-		coordenação e atribuição de tarefas em uma aplicação. Por fim,
-		mecanismos de controle de escopo de dados são inerentemente
-		necessários em aplicações paralelas.
+		número de \textit{threads} em uma região paralela evita o
+		desperdício de recursos computacionais e possibilita um ajuste
+		da granularidade de tarefas. A identificação de \textit{threads}
+		é necessária para a correta coordenação e atribuição de tarefas
+		em uma aplicação. Por fim, mecanismos de controle de escopo de
+		dados são inerentemente necessários em aplicações paralelas.
 
 \begin{lstlisting}[frame=single, caption=Um exemplo simples com uma região paralela.,
 label=listing:sayhello]
@@ -378,9 +380,9 @@ void sayhello(int nthreads)
 
 	% Visão Geral
 	No \openmp, o paralelismo de dados é explorado através de diretivas
-	para paralelização de laços. Nessa seção, o uso dessas diretivas para o
-	projeto de aplicações paralelas será discutido.
-	Primeiro, serão apresentadas as diretivas que possibilitam explorar o
+	para paralelização de laços. Nessa seção, o uso dessas diretivas
+	para o projeto de aplicações paralelas será discutido.  Primeiro,
+	serão apresentadas as diretivas que possibilitam explorar o
 	paralelismo de dados. Em seguida, as estratégias de escalonamento
 	disponíveis no \openmp são apresentadas, assim como suas vantagens e
 	desvantagens. Por fim, os mecanismos de redução oferecidos pela API
@@ -391,17 +393,18 @@ void sayhello(int nthreads)
 
 		% Visão Geral
 		Duas diretivas de paralelização de laços estão disponíveis no
-		\openmp: \texttt{omp for} e \texttt{omp parallel for}. A primeira
-		diretiva instrui que as iterações do laço seguinte de uma região
-		paralela devem ser distribuídas entre as \textit{threads} do grupo em questão
-		e, então, executadas em paralelo. A segunda diretiva tem o mesmo
-		efeito, porém não necessita que o laço esteja dentro de uma região
-		paralela. O Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa última
-		diretiva na paralelização do algoritmo clássico de multiplicação de
-		matrizes. Nesse exemplo, um grupo de \textit{threads} é criado para
-		executar os comandos do laço da linha $9$. Cada \textit{thread}
-		recebe um conjunto distinto de iterações e, assim, a
-		computação é efetuada em paralelo. 
+		\openmp: \texttt{omp for} e \texttt{omp parallel for}. A
+		primeira diretiva instrui que as iterações do laço seguinte de
+		uma região paralela devem ser distribuídas entre as
+		\textit{threads} do grupo em questão e, então, executadas em
+		paralelo. A segunda diretiva tem o mesmo efeito, porém não
+		necessita que o laço esteja dentro de uma região paralela. O
+		Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa
+		última diretiva na paralelização do algoritmo clássico de
+		multiplicação de matrizes. Nesse exemplo, um grupo de
+		\textit{threads} é criado para executar os comandos do laço da
+		linha $9$. Cada \textit{thread} recebe um conjunto distinto de
+		iterações e, assim, a computação é efetuada em paralelo. 
 
 \begin{lstlisting}[frame=single, caption=Paralelização da multiplicação de
 matrizes no \openmp.,
@@ -428,73 +431,78 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 \end{lstlisting}
 
 		% Discussão de Granularidade
-		Observe que nesse exemplo, assim como em diversas outras aplicações que
-		também exploram o paralelismo de dados presente em laços, a diretiva de
-		compilação também poderia ter sido colocada no segundo laço mais externo
-		sem perda de semântica. No entanto, as duas abordagens se difeririam
-		quanto à granularidade de paralelização. Na primeira abordagem, o grão
-		de trabalho entregue a cada \textit{thread} é mais grosso, enquanto na segunda
-		abordagem o grão de trabalho é mais fino. O controle de granularidade
-		consiste em uma técnica importante no projeto de aplicações paralelas
-		eficientes, pois possibilita que a localidade temporal e de dados sejam efetivamente
-		exploradas além de evitar sobrecargas de sincronização e contornar desbalanceamentos
-		de carga durante a computação. Na Seção~\ref{subsection: escalonamento de iteracoes}
-		serão discutidas as peculiaridades desse assunto em maiores detalhes.
+		Observe que nesse exemplo, assim como em diversas outras
+		aplicações que também exploram o paralelismo de dados presente
+		em laços, a diretiva de compilação também poderia ter sido
+		colocada no segundo laço mais externo sem perda de semântica. No
+		entanto, as duas abordagens se difeririam quanto à granularidade
+		de paralelização. Na primeira abordagem, o grão de trabalho
+		entregue a cada \textit{thread} é mais grosso, enquanto na
+		segunda abordagem o grão de trabalho é mais fino. O controle de
+		granularidade consiste em uma técnica importante no projeto de
+		aplicações paralelas eficientes, pois possibilita que a
+		localidade temporal e de dados sejam efetivamente exploradas
+		além de evitar sobrecargas de sincronização e contornar
+		desbalanceamentos de carga durante a computação. Na
+		Seção~\ref{subsection: escalonamento de iteracoes} serão
+		discutidas as peculiaridades desse assunto em maiores detalhes.
 
-			\begin{figure}[t]
-				\captionsetup[subfigure]{justification=centering}
-				\centering
-					\begin{subfigure}{0.45\linewidth}
-						\includegraphics[width=\linewidth]{img/mm}
-						\caption{Tempo de execução.}
-						\label{figure: time mm}
-					\end{subfigure}
-					\quad
-					\begin{subfigure}{0.45\linewidth}
-						\includegraphics[width=\linewidth]{img/mm-cache}
-						\caption{Número de faltas de \textit{cache}.}
-						\label{figure: cache misses mm}
-					\end{subfigure}
-					\caption{Resultados das soluções de paralelização para a
-					multiplicação de matrizes.}
-			\end{figure}
+		\begin{figure}[t]
+			\captionsetup[subfigure]{justification=centering}
+			\centering
+				\begin{subfigure}{0.47\linewidth}
+					\includegraphics[width=\linewidth]{img/mm}
+					\caption{Tempo de execução.}
+					\label{figure: time mm}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.47\linewidth}
+					\includegraphics[width=\linewidth]{img/mm-cache}
+					\caption{Número de faltas de \textit{cache}.}
+					\label{figure: cache misses mm}
+				\end{subfigure}
+				\caption{Resultados das soluções de paralelização para a
+				multiplicação de matrizes.}
+		\end{figure}
 			
 		% Análise de Desempenho
-		Para ilustrar o impacto no desempenho que cada uma dessas abordagens
-		teriam no algoritmo clássico de multiplicação de matrizes,
-		experimentos foram conduzidos em uma máquina UMA com 24 \textit{cores} ($4
-		\times$ Xeon X7). Nesses experimentos, o tamanho da matriz de
-		entrada foi fixado em $1.680 \times 1.680$, o número de
-		\textit{threads} foi variado de $2$ a $24$, e estatísticas de tempo
-		de execução e número de faltas na \textit{cache} L2 foram coletadas.
-		A análise dos resultados de faltas na \textit{cache} L2 (Figura
-		\ref{figure: cache misses mm}) revela que a abordagem de
-		paralelização mais grossa conduz a um menor número de faltas, em
-		contraste a estratégia de paralelização do laço mais interno, para a
-		plataforma e tamanho de problema considerados. Essa diferença conduz
-		a um ganho de desempenho que é evidenciado nos resultados de tempo
-		de execução da aplicação (Figura \ref{figure: time mm}). Além disso,
-		é possível constatar que o ganho obtido com mais que $12$
+		Para ilustrar o impacto no desempenho que cada uma dessas
+		abordagens teriam no algoritmo clássico de multiplicação de
+		matrizes, experimentos foram conduzidos em uma máquina UMA com
+		24 \textit{cores} ($4 \times$ Xeon X7). Nesses experimentos, o
+		tamanho da matriz de entrada foi fixado em $1.680 \times 1.680$,
+		o número de \textit{threads} foi variado de $2$ a $24$, e
+		estatísticas de tempo de execução e número de faltas na
+		\textit{cache} L2 foram coletadas.  A análise dos resultados de
+		faltas na \textit{cache} L2 (Figura \ref{figure: cache misses
+		mm}) revela que a abordagem de paralelização mais grossa conduz
+		a um menor número de faltas, em contraste a estratégia de
+		paralelização do laço mais interno, para a plataforma e tamanho
+		de problema considerados. Essa diferença conduz a um ganho de
+		desempenho que é evidenciado nos resultados de tempo de execução
+		da aplicação (Figura \ref{figure: time mm}). Além disso, é
+		possível constatar que o ganho obtido com mais que $12$
 		\textit{threads} não é significantemente superior do que quando
 		menos \textit{threads} são usadas, indicando assim que na
-		plataforma considerada o tamanho de problema não escala linearmente
-		com o número de \textit{threads}.
+		plataforma considerada o tamanho de problema não escala
+		linearmente com o número de \textit{threads}.
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
 
 		% Aplicações Regulares
-		O escalonamento de iterações diz respeito ao modo como iterações de
-		um laço paralelo são atribuídas às \textit{threads} de um grupo. Por padrão,
-		no \openmp, o escalonamento de iterações é feito estaticamente e em
-		blocos (ou \textit{chunks}) de mesmo tamanho. Para aplicações que
-		possuem um padrão de computação regular, isto é, o tempo de
-		computação para cada iteração do laço paralelo é o mesmo, essa
-		estratégia conduz a ganhos de desempenhos satisfatórios, pois esse
-		particionamento estático é capaz de distribuir a carga de trabalho
-		de forma uniforme entre as \textit{threads}. O algoritmo de multiplicação de
-		matrizes apresentado na seção anterior exemplifica a classe de
-		algoritmos regulares. No caso, a carga de trabalho entregue a cada
+		O escalonamento de iterações diz respeito ao modo como iterações
+		de um laço paralelo são atribuídas às \textit{threads} de um
+		grupo. Por padrão, no \openmp, o escalonamento de iterações é
+		feito estaticamente e em blocos (ou \textit{chunks}) de mesmo
+		tamanho. Para aplicações que possuem um padrão de computação
+		regular, isto é, o tempo de computação para cada iteração do
+		laço paralelo é o mesmo, essa estratégia conduz a ganhos de
+		desempenhos satisfatórios, pois esse particionamento estático é
+		capaz de distribuir a carga de trabalho de forma uniforme entre
+		as \textit{threads}. O algoritmo de multiplicação de matrizes
+		apresentado na seção anterior exemplifica a classe de algoritmos
+		regulares. No caso, a carga de trabalho entregue a cada
 		\textit{thread} é constate e proporcional à:
 		%
 		\begin{equation}
@@ -626,13 +634,13 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
-				\begin{subfigure}{0.45\linewidth}
+				\begin{subfigure}{0.47\linewidth}
 					\includegraphics[width=\linewidth]{img/smm}
 					\caption{Escalabilidade das estratégias \texttt{dynamic} e \texttt{static}.}
 					\label{fig:static-dynamic-guided}
 				\end{subfigure}
 				\quad
-				\begin{subfigure}{0.45\linewidth}
+				\begin{subfigure}{0.47\linewidth}
 					\includegraphics[width=\linewidth]{img/chunk-size}
 					\caption{Desempenho para diferentes tamanhos de
 					\textit{chunks}.}
@@ -651,13 +659,13 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		combinem seus resultados privados de forma a produzir um
 		resultado final para o problema sendo computado. Um suporte
 		eficiente a essa operação, denominada redução, é oferecido pelo
-		\openmp através da cláusula \texttt{reduction}. O Fragmento de Código~\ref{listing:prodescalar}
-		ilustra o uso da operação de redução para o cálculo
-		paralelo do produto escalar de um vetor. Nesse exemplo, cada
-		\textit{thread} executa o produto de um subconjunto dos
-		elementos do vetor por um escalar e, em seguida, os resultados
-		parciais encontrados por cada \textit{thread} são somados, para
-		o cálculo do resultado final.
+		\openmp através da cláusula \texttt{reduction}. O Fragmento de
+		Código~\ref{listing:prodescalar} ilustra o uso da operação de
+		redução para o cálculo paralelo do produto escalar de um vetor.
+		Nesse exemplo, cada \textit{thread} executa o produto de um
+		subconjunto dos elementos do vetor por um escalar e, em seguida,
+		os resultados parciais encontrados por cada \textit{thread} são
+		somados, para o cálculo do resultado final.
 
 		% Discussão
 		Por padrão, o \openmp oferece suporte  para redução de operações
@@ -689,53 +697,75 @@ int scalar_product(struct vector *a, struct vector *b)
 \section{Sincronização}
 \label{section: sincronizacao}
 
-	Além de oferecer diretivas úteis para paralelização de porções de código, a API
-	\openmp também oferece diretivas para sincronização de \textit{worker threads}. Essas
-	diretivas são utilizadas dentro de regiões paralelas para: (i) indicar a necessidade de serialização
-	de um trecho de código; (ii) garantir exclusão mútua ao acesso a dados compartilhados; ou
-	(iii) realizar uma sincronização global entre \textit{worker threads}. A seguir, são discutidas
-	as principais diretivas de sincronização disponíveis na API \openmp.
+	Além de oferecer diretivas úteis para paralelização de porções de
+	código, a API \openmp também oferece diretivas para sincronização de
+	\textit{worker threads}. Essas diretivas são utilizadas dentro de
+	regiões paralelas para: (i) indicar a necessidade de serialização de
+	um trecho de código; (ii) garantir exclusão mútua ao acesso a dados
+	compartilhados; ou (iii) realizar uma sincronização global entre
+	\textit{worker threads}. A seguir, são discutidas as principais
+	diretivas de sincronização disponíveis na API \openmp.
 
-		\paragraph{Serialização.} A diretiva \texttt{omp single} permite que a execução de um trecho
-		de código dentro de uma região paralela seja serializada, ou seja, seja executada por apenas
-		uma \textit{worker thread}. O \openmp implementa uma ou diretiva similar para serialização
-		de trechos de código denominada \texttt{omp master}. A diferença entre as primitivas \texttt{omp single}
-		e \texttt{omp master} reside no fato de que, na primeira, qualquer \textit{worker thread} pode executar
-		o trecho de código serializado, ao passo que, na segunda, somente a \textit{master thread} executará
-		o trecho de código serializado.
+		\paragraph{Serialização.} A diretiva \texttt{omp single} permite
+		que a execução de um trecho de código dentro de uma região
+		paralela seja serializada, ou seja, seja executada por apenas
+		uma \textit{worker thread}. O \openmp implementa uma ou diretiva
+		similar para serialização de trechos de código denominada
+		\texttt{omp master}. A diferença entre as primitivas \texttt{omp
+		single} e \texttt{omp master} reside no fato de que, na
+		primeira, qualquer \textit{worker thread} pode executar o trecho
+		de código serializado, ao passo que, na segunda, somente a
+		\textit{master thread} executará o trecho de código serializado.
 		
-		\paragraph{Exclusão mútua.} Em muitos casos, dados compartilhados necessitam modificados dentro
-		de uma região paralela por todas as \textit{worker threads}. Nesses trechos de código, denominados
-		\textit{seções críticas}, faz-se necessária a utilização e um mecanismo de exclusão mútua para evitar
-		que duas ou mais \textit{worker threads} tenham acesso simultaneamente aos dados compartilhados.
-		Para esses casos, a API \openmp oferece duas diretivas principais. A primeira delas, denominada
-		\texttt{omp critical}, implementa um mecanismo de exclusão mútua clássico com uso de \textit{locks}
-		similar ao \textit{mutex}. A segunda delas, denominada \texttt{omp atomic}, é semelhante à primeira, 
-		porém somente pode ser utilizada para proteger operações simples sobre uma variável compartilhada.
-		Por exemplo, para uma variável compartilhada \texttt{x}, as operações permitidas pela diretiva
-		\texttt{omp atomic} são: (i) leitura, \eg \texttt{v = x}; (ii) escrita, \eg \texttt{x =} \textit{expr}
-		(onde \textit{expr} é uma expressão aritmética); (iii) atualização, \eg \texttt{x++}; ou (iv) 
-		incremento/decremento, \eg \texttt{v = x++}. A lista completa de operações permitidas está
-		disponível na especificação \openmp\footnote{Disponível em \url{http://openmp.org/wp/openmp-specifications/}}.
-		É importante notar que, para o caso de uma seção crítica contendo uma única operação aritmética,
-		ambas as diretivas podem ser utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic} oferecerá
-		um melhor desempenho, pois a sua implementação utiliza \textit{spin-locks} e instruções de \textit{hardware}
-		para garantir a atomicidade das operações.
+		\paragraph{Exclusão mútua.} Em muitos casos, dados
+		compartilhados necessitam modificados dentro de uma região
+		paralela por todas as \textit{worker threads}. Nesses trechos de
+		código, denominados \textit{seções críticas}, faz-se necessária
+		a utilização e um mecanismo de exclusão mútua para evitar que
+		duas ou mais \textit{worker threads} tenham acesso
+		simultaneamente aos dados compartilhados.  Para esses casos, a
+		API \openmp oferece duas diretivas principais. A primeira delas,
+		denominada \texttt{omp critical}, implementa um mecanismo de
+		exclusão mútua clássico com uso de \textit{locks} similar ao
+		\textit{mutex}. A segunda delas, denominada \texttt{omp atomic},
+		é semelhante à primeira, porém somente pode ser utilizada para
+		proteger operações simples sobre uma variável compartilhada.
+		Por exemplo, para uma variável compartilhada \texttt{x}, as
+		operações permitidas pela diretiva \texttt{omp atomic} são: (i)
+		leitura, \eg \texttt{v = x}; (ii) escrita, \eg \texttt{x =}
+		\textit{expr} (onde \textit{expr} é uma expressão aritmética);
+		(iii) atualização, \eg \texttt{x++}; ou (iv)
+		incremento/decremento, \eg \texttt{v = x++}. A lista completa de
+		operações permitidas está disponível na especificação
+		\openmp\footnote{Disponível em
+		\url{http://openmp.org/wp/openmp-specifications/}}.  É
+		importante notar que, para o caso de uma seção crítica contendo
+		uma única operação aritmética, ambas as diretivas podem ser
+		utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic}
+		oferecerá um melhor desempenho, pois a sua implementação utiliza
+		\textit{spin-locks} e instruções de \textit{hardware} para
+		garantir a atomicidade das operações.
 		
-		\paragraph{Sincronização global.} O \openmp também oferece uma diretiva que permite realizar uma
-		sincronização global entre as \textit{worker threads} na forma de uma \textit{barreira}. Essa primitiva,
-		denominada \texttt{omp barrier}, garante que todas as \textit{worker threads} somente possam executar
-		as instruções posteriores à barreira quando todas as \textit{worker threads} tiverem chegado a ela.
+		\paragraph{Sincronização global.} O \openmp também oferece uma
+		diretiva que permite realizar uma sincronização global entre as
+		\textit{worker threads} na forma de uma \textit{barreira}. Essa
+		primitiva, denominada \texttt{omp barrier}, garante que todas as
+		\textit{worker threads} somente possam executar as instruções
+		posteriores à barreira quando todas as \textit{worker threads}
+		tiverem chegado a ela.
 	
 \section{Paralelismo de Tarefas e Diretivas \openmp}
 \label{sec:paralelismo tarefas}
 
-	A partir da versão 3.0 foi introduzido o conceito de tarefas (\textit{tasks}) no \openmp.
-	No \openmp a criação de tarefas pode ser feita por uma ou mais \textit{threads}. Ao
-	serem criadas, as tarefas que ainda não foram computadas são inseridas em uma
-	estrutura de dados compartilhada entre as \textit{threads} denominada ``saco de tarefas''
-	(\textit{bag of tasks}). Dentro de uma região paralela, ao ficarem ociosas, as \textit{threads}
-	retiram tarefas ainda não computadas do saco de tarefas e as processam uma a uma.
+	A partir da versão 3.0 foi introduzido o conceito de tarefas
+	(\textit{tasks}) no \openmp.  No \openmp a criação de tarefas pode
+	ser feita por uma ou mais \textit{threads}. Ao serem criadas, as
+	tarefas que ainda não foram computadas são inseridas em uma
+	estrutura de dados compartilhada entre as \textit{threads}
+	denominada ``saco de tarefas'' (\textit{bag of tasks}). Dentro de
+	uma região paralela, ao ficarem ociosas, as \textit{threads} retiram
+	tarefas ainda não computadas do saco de tarefas e as processam uma a
+	uma.
 	
 	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de
 	tarefas implementado no \openmp. Algumas \textit{threads} somente
@@ -750,17 +780,16 @@ int scalar_product(struct vector *a, struct vector *b)
 	para ser computada por qualquer \textit{worker thread} ociosa dentro
 	da região paralela.
 
-		\begin{figure}[t]
-			\centering
-			\includegraphics[width=0.6\linewidth]{img/tasks}
-			\caption{Paralelismo de tarefas do \openmp: uma ou mais \textit{threads} criam
-			tarefas, as quais são inseridas em uma estrutura de dados compartilhada
-			que contém tarefas ainda não computadas. \textit{Threads} ociosas em
-			uma região paralela retiram tarefas dessa estrutura e as processam uma a
-			uma.}
-			\label{fig:tasks}
-		\end{figure}
-
+	\begin{figure}[t]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/tasks}
+		\caption{Paralelismo de tarefas do \openmp: uma ou mais \textit{threads} criam
+		tarefas, as quais são inseridas em uma estrutura de dados compartilhada
+		que contém tarefas ainda não computadas. \textit{Threads} ociosas em
+		uma região paralela retiram tarefas dessa estrutura e as processam uma a
+		uma.}
+		\label{fig:tasks}
+	\end{figure}
 
 	Em muitos problemas computacionais paralelizados com o uso de
 	tarefas, determinadas tarefas não podem ser computadas pois dependem
@@ -791,32 +820,46 @@ int scalar_product(struct vector *a, struct vector *b)
 	de Fibonacci usando tarefas. Nesse exemplo, cada tarefa representa
 	uma chamada recursiva à $F_{n-1}$ e $F_{n-2}$.
 
-		\begin{figure}[t]
-			\centering
-			\includegraphics[width=0.8\linewidth]{img/fibonacci}
-			\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
-			de Fibonacci.}\label{fig:fibonacci}
-		\end{figure}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[width=0.8\linewidth]{img/fibonacci}
+		\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
+		de Fibonacci.}\label{fig:fibonacci}
+	\end{figure}
 
-	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de implementação básica para o cálculo da soma da sequência
-	de Fibonacci usando tarefas em \openmp. Primeiramente é criada uma região paralela com o uso da diretiva
-	\texttt{omp parallel} (linha 5). Para permitir que somente uma única \textit{worker thread} inicie a computação, e
-	consequentemente, a criação das primeiras tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A primeira
-	\textit{worker thread} que ganhar acesso à região \texttt{omp single} executa uma chamada à função recursiva 
-	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite que as demais \textit{worker threads} avancem até
-	a barreira implícita ao final da região paralela. Na função \texttt{recursive\_fibonacci()}, tarefas correspondentes ao
-	cálculo $F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp task} (linhas 27--28 e 30--31) assim
-	como as dependências são criadas com a diretiva \texttt{omp taskwait} (linhas 33--34).
+	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de
+	implementação básica para o cálculo da soma da sequência de
+	Fibonacci usando tarefas em \openmp. Primeiramente é criada uma
+	região paralela com o uso da diretiva \texttt{omp parallel} (linha
+	5). Para permitir que somente uma única \textit{worker thread}
+	inicie a computação, e consequentemente, a criação das primeiras
+	tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A
+	primeira \textit{worker thread} que ganhar acesso à região
+	\texttt{omp single} executa uma chamada à função recursiva
+	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite
+	que as demais \textit{worker threads} avancem até a barreira
+	implícita ao final da região paralela. Na função
+	\texttt{recursive\_fibonacci()}, tarefas correspondentes ao cálculo
+	$F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp
+	task} (linhas 27--28 e 30--31) assim como as dependências são
+	criadas com a diretiva \texttt{omp taskwait} (linhas 33--34).
 	
-	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma condição de parada específica para a criação de tarefas (linha 23),
-	evitando-se explicitamente a criação de tarefas quando o valor da variável \texttt{n} é inferior a um valor específico (\texttt{stop}). 
-	Basicamente, essa condição garante uma carga \textit{mínima} para computação de uma tarefa. Em outras palavras, a
-	computação será realizada sequencialmente por cada \textit{worker thread} quando \texttt{n < stop}. Portanto,
-	a variável \texttt{stop} pode ser vista como uma forma de controle de granularidade das tarefas da aplicação.
-	A condição de parada para criação de tarefas é muito importante, tendo em vista que a criação e gestão de tarefas no
-	\openmp possui um sobrecusto significativo. Logo, é importante que as tarefas tenham uma carga grande o suficiente de forma
-	a reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas contendo cargas extremamente grandes podem gerar
-	desbalanceamentos de carga entre as \textit{worker threads}.
+	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma
+	condição de parada específica para a criação de tarefas (linha 23),
+	evitando-se explicitamente a criação de tarefas quando o valor da
+	variável \texttt{n} é inferior a um valor específico
+	(\texttt{stop}).  Basicamente, essa condição garante uma carga
+	\textit{mínima} para computação de uma tarefa. Em outras palavras, a
+	computação será realizada sequencialmente por cada \textit{worker
+	thread} quando \texttt{n < stop}. Portanto, a variável \texttt{stop}
+	pode ser vista como uma forma de controle de granularidade das
+	tarefas da aplicação.  A condição de parada para criação de tarefas
+	é muito importante, tendo em vista que a criação e gestão de tarefas
+	no \openmp possui um sobrecusto significativo. Logo, é importante
+	que as tarefas tenham uma carga grande o suficiente de forma a
+	reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas
+	contendo cargas extremamente grandes podem gerar desbalanceamentos
+	de carga entre as \textit{worker threads}.
 
 \begin{lstlisting}[frame=single, caption=Exemplo de uma implementação recursiva simples da soma da sequencia de Fibonacci
 usando tarefas., label=listing:fibonacci]
@@ -860,17 +903,22 @@ long recursive_fibonacci(int n, int stop)
 }
 \end{lstlisting}
 
-	Uma avaliação do impacto da granularidade das tarefas no desempenho da aplicação é apresentada na
-	Figura~\ref{fig:grao-tarefas}. Os experimentos foram conduzidos em uma máquina UMA com 24 cores
-	($4 \times$ Intel Xeon X7 com 6 \textit{cores} cada). Nesses experimentos, o número de \textit{threads} foi fixado
-	em 12 e o valor da variável \texttt{n} foi fixado em 50.
+	Uma avaliação do impacto da granularidade das tarefas no desempenho
+	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Os
+	experimentos foram conduzidos em uma máquina UMA com 24 cores ($4
+	\times$ Intel Xeon X7 com 6 \textit{cores} cada). Nesses
+	experimentos, o número de \textit{threads} foi fixado em 12 e o
+	valor da variável \texttt{n} foi fixado em 50.
 	
-	O resultado mostra um ganho significativo de desempenho quando a granularidade das tarefas é aumentada (i.e.,
-	valor usado na variável \texttt{stop} é aumentada) de $14$ para $26$ (ganho de desempenho de $19,8\times$).
-	Com $\texttt{stop} = 26$ tem-se então o melhor compromisso entre sobrecusto da geração/controle de tarefas e
-	desbalanceamento de carga entre as \textit{threads}. A partir desse ponto, o desempenho da aplicação volta a
-	piorar ligeiramente. Esse comportamento é esperando pois um grão muito grande pode gerar importantes
-	desbalanceamentos de carga entre as \textit{threads}.
+	O resultado mostra um ganho significativo de desempenho quando a
+	granularidade das tarefas é aumentada (i.e., valor usado na variável
+	\texttt{stop} é aumentada) de $14$ para $26$ (ganho de desempenho de
+	$19,8\times$).  Com $\texttt{stop} = 26$ tem-se então o melhor
+	compromisso entre sobrecusto da geração/controle de tarefas e
+	desbalanceamento de carga entre as \textit{threads}. A partir desse
+	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
+	comportamento é esperando pois um grão muito grande pode gerar
+	importantes desbalanceamentos de carga entre as \textit{threads}.
 	
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
