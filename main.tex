@@ -82,7 +82,21 @@
 \maketitle
 
 \begin{resumo}
-	\lipsum[1]
+	O emprego de arquiteturas paralelas com quantidades massivas de
+	núcleos de processamento é uma tendência na área de Computação de
+	Alto Desempenho, que lida com a resolução de problemas com alta
+	demanda computacional. Nesse cenário, para que seja feito uso pleno
+	e eficiente da capacidade de processamento disponível, torna-se
+	imprescindível o uso de bibliotecas de programação paralelas, as
+	quais oferece uma abstração para criação e gerenciamento de
+	\textit{threads} e processos. Nesse contexto, esse capítulo
+	apresenta uma discussão de como desenvolver aplicações paralelas
+	eficientes usando o \openmp, uma interface de programação de
+	aplicações para arquiteturas paralelas de memória compartilhada que
+	é largamente utilizada pela indústria e academia. Para realizar essa
+	discussão, os principais mecanismos oferecidos por essa interface de
+	programação são apresentados e analisados através de exemplos
+	práticos.
 \end{resumo}
 
 \section{Introdução}
@@ -104,8 +118,8 @@
 	utilizados na Computação de Alto Desempenho~\cite{Asanovic09}.
 	Nesse nicho, a tendência atual é o emprego de centenas, ou até mesmo
 	milhares desses processadores no projeto de arquiteturas paralelas
-	com uma quantidade massiva de \textit{cores}. Essa tendência é
-	confirmada pelo \textit{website}
+	com uma quantidade massiva de núcleos (\textit{cores}). Essa
+	tendência é confirmada pelo \textit{website}
 	Top500~\footnote{\url{www.top500.org}}, que provê um
 	\textit{ranking} atualizado	dos 500 supercomputadores mais poderosos
 	do mundo, conforme mostrado na Figura~\ref{fig:top500}.
