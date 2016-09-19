@@ -95,7 +95,7 @@
 	$50\%$~\cite{LARUS08}. No entanto, a dissipação de potência no
 	\textit{chip}, inerente ao crescente número de transistores, impôs
 	um limite físico ao desempenho máximo possível a ser alcançado.
-	Para contornar esse problema, grande parte da indústria agora
+	Então, para contornar esse problema, grande parte da indústria agora
 	investe no projeto de processadores com diversos núcleos de
 	processamento (processadores \textit{multicores}).
 
@@ -115,28 +115,27 @@
 	entrega um grande poder computacional a essas arquiteturas
 	paralelas, a alta latência de acesso aos demais dispositivos, como
 	memórias e unidades de armazenamento, impõe um desafio arquitetural
-	no uso pleno de sua capacidade de desempenho. Para que essa
-	barreira seja superada, o desenvolvimento de aplicações paralelas
-	eficientes consiste em um requisito obrigatório. Esse objetivo pode
-	ser alcançado através do uso de bibliotecas de programação paralela,
-	as quais oferecem uma abstração para criação, gerenciamento, sincronização
-	e comunicação de \textit{threads} e processos.
-
-	Nesse contexto, esse capítulo apresenta uma discussão de como
-	desenvolver aplicações paralelas eficientes usando o \openmp, uma
-	Interface de Programação de Aplicações (\textit{Aplication
-	Programming Interface} -- API) largamente utilizada pela indústria e
-	academia. 
+	no uso pleno de sua capacidade de desempenho. Para que essa barreira
+	seja superada, o desenvolvimento de aplicações paralelas eficientes
+	consiste em um requisito obrigatório. Esse objetivo pode ser
+	alcançado através do uso de bibliotecas de programação paralela, as
+	quais oferecem uma abstração para criação, gerenciamento,
+	sincronização e comunicação de \textit{threads} e processos. Nesse
+	contexto, esse capítulo apresenta uma discussão de como desenvolver
+	aplicações paralelas eficientes usando o \openmp, uma Interface de
+	Programação de Aplicações (\textit{Aplication Programming Interface}
+	-- API) largamente utilizada pela indústria e academia. 
 	
-	Este minicurso está organizado da seguinte forma. a Seção~\ref{sec:conceitos
-	basicos} apresenta uma introdução ao modelo de programação \openmp.
-	A Seção~\ref{sec:paralelismo dados} apresenta e discute as diretivas do
-	\openmp que podem ser utilizadas para realizar o paralelismo de dados.
-	Então, a Seção~\ref{section: sincronizacao} apresenta os mecanismos de
-	sincronização básicos disponíveis no \openmp. A Seção~\ref{sec:paralelismo
-	tarefas} apresenta e discute as diretivas do \openmp que podem ser utilizadas para 
-	realizar o paralelismo de tarefas. Por fim, a Seção~\ref{sec:conclusao} apresenta
-	as conclusões finais.
+	Este capítulo está organizado da seguinte forma. a
+	Seção~\ref{sec:conceitos basicos} apresenta uma introdução ao modelo
+	de programação \openmp.  A Seção~\ref{sec:paralelismo dados}
+	apresenta e discute as diretivas do \openmp que podem ser utilizadas
+	para realizar o paralelismo de dados.  Então, a Seção~\ref{section:
+	sincronizacao} apresenta os mecanismos de sincronização básicos
+	disponíveis no \openmp. A Seção~\ref{sec:paralelismo tarefas}
+	apresenta e discute as diretivas do \openmp que podem ser utilizadas
+	para realizar o paralelismo de tarefas. Por fim, a
+	Seção~\ref{sec:conclusao} apresenta as conclusões finais.
 
 \section{Conceitos Básicos}
 \label{sec:conceitos basicos}
