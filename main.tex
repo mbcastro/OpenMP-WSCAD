@@ -875,37 +875,16 @@ long recursive_fibonacci(int n, int stop)
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
-				\begin{subfigure}{0.45\linewidth}
+				\begin{subfigure}{0.47\linewidth}
 					\includegraphics[width=\linewidth]{img/fibonacci-task-grain}
 					\label{fig:grao-tarefas-tempo}
 					\caption{Tempos de execução.}
 				\end{subfigure}
 				\quad
-				\begin{subfigure}{0.50\linewidth}
-					\centering
-					\resizebox{0.4\linewidth}{!}{
-            					\begin{tabular}{c c}
-            						\toprule
-            						\textbf{\texttt{stop}} 	& \textbf{Ganho} \\
-									\midrule					
-            						16			& 2,79\\
-            						18			& 8,37\\
-            						20			& 17,15\\
-            						22			& 18,82\\
-            						24			& 18,56\\
-            						26			& 19,80\\
-            						28			& 18,99\\
-            						30			& 19,33\\
-            						32			& 19,03\\ 
-									34			& 19,52\\
-									36			& 18,82\\ 
-									38			& 19,62\\
-									40			& 18,62\\
-									\bottomrule
-            					\end{tabular}
-					}
+				\begin{subfigure}{0.47\linewidth}
+					\includegraphics[width=\linewidth]{img/fibonacci-speedup}
 					\label{fig:grao-tarefas-ganho}
-					\caption{Ganhos de desempenho sobre $\texttt{stop} = 14$.}
+					\caption{Ganhos de desempenho.}
 				\end{subfigure}
 			\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
 				de Fibonacci.}
