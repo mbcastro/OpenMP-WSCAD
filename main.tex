@@ -939,8 +939,28 @@ long recursive_fibonacci(int n, int stop)
 \section{Conclusão}
 \label{sec:conclusao}
 
-	Esse capítulo apresentará um apanhado geral do minicurso, ressaltando os
-	principais pontos abordados no texto.
+	Com a crescente tendência do emprego de arquiteturas paralelas na
+	Computação de Alto Desempenho, o desenvolvimento de aplicações
+	paralelas eficientes tornou-se um requisito obrigatório. Felizmente,
+	essa demanda pode ser suprida através do uso de bibliotecas de
+	programação paralela, as quais oferecem uma abstração para a
+	criação, gerenciamento, sincronização e comunicação de
+	\textit{threads} e processos. Nesse contexto, esse capítulo
+	apresenta uma discussão de como desenvolver aplicações paralelas de
+	alto desempenho usando o \openmp, uma API largamente utilizada pela
+	indústria e academia para arquiteturas paralelas de memória
+	compartilhada. 
+	
+	O \openmp utiliza o conceito de \textit{threads} e recai sobre o
+	modelo paralelo de computação \textit{Fork}-\textit{Join}.  Através
+	de exemplos práticos, os principais mecanismos oferecidos por essa
+	interface de programação foram apresentados e discutidos. O \openmp
+	exporta um conjunto de diretivas de compilação e funções
+	utilitárias, oferecendo suporte para exploração tanto do paralelismo
+	de dados quanto o paralelismo de tarefas. Além disso, mecanismos
+	oferecidos para o controle de escalonamento e o ajuste de
+	granularidade de tarefas possibilita o desenolvimento de aplicações
+	paralelas eficientes.
 
 \bibliography{referencias}
 
