@@ -446,7 +446,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		Observe que nesse exemplo, assim como em diversas outras
 		aplicações que também exploram o paralelismo de dados presente
 		em laços, a diretiva de compilação também poderia ter sido
-		colocada no segundo laço mais externo sem perda de semântica. No
+		colocada no segundo laço mais externo (linha 11) sem perda de semântica. No
 		entanto, as duas abordagens se difeririam quanto à granularidade
 		de paralelização. Na primeira abordagem, o grão de trabalho
 		entregue a cada \textit{thread} é mais grosso, enquanto na
@@ -481,7 +481,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		Para ilustrar o impacto no desempenho que cada uma dessas
 		abordagens teriam no algoritmo clássico de multiplicação de
 		matrizes, experimentos foram conduzidos com tamanho da matriz de
-		entrada fixado em $1.680 \times 1.680$, o número de \textit{threads} 
+		entrada fixado em $1.680 \times 1.680$ e com o número de \textit{threads} 
 		variando de $2$ a $24$. Durante as execuções, foram coletadas estatísticas
 		de tempo de execução e número de faltas na \textit{cache} L2.  A análise
 		dos resultados de faltas na \textit{cache} L2 (Figura \ref{figure: cache misses
@@ -602,17 +602,15 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		de tamanho 1 com a política de escalonamento \texttt{dynamic}.
 		Uma avaliação quantitativa do desempenho dessa estratégia nesse
 		algoritmo particular, frente à estratégia \texttt{static}, é
-		apresentada na Figura~\ref{fig:static-dynamic-guided}. Os
-		experimentos foram conduzidos em uma máquina UMA com 24 cores
-		($4 \times$ Intel Xeon X7 com 6 \textit{cores} cada) para uma
-		matriz de tamanho $1.680 \times 1.680$.  O número de
-		\textit{threads} $n$ foi variado de $2$ a $12$ e o tamanho de
-		\textit{chunks} foi fixado em $1.680/n$ e $1$, para as
+		apresentada na Figura~\ref{fig:static-dynamic-guided}. Nesses
+		experimentos utilizou-se uma matriz de tamanho $1.680 \times 1.680$. 
+		O número de \textit{threads} ($n$) foi variado de $2$ a $12$ e o tamanho
+		dos \textit{chunks} foi fixado em $1.680/n$ e $1$, para as
 		estratégias escalonamento \texttt{static} e \texttt{dynamic},
 		respectivamente.  Para essa aplicação, tamanho de problema e
 		plataforma, a análise dos resultados revela que a estratégia de
 		escalonamento \texttt{dynamic} conduz a um melhor desempenho do
-		que que a estratégia \texttt{static}, se mostrando assim mais
+		que a estratégia \texttt{static}, se mostrando assim mais
 		escalável.  De fato, esse comportamento é recorrente em
 		aplicações irregulares e pode ser utilizado para guiar o projeto
 		de soluções paralelas eficientes nesse domínio. No entanto, é
@@ -625,8 +623,8 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		Para enfatizar a influência do tamanho do \textit{chunk} no
 		desempenho do escalonador \textit{dynamic}, experimentos foram
 		conduzidos com um \textit{kernel} sintético que realiza uma
-		computação regular, uma soma de um conjunto (grande) de números
-		inteiros. Diferentes tamanhos de \textit{chunks} foram
+		computação regular (uma soma de um conjunto grande de números
+		inteiros). Diferentes tamanhos de \textit{chunks} foram
 		analisados e as estratégias de escalonamento de iterações
 		\texttt{static} e \texttt{dynamic} foram consideradas. Os
 		resultados obtidos são apresentados na Figura
@@ -634,8 +632,8 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		\texttt{dynamic}, \textit{chunks} muito pequenos introduzem uma
 		expressiva sobrecarga de sincronização na execução, que diminui
 		com o aumento do tamanho do \textit{chunk}. Em contraste, a
-		estratégia \texttt{static} entrega um desempenho constante à
-		aplicação, independente do tamanho do \textit{chunk}.
+		estratégia \texttt{static} entrega um desempenho praticamente
+		constante à aplicação, independente do tamanho do \textit{chunk}.
 
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
@@ -667,11 +665,22 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		eficiente a essa operação, denominada redução, é oferecido pelo
 		\openmp através da cláusula \texttt{reduction}. O Fragmento de
 		Código~\ref{listing:prodescalar} ilustra o uso da operação de
-		redução para o cálculo paralelo do produto escalar de um vetor.
-		Nesse exemplo, cada \textit{thread} executa o produto de um
-		subconjunto dos elementos do vetor por um escalar e, em seguida,
-		os resultados parciais encontrados por cada \textit{thread} são
-		somados, para o cálculo do resultado final.
+		redução para o cálculo paralelo do produto escalar entre dois
+		vetores $a$ e $b$. A definição algébrica do produto escalar entre dois
+		vetores ($a \cdot b$) é mostrada na Equação~\ref{eq:scalar-product},
+		onde $a=[a_1, a_2, \dots, a_n]$ e $b=[b_1, b_2, \dots, b_n]$:
+		
+			\begin{equation}
+			a \cdot b = \sum_{i=1}^{n} a_i b_i = a_1 b_1 + a_2 b_2 + \dots + a_n b_n
+			\label{eq:scalar-product}
+			\end{equation}		
+		
+		No Fragmento de Código~\ref{listing:prodescalar}, devido ao uso
+		da diretiva \texttt{omp parallel for}, cada \textit{thread} fica responsável por
+		calcular o produto de um subconjunto dos elementos dos vetores $a$ e $b$.
+		Então, os resultados parciais encontrados por cada \textit{thread} são
+		somados devido ao uso da cláusula \texttt{reduction(+:prod)}, obtendo-se
+		assim o cálculo do resultado final na própria varável \texttt{prod}.
 
 		% Discussão
 		Por padrão, o \openmp oferece suporte  para redução de operações
