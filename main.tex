@@ -773,7 +773,7 @@ int scalar_product(struct vector *a, struct vector *b)
 \section{Paralelismo de Tarefas e Diretivas \openmp}
 \label{sec:paralelismo tarefas}
 
-	\begin{figure}[b]
+	\begin{figure}[t]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/tasks}
 		\caption{Paralelismo de tarefas do \openmp: uma ou mais \textit{threads} criam
@@ -785,28 +785,21 @@ int scalar_product(struct vector *a, struct vector *b)
 	\end{figure}
 
 	A partir da versão 3.0 foi introduzido o conceito de tarefas
-	(\textit{tasks}) no \openmp.  No \openmp a criação de tarefas pode
-	ser feita por uma ou mais \textit{threads}. Ao serem criadas, as
+	(\textit{tasks}) no \openmp. A criação de tarefas pode ser feita por uma ou
+	mais \textit{threads} em uma região paralela. Ao serem criadas, as
 	tarefas que ainda não foram computadas são inseridas em uma
 	estrutura de dados compartilhada entre as \textit{threads}
 	denominada ``saco de tarefas'' (\textit{bag of tasks}). Dentro de
 	uma região paralela, ao ficarem ociosas, as \textit{threads} retiram
 	tarefas ainda não computadas do saco de tarefas e as processam uma a
 	uma.
-
-	\begin{figure}[t]
-		\centering
-		\includegraphics[width=0.8\linewidth]{img/fibonacci}
-		\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
-		de Fibonacci.}\label{fig:fibonacci}
-	\end{figure}
 	
 	A Figura~\ref{fig:tasks} apresenta uma visão geral do modelo de
-	tarefas implementado no \openmp. Algumas \textit{threads} somente
-	criam tarefas (representadas por flechas unidirecionais com linhas
-	tracejadas), outras somente executam tarefas (representadas por
-	flechas unidirecionais com linhas pontilhadas), e podem haver
-	\textit{threads} que criam e executam tarefas (representadas por
+	tarefas implementado no \openmp. Nesse modelo, é possível que
+	algumas \textit{threads} somente criem tarefas (representadas por
+	flechas unidirecionais com linhas tracejadas), outras somente executem
+	tarefas (representadas por flechas unidirecionais com linhas pontilhadas)
+	e outras criem e executem tarefas (representadas por
 	flechas bidirecionais com linhas contínuas).  A criação e execução
 	de tarefas pelas \textit{threads} é feita dentro de uma região
 	paralela utilizando a diretiva \texttt{omp task}. Quando uma tarefa
@@ -817,7 +810,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	Em muitos problemas computacionais paralelizados com o uso de
 	tarefas, determinadas tarefas não podem ser computadas pois dependem
 	de resultados de outras tarefas ainda não finalizadas. Essas
-	dependênncias podem ser vistas na forma de um grafo direcionado de
+	dependências podem ser vistas na forma de um grafo direcionado de
 	dependências, onde cada nó do grafo representa uma tarefa e as
 	arestas representam as dependências entre elas. A dependência entre
 	tarefas é determinada no \openmp através da diretiva \texttt{omp
@@ -828,20 +821,66 @@ int scalar_product(struct vector *a, struct vector *b)
 	Um exemplo clássico de um problema recursivo que pode ser
 	paralelizado com o uso de tarefas é a soma da sequência de
 	Fibonacci. Matematicamente, os números da sequência de Fibonacci são
-	gerados através da seguinte fórmula recursiva:
+	gerados através da seguinte fórmula recursiva (Equação~\ref{eq:fib}):
 	
-	\begin{align*}
+	\begin{equation}
 		F_n = F_{n-1} + F_{n-2} \text{, onde } F_1=1 \text{ e } F_2=1
-	\end{align*}
+		\label{eq:fib}
+	\end{equation}
 
 	Se considerarmos que para calcular $F_n$ são necessárias duas
-	tarefas $F_{n-1}$ e $F_{n-2}$, é evidente que os resultados de
-	$F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término de ambas
-	tarefas. Nesse caso, nota-se que $F_n$ depende de $F_{n-1}$ e
-	$F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um
-	grafo de dependências de tarefas para o cálculo da soma da sequência
-	de Fibonacci usando tarefas. Nesse exemplo, cada tarefa representa
-	uma chamada recursiva à $F_{n-1}$ e $F_{n-2}$.
+	tarefas $F_{n-1}$ e $F_{n-2}$, é evidente que os resultados obtidos
+	pelas tarefas $F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término
+	de ambas tarefas. Nesse caso, nota-se que $F_n$ depende de $F_{n-1}$ e
+	$F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um grafo de dependências
+	de tarefas para o cálculo da soma da sequência de Fibonacci usando tarefas.
+	Nesse exemplo, considera-se uma solução básica recursiva para o cálculo
+	da soma da sequência de Fibonacci com computações redundantes. Porém,
+	existem soluções mais otimizadas para esse problema que utilizam a técnica de
+	\textit{programação dinâmica}.
+
+	\begin{figure}[t]
+		\centering
+		\includegraphics[width=0.8\linewidth]{img/fibonacci}
+		\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
+		de Fibonacci.}\label{fig:fibonacci}
+	\end{figure}
+
+	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de
+	implementação básica (com computação redundante) para o cálculo da soma da sequência de
+	Fibonacci usando tarefas em \openmp. Primeiramente é criada uma
+	região paralela com o uso da diretiva \texttt{omp parallel} (linha
+	5). Para permitir que somente uma única \textit{worker thread}
+	inicie a computação, e consequentemente, a criação da primeira
+	tarefa, utiliza-se a diretiva \texttt{omp single} (linha 7). A
+	primeira \textit{worker thread} que ganhar acesso à região
+	\texttt{omp single} executa uma chamada à função recursiva
+	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite
+	que as demais \textit{worker threads} avancem até a barreira
+	implícita ao final da região paralela. Na função
+	\texttt{recursive\_fibonacci()}, tarefas correspondentes ao cálculo
+	$F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp
+	task} (linhas 27--28 e 30--31) assim como as dependências são
+	criadas com a diretiva \texttt{omp taskwait} (linhas 33--34). Com as
+	tarefas correspondem a chamadas recursivas, essas tarefas poderão
+	criar novas tarefas.
+	
+	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma
+	condição de parada específica para a criação de tarefas (linha 23),
+	evitando-se explicitamente a criação de tarefas quando o valor da
+	variável \texttt{n} é inferior a um valor específico
+	(\texttt{stop}).  Basicamente, essa condição garante uma carga
+	\textit{mínima} para computação de uma tarefa. Em outras palavras, a
+	computação será realizada sequencialmente por cada \textit{worker
+	thread} quando \texttt{n < stop}. Logo, a variável \texttt{stop}
+	pode ser vista como uma forma de controle de granularidade das
+	tarefas da aplicação.  A condição de parada para criação de tarefas
+	é muito importante, tendo em vista que a criação e gestão de tarefas
+	no \openmp possui um sobrecusto. Portanto, é importante
+	que as tarefas tenham uma carga grande o suficiente de forma a
+	reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas
+	contendo cargas extremamente grandes podem gerar desbalanceamentos
+	de carga entre as \textit{worker threads}.
 
 \begin{lstlisting}[float,floatplacement=b,frame=single, caption=Exemplo de uma implementação recursiva simples da soma da sequencia de Fibonacci
 usando tarefas., label=listing:fibonacci]
@@ -885,56 +924,21 @@ long recursive_fibonacci(int n, int stop)
 }
 \end{lstlisting}
 
-	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de
-	implementação básica para o cálculo da soma da sequência de
-	Fibonacci usando tarefas em \openmp. Primeiramente é criada uma
-	região paralela com o uso da diretiva \texttt{omp parallel} (linha
-	5). Para permitir que somente uma única \textit{worker thread}
-	inicie a computação, e consequentemente, a criação das primeiras
-	tarefas, utiliza-se a diretiva \texttt{omp single} (linha 7). A
-	primeira \textit{worker thread} que ganhar acesso à região
-	\texttt{omp single} executa uma chamada à função recursiva
-	\texttt{recursive\_fibonacci()}. A cláusula \textit{nowait} permite
-	que as demais \textit{worker threads} avancem até a barreira
-	implícita ao final da região paralela. Na função
-	\texttt{recursive\_fibonacci()}, tarefas correspondentes ao cálculo
-	$F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp
-	task} (linhas 27--28 e 30--31) assim como as dependências são
-	criadas com a diretiva \texttt{omp taskwait} (linhas 33--34).
-	
-	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma
-	condição de parada específica para a criação de tarefas (linha 23),
-	evitando-se explicitamente a criação de tarefas quando o valor da
-	variável \texttt{n} é inferior a um valor específico
-	(\texttt{stop}).  Basicamente, essa condição garante uma carga
-	\textit{mínima} para computação de uma tarefa. Em outras palavras, a
-	computação será realizada sequencialmente por cada \textit{worker
-	thread} quando \texttt{n < stop}. Portanto, a variável \texttt{stop}
-	pode ser vista como uma forma de controle de granularidade das
-	tarefas da aplicação.  A condição de parada para criação de tarefas
-	é muito importante, tendo em vista que a criação e gestão de tarefas
-	no \openmp possui um sobrecusto significativo. Logo, é importante
-	que as tarefas tenham uma carga grande o suficiente de forma a
-	reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas
-	contendo cargas extremamente grandes podem gerar desbalanceamentos
-	de carga entre as \textit{worker threads}.
-
 	Uma avaliação do impacto da granularidade das tarefas no desempenho
-	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Os
-	experimentos foram conduzidos em uma máquina UMA com 24 cores ($4
-	\times$ Intel Xeon X7 com 6 \textit{cores} cada). Nesses
+	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Nesses
 	experimentos, o número de \textit{threads} foi fixado em 12 e o
-	valor da variável \texttt{n} foi fixado em 50.
-	
-	O resultado mostra um ganho significativo de desempenho quando a
-	granularidade das tarefas é aumentada (i.e., valor usado na variável
-	\texttt{stop} é aumentada) de $14$ para $26$ (ganho de desempenho de
-	$19,8\times$).  Com $\texttt{stop} = 26$ tem-se então o melhor
-	compromisso entre sobrecusto da geração/controle de tarefas e
+	valor da variável \texttt{n} foi fixado em 50. Os resultados mostram um ganho
+	significativo de desempenho quando a granularidade das tarefas é aumentada
+	(i.e., quando o valor usado na variável \texttt{stop} é aumentado) de $14$ para $26$
+	(ganho de desempenho de $19,8\times$).  Com \texttt{stop=26} tem-se então o
+	melhor compromisso entre sobrecusto da geração/controle de tarefas e
 	desbalanceamento de carga entre as \textit{threads}. A partir desse
 	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
 	comportamento é esperando pois um grão muito grande pode gerar
-	importantes desbalanceamentos de carga entre as \textit{threads}.
+	importantes desbalanceamentos de carga entre as \textit{worker threads}. A perda de
+	desempenho devido ao desbalanceamento de carga ocorre pois o tempo total
+	da aplicação passa a ser determinado pelo tempo de execução da \textit{worker thread}
+	mais sobrecarregada.
 	
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
