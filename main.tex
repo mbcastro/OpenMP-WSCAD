@@ -680,7 +680,8 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		da diretiva \texttt{omp parallel for}, cada \textit{thread} fica responsável por
 		calcular o produto de um subconjunto dos elementos dos vetores $a$ e $b$.
 		Então, os resultados parciais encontrados por cada \textit{thread} são
-		somados, para o cálculo do resultado final.
+		somados devido ao uso da cláusula \texttt{reduction(+:prod)}, obtendo-se
+		assim o cálculo do resultado final.
 
 		% Discussão
 		Por padrão, o \openmp oferece suporte  para redução de operações
