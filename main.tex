@@ -350,7 +350,7 @@ void sayhello(int nthreads)
 		A definição de regiões paralelas no \openmp é feita através da
 		diretiva \texttt{omp parallel}, como ilustrado no Fragmento
 		de Código~\ref{listing:sayhello}.  Nesse exemplo, assim que a a
-		\textit{master thread} atinge a região paralela (linhas 8 a 16),
+		\textit{master thread} atinge a região paralela (linhas 6 a 12),
 		ela cria um grupo de \textit{worker threads} para executar os
 		comandos especificados. Ao final da região paralela, uma
 		barreira implícita força a sincronização das \textit{threads}.
@@ -399,9 +399,9 @@ void sayhello(int nthreads)
 	para o projeto de aplicações paralelas será discutido.  Primeiro,
 	serão apresentadas as diretivas que possibilitam explorar o
 	paralelismo de dados. Em seguida, as estratégias de escalonamento
-	disponíveis no \openmp são apresentadas, assim como suas vantagens e
+	disponíveis no \openmp serão apresentadas, assim como suas vantagens e
 	desvantagens. Por fim, os mecanismos de redução oferecidos pela API
-	\openmp são introduzidos.
+	\openmp serão introduzidos.
 
 	\subsection{Paralelização de Laços}
 	\label{subsection: paralelização de lacos}
