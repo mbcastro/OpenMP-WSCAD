@@ -51,7 +51,6 @@
 	basicstyle=\scriptsize\ttfamily,
 	otherkeywords={
 		pragma,
-		omp,
 		parallel,
 		num\_threads,
 		schedule,
@@ -67,6 +66,7 @@
 	commentstyle=\itshape\color{gray},
 	identifierstyle=\color{black},
 	stringstyle=\color{purple},
+	moredelim=**[is][\color{blue}]{@}{@},
 }
 
 % Autores e Instituição
@@ -331,7 +331,7 @@ void sayhello(int nthreads)
 	void tids[nthreads]
 
 	/* Cria threads. */
-	#pragma omp parallel num_threads(nthreads)
+	#pragma @omp@ parallel num_threads(nthreads)
 	{
 		int tid;
 
@@ -413,7 +413,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 	c = matrix_create(a->nrows, b->ncols);
 
 	/* Multiplica matrizes. */
-	#pragma omp parallel for private(i, j, k)
+	#pragma @omp@ parallel for private(i, j, k)
 	for (int i = 0; i < a->nrows; i++)
 	{
 		for (int j = 0; j < a->cols; j++)
@@ -529,7 +529,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 	c = matrix_create(a->nrows, b->ncols);
 
 	/* Multiplica matrizes esparsas. */
-	#pragma omp parallel for private(i, j, k) schedule(dynamic, 1)
+	#pragma @omp@ parallel for private(i, j, k) schedule(dynamic, 1)
 	for (int i = 0; i < a->nrows; i++) {
 		for (int j = 0; j < a->ncols; j++) {
 			for (int k = 0; k < a->ncols; k++) {
@@ -700,7 +700,7 @@ int scalar_product(struct vector *a, struct vector *b)
 {
 	int prod;
 
-	#pragma omp parallel for private(i) schedule (static) reduction(+:prod)
+	#pragma @omp@ parallel for private(i) schedule (static) reduction(+:prod)
 	for (int i = 0; i < a->size; i++)
 		prod += VECTOR(a, i) * VECTOR(b, i);
 	
@@ -847,9 +847,9 @@ int fibonacci(int n, int stop)
 {
 	int result;
 	
-	#pragma omp parallel
+	#pragma @omp@ parallel
   	{
-		#pragma omp single nowait
+		#pragma @omp@ single nowait
 		result = recursive_fibonacci(n, stop);
 	}
 		
@@ -869,13 +869,13 @@ long recursive_fibonacci(int n, int stop)
 		return (recursive_fibonacci(n-1, stop) + recursive_fibonacci(n-2, stop));
 	else
 	{	/* Criacao de tarefas e suas dependencias. */
-		#pragma omp task shared(f1)
+		#pragma @omp@ task shared(f1)
 		f1 = recursive_fibonacci(n-1, stop);
 
-		#pragma omp task shared(f2)
+		#pragma @omp@ task shared(f2)
 		f2 = recursive_fibonacci(n-2, stop);
 		
-		#pragma omp taskwait
+		#pragma @omp@ taskwait
 		fn = f1 + f2;
 			
 		return (fn);
