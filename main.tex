@@ -195,9 +195,12 @@
 		interconectados através de uma rede e se comunicam através da
 		troca de mensagens explícitas. Computadores, ou alternativamente
 		nós computacionais, de um sistema de memória distribuída podem
-		possuir ou não uma mesma configuração computacional.  Caso os
-		nós possuam uma mesma configuração, o sistema é denominado
-		\textit{cluster}; caso contrário o sistema é referido como
+		possuir ou não uma mesma configuração computacional. Quando
+		os nós possuem uma mesma configuração e são interconectados
+		através de uma rede de alto desempenho (baixa latência e alta 
+		largura de banda), o sistema é denominado \textit{cluster}. Por outro
+		lado, quando os nós possuem configurações heterogêneas e são
+		geograficamente distantes o sistema é usualmente referido como
 		\textit{grid}. Sistemas de memória distribuída possuem a
 		vantagem de ser altamente escaláveis, no entanto são de difícil
 		programação, pois usualmente exigem o reprojeto de algoritmos.
@@ -212,7 +215,7 @@
 		principal, que têm seu acesso globalmente compartilhado.
 		Sistemas de memória compartilhada possuem a vantagem de fácil
 		programação, no entanto não oferecem alta escalabilidade, como
-		sistemas de de memória distribuída.
+		sistemas de memória distribuída.
             
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
@@ -250,9 +253,10 @@
 		dependendo da distância entre o processador ou \textit{core}
 		e o banco de memória que esse processador ou \textit{core}
 		está acessando.  Arquiteturas do tipo NUMA possuem maior
-		potencial de escalabilidade que arquiteturas UMA, porém, em
-		contrapartida são mais complexas, caras e de difícil
-		programação.
+		potencial de escalabilidade que arquiteturas UMA. Todavia,
+		esses sistemas são mais complexos, caros e de difícil
+		programação devido a questões relacionada à afinidade
+		de memória entre \textit{threads}~\cite{Pousa-SBAC-2009}.
 
 		Por fim, os sistemas de memória compartilhada e distribuída
 		apresentam uma organização mista da memória (compartilhada e
@@ -265,11 +269,11 @@
 		agrupados em \textit{clusters}. Dentro de um \textit{cluster},
 		todos os \textit{cores} compartilham o acesso a uma memória.
 		Porém, um \textit{cluster} necessita realizar comunicações via
-		rede para que possa acessar a memória de outros
-		\textit{clusters}. De fato, sistemas de memória compartilhada e
-		distribuída constituem tendência na Computação de Alto
-		Desempenho, por consistirem em um compromisso entre as vantagens
-		dos dois outros tipos de sistemas.
+		rede (usualmente, uma \textit{Network-on-Chip} -- NoC) para que
+		possa acessar a memória de outros \textit{clusters}. De fato, sistemas
+		de memória compartilhada e distribuída constituem uma tendência na
+		Computação de Alto Desempenho, por consistirem em um compromisso
+		entre as vantagens dos dois outros tipos de sistemas.
 
 		O \openmp, assunto deste capítulo, consiste numa API para
 		sistemas de memória compartilhada e utiliza o conceito de
@@ -282,11 +286,11 @@
 		\begin{figure}[b]
 			\centering
 			\includegraphics[width=0.8\linewidth]{img/fork-join}
-			\caption{Visão geral do modelo Fork-Join.}\label{fig:fork-join}
+			\caption{Visão geral do modelo \textit{Fork-Join}.}\label{fig:fork-join}
 		\end{figure}
 
 		% Descrição
-		O \openmp segue o modelo Fork-Join de execução paralela, que é
+		O \openmp segue o modelo \textit{Fork-Join} de execução paralela, que é
 		ilustrado na Figura~\ref{fig:fork-join}. Nesse modelo, o
 		programa inicia sua execução com uma única \textit{thread},
 		denominada \textit{master thread} (Figura~\ref{fig:fork-join}a).
@@ -344,33 +348,32 @@ void sayhello(int nthreads)
 
 		% Descrição.
 		A definição de regiões paralelas no \openmp é feita através da
-		diretiva \texttt{omp\_parallel}, como é ilustrado no Fragmento
+		diretiva \texttt{omp parallel}, como ilustrado no Fragmento
 		de Código~\ref{listing:sayhello}.  Nesse exemplo, assim que a a
-		\textit{master thread} atinge a região paralela (linhas 7 a 12),
+		\textit{master thread} atinge a região paralela (linhas 8 a 16),
 		ela cria um grupo de \textit{worker threads} para executar os
 		comandos especificados. Ao final da região paralela, uma
 		barreira implícita força a sincronização das \textit{threads}.
 		
 		% Controle do Número de Threads
 		Por padrão, o número de \textit{threads} no grupo que executará
-		uma região paralela será igual ao número de \textit{cores} de
-		processamento no processador. No entanto, esse fator pode ser
-		controlador através da cláusula \texttt{num\_threads()}, pela
-		invocação da função utilitária
-		\texttt{omp\_set\_num\_threads()}, ou então pela definição da
+		uma região paralela será igual ao número de \textit{cores} do
+		processador. No entanto, esse fator pode ser controlado através
+		da cláusula \texttt{num\_threads()} da região paralela, pela invocação
+		da função utilitária \texttt{omp\_set\_num\_threads()}, ou então pela definição da
 		variável de ambiente \texttt{OMP\_NUM\_THREADS}. Em uma região
 		paralela as \textit{threads} são identificadas por um número
 		único entre $0$ e o número total de $\textit{threads} - 1$.
 		Esse identificador pode ser recuperado em tempo de execução por
-		cada \textit{thread} através da função utilitária do \openmp
-		\texttt{omp\_get\_thread\_num()}.
+		cada \textit{thread} em uma região paralela através da função utilitária do
+		\openmp denominada \texttt{omp\_get\_thread\_num()}.
 
 		% Controle de Escopo de Dados 
 		Variáveis declaradas fora da região paralela são compartilhadas
 		entre todas as \textit{threads} por padrão. No entanto, a
 		cláusula \texttt{private()} pode ser usada para a especificação
 		de variáveis locais privadas, e a diretiva \texttt{omp
-		threadprivate} pode ser empregada para a definição de variáveis
+		threadprivate()} pode ser empregada para a definição de variáveis
 		globais privadas. Alternativamente, é possível alterar o
 		comportamento padrão para variáveis locais através da cláusula
 		\texttt{default()}, definindo todas elas como privadas, e então
