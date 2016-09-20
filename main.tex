@@ -140,7 +140,14 @@
 	contexto, esse capítulo apresenta uma discussão de como desenvolver
 	aplicações paralelas eficientes usando o \openmp, uma Interface de
 	Programação de Aplicações (\textit{Aplication Programming Interface}
-	-- API) largamente utilizada pela indústria e academia. 
+	-- API) largamente utilizada pela indústria e academia. Além de apresentar
+	os conceitos básicos e diretivas de compilação oferecidas pelo OpenMP,
+	esse documento apresenta também exemplos práticos de aplicações.
+	Diferentes resultados de desempenho obtidos através da execução
+	das aplicações em uma arquitetura paralela com 4 processadores
+	Intel Xeon X7 (6 \textit{cores} cada) são apresentados e discutidos.
+	Todos os exemplos discutidos estão disponíveis para download sob
+	licença GNU GPL 3 em \url{https://github.com/lapesd/teaching-openmp}.
 	
 	Este capítulo está organizado da seguinte forma. A
 	Seção~\ref{sec:conceitos basicos} apresenta uma introdução ao modelo
@@ -168,7 +175,7 @@
 	Essa seção irá abordar os conceitos básicos de programação paralela
 	com \openmp. Primeiramente, será apresentada uma discussão sobre as
 	diferentes classes de arquiteturas paralelas, salientando-se aquelas
-	em que \openmp poderá ser aplicado.	Em seguida, será apresentado o
+	em que \openmp poderá ser aplicado. Em seguida, será apresentado o
 	modelo base dessa API.  Por fim, será apresentada a diretiva básica
 	para a criação de regiões paralelas no código com as formas de
 	compartilhamento de dados oferecidas pelo \openmp.
@@ -470,13 +477,11 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas
 		abordagens teriam no algoritmo clássico de multiplicação de
-		matrizes, experimentos foram conduzidos em uma máquina UMA com
-		24 \textit{cores} ($4 \times$ Xeon X7). Nesses experimentos, o
-		tamanho da matriz de entrada foi fixado em $1.680 \times 1.680$,
-		o número de \textit{threads} foi variado de $2$ a $24$, e
-		estatísticas de tempo de execução e número de faltas na
-		\textit{cache} L2 foram coletadas.  A análise dos resultados de
-		faltas na \textit{cache} L2 (Figura \ref{figure: cache misses
+		matrizes, experimentos foram conduzidos com tamanho da matriz de
+		entrada fixado em $1.680 \times 1.680$, o número de \textit{threads} 
+		variando de $2$ a $24$. Durante as execuções, foram coletadas estatísticas
+		de tempo de execução e número de faltas na \textit{cache} L2.  A análise
+		dos resultados de faltas na \textit{cache} L2 (Figura \ref{figure: cache misses
 		mm}) revela que a abordagem de paralelização mais grossa conduz
 		a um menor número de faltas, em contraste a estratégia de
 		paralelização do laço mais interno, para a plataforma e tamanho
