@@ -723,8 +723,8 @@ int scalar_product(struct vector *a, struct vector *b)
 
 		\paragraph{Serialização.} A diretiva \texttt{omp single} permite
 		que a execução de um trecho de código dentro de uma região
-		paralela seja serializada, ou seja, seja executada por apenas
-		uma \textit{worker thread}. O \openmp implementa uma ou diretiva
+		paralela seja serializada, isto é, seja executada por apenas
+		uma \textit{worker thread}. O \openmp também oferece uma diretiva
 		similar para serialização de trechos de código denominada
 		\texttt{omp master}. A diferença entre as primitivas \texttt{omp
 		single} e \texttt{omp master} reside no fato de que, na
@@ -733,13 +733,14 @@ int scalar_product(struct vector *a, struct vector *b)
 		\textit{master thread} executará o trecho de código serializado.
 		
 		\paragraph{Exclusão mútua.} Em muitos casos, dados
-		compartilhados necessitam modificados dentro de uma região
+		compartilhados necessitam ser modificados dentro de uma região
 		paralela por todas as \textit{worker threads}. Nesses trechos de
 		código, denominados \textit{seções críticas}, faz-se necessária
-		a utilização e um mecanismo de exclusão mútua para evitar que
-		duas ou mais \textit{worker threads} tenham acesso
-		simultaneamente aos dados compartilhados.  Para esses casos, a
-		API \openmp oferece duas diretivas principais. A primeira delas,
+		a utilização de um mecanismo de exclusão mútua para evitar que
+		duas ou mais \textit{worker threads} modifiquem simultaneamente 
+		dados compartilhados.  
+		
+		Para esses casos, a API \openmp oferece duas diretivas principais. A primeira delas,
 		denominada \texttt{omp critical}, implementa um mecanismo de
 		exclusão mútua clássico com uso de \textit{locks} similar ao
 		\textit{mutex}. A segunda delas, denominada \texttt{omp atomic},
@@ -751,21 +752,22 @@ int scalar_product(struct vector *a, struct vector *b)
 		\textit{expr} (onde \textit{expr} é uma expressão aritmética);
 		(iii) atualização, \eg \texttt{x++}; ou (iv)
 		incremento/decremento, \eg \texttt{v = x++}. A lista completa de
-		operações permitidas está disponível na especificação
-		\openmp~(??).  É
-		importante notar que, para o caso de uma seção crítica contendo
+		operações permitidas está disponível na especificação da API
+		\openmp em \url{http://openmp.org/wp/openmp-specifications}.
+		
+		É importante notar que, para o caso de uma seção crítica contendo
 		uma única operação aritmética, ambas as diretivas podem ser
 		utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic}
 		oferecerá um melhor desempenho, pois a sua implementação utiliza
 		\textit{spin-locks} e instruções de \textit{hardware} para
 		garantir a atomicidade das operações.
 		
-		\paragraph{Sincronização global.} O \openmp também oferece uma
+		\paragraph{Sincronização global.} A API \openmp também oferece uma
 		diretiva que permite realizar uma sincronização global entre as
 		\textit{worker threads} na forma de uma \textit{barreira}. Essa
 		primitiva, denominada \texttt{omp barrier}, garante que todas as
-		\textit{worker threads} somente possam executar as instruções
-		posteriores à barreira quando todas as \textit{worker threads}
+		\textit{worker threads} em uma região paralela somente possam executar
+		as instruções posteriores à barreira quando todas as \textit{worker threads}
 		tiverem chegado a ela.
 	
 \section{Paralelismo de Tarefas e Diretivas \openmp}
