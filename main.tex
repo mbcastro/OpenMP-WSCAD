@@ -71,7 +71,7 @@
 
 % Autores e Instituição
 \author{%
-	Márcio Castro, Pedro H. Penna e Alyson D. Pereira                  \\
+	Pedro H. Penna e Márcio Castro \\
 	\textit{Laboratório de Pesquisa em Sistemas Distribuídos (LaPeSD)} \\
 	\textit{Departamento de Informática e Estatística (INE)}           \\
 	\textit{Universidade Federal de Santa Catarina (UFSC)}
@@ -90,7 +90,7 @@
 	Alto Desempenho. Nesse cenário, para que seja feito uso pleno e
 	eficiente da capacidade de processamento disponível, torna-se
 	imprescindível o uso de bibliotecas de programação paralelas, as
-	quais oferece uma abstração para criação e gerenciamento de
+	quais oferecem uma abstração para criação e gerenciamento de
 	\textit{threads} e processos. Nesse contexto, esse capítulo
 	apresenta uma discussão de como desenvolver aplicações paralelas
 	eficientes usando o \openmp, uma interface de programação de
@@ -111,9 +111,9 @@
 	$50\%$~\cite{LARUS08}. No entanto, a dissipação de potência no
 	\textit{chip}, inerente ao crescente número de transistores, impôs
 	um limite físico ao desempenho máximo possível a ser alcançado.
-	Então, para contornar esse problema, grande parte da indústria agora
+	Para contornar esse problema, grande parte da indústria agora
 	investe no projeto de processadores com diversos núcleos de
-	processamento (processadores \textit{multicores}).
+	processamento (processadores \textit{multicore}).
 
 	% Computação de Alto Desempenho
 	De fato, processadores \textit{multicore} já são largamente
@@ -122,7 +122,7 @@
 	milhares desses processadores no projeto de arquiteturas paralelas
 	com uma quantidade massiva de núcleos (\textit{cores}). Essa
 	tendência é confirmada pelo \textit{website}
-	Top500~\footnote{\url{www.top500.org}}, que provê um
+	Top500\footnote{\url{www.top500.org}}, que provê um
 	\textit{ranking} atualizado	dos 500 supercomputadores mais poderosos
 	do mundo, conforme mostrado na Figura~\ref{fig:top500}.
 		
@@ -142,15 +142,16 @@
 	Programação de Aplicações (\textit{Aplication Programming Interface}
 	-- API) largamente utilizada pela indústria e academia. 
 	
-	Este capítulo está organizado da seguinte forma. a
+	Este capítulo está organizado da seguinte forma. A
 	Seção~\ref{sec:conceitos basicos} apresenta uma introdução ao modelo
 	de programação \openmp.  A Seção~\ref{sec:paralelismo dados}
 	apresenta e discute as diretivas do \openmp que podem ser utilizadas
-	para realizar o paralelismo de dados.  Então, a Seção~\ref{section:
+	para realizar o paralelismo de dados. Então, a Seção~\ref{section:
 	sincronizacao} apresenta os mecanismos de sincronização básicos
 	disponíveis no \openmp. A Seção~\ref{sec:paralelismo tarefas}
 	apresenta e discute as diretivas do \openmp que podem ser utilizadas
-	para realizar o paralelismo de tarefas. Por fim, a
+	para realizar o paralelismo de tarefas. Por fim, a Seção~\ref{sec:conclusao}
+	apresenta as conclusões finais.
 
 	\begin{figure}[t]
 		\centering
@@ -159,7 +160,7 @@
 		mais poderosos listados no \textit{ranking} do Top500.}
 		\label{fig:top500}
 	\end{figure}
-	Seção~\ref{sec:conclusao} apresenta as conclusões finais.
+
 
 \section{Conceitos Básicos}
 \label{sec:conceitos basicos}
@@ -262,7 +263,7 @@
 		Desempenho, por consistirem em um compromisso entre as vantagens
 		dos dois outros tipos de sistemas.
 
-		O \openmp, assunto deste capítulo, consiste uma API para
+		O \openmp, assunto deste capítulo, consiste numa API para
 		sistemas de memória compartilhada e utiliza o conceito de
 		\textit{threads} para possibilitar o compartilhamento de dados
 		em memória. Por tanto, a API pode ser utilizada tanto para
