@@ -119,7 +119,7 @@
 	De fato, processadores \textit{multicore} já são largamente
 	utilizados na Computação de Alto Desempenho~\cite{Asanovic09}.
 	Nesse nicho, a tendência atual é o emprego de centenas, ou até mesmo
-	milhares desses processadores no projeto de arquiteturas paralelas
+	milhares desses processadores, no projeto de arquiteturas paralelas
 	com uma quantidade massiva de núcleos (\textit{cores}). Essa
 	tendência é confirmada pelo \textit{website}
 	Top500\footnote{\url{www.top500.org}}, que provê um
@@ -133,7 +133,7 @@
 	memórias e unidades de armazenamento, impõe um desafio arquitetural
 	no uso pleno de sua capacidade de desempenho. Para que essa barreira
 	seja superada, o desenvolvimento de aplicações paralelas eficientes
-	consiste em um requisito obrigatório. Esse objetivo pode ser
+	consiste em um requisito obrigatório. Felizmente, esse objetivo pode ser
 	alcançado através do uso de bibliotecas de programação paralela, as
 	quais oferecem uma abstração para criação, gerenciamento,
 	sincronização e comunicação de \textit{threads} e processos.
@@ -144,8 +144,8 @@
 	Interface} -- API) para arquiteturas paralelas de memória compartilhada
 	que é largamente utilizada pela indústria e academia. Os principais
 	mecanismos oferecidos por essa interface de programação são apresentados
-	através de exemplos práticos, disponíveis publicamente sob licença GNU
-	GPL v3 em \url{www.github.com/lapesd/teaching-openmp}, e analisados
+	através de exemplos práticos, disponíveis publicamente sob licença
+	GPLv3 em \url{www.github.com/lapesd/teaching-openmp}, e analisados
 	quantitativamente em uma máquina real UMA com 4 processadores Intel Xeon
 	X7 (6 \textit{cores} cada).
 	
@@ -163,8 +163,8 @@
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=\linewidth]{img/cores-top500.pdf}
-		\caption{Número total de \textit{cores} dos supercomputadores
-		mais poderosos listados no \textit{ranking} do Top500.}
+		\caption{Número total de \textit{cores} dos 500 supercomputadores
+		mais poderosos do mundo.}
 		\label{fig:top500}
 	\end{figure}
 
@@ -174,11 +174,12 @@
 
 	Essa seção irá abordar os conceitos básicos de programação paralela
 	com \openmp. Primeiramente, será apresentada uma discussão sobre as
-	diferentes classes de arquiteturas paralelas, salientando-se aquelas
-	em que \openmp poderá ser aplicado. Em seguida, será apresentado o
-	modelo base dessa API.  Por fim, será apresentada a diretiva básica
-	para a criação de regiões paralelas no código com as formas de
-	compartilhamento de dados oferecidas pelo \openmp.
+	diferentes classes de arquiteturas paralelas existentes,
+	salientando-se aquelas em que \openmp poderá ser aplicado. Em
+	seguida, será apresentado o modelo base dessa API.  Por fim, serão
+	apresentadas as diretivas básicas para a criação de regiões
+	paralelas e as formas de compartilhamento de dados oferecidas pelo
+	\openmp.
 
 	\subsection{Arquiteturas Alvo}
 
@@ -236,49 +237,50 @@
 
 		Sistemas de memória compartilhada, por sua vez, podem ser
 		classificados em duas classes, quanto ao tempo de acesso à
-		memória principal compartilhada. Uma visão geral dessas duas
-		classes é apresentada na Figura~\ref{fig:uma-numa}. Em
-		arquiteturas do tipo \textit{Uniform Memory Access} (UMA), o
-		tempo de acesso de um \textit{core} à memória é constante
-		(Figure~\ref{subfigure: uma}). Por outro lado, em arquiteturas
-		do tipo \textit{Non-Uniform Memory Access} (NUMA), esse tempo
-		varia em função da organização da memória em
-		bancos~(Figura~\ref{subfigure: numa}). Bancos de memória
-		locais (próximos ao \textit{core}) possuem uma latência de
-		memória menor que bancos de memória remotos (distantes do
+		memória principal compartilhada. Uma visão geral dessas classes
+		é apresentada na Figura~\ref{fig:uma-numa}. Em arquiteturas do
+		tipo \textit{Uniform Memory Access} (UMA), o tempo de acesso de
+		um \textit{core} à memória é constante (Figure~\ref{subfigure:
+		uma}). Por outro lado, em arquiteturas do tipo
+		\textit{Non-Uniform Memory Access} (NUMA), esse tempo varia em
+		função da organização da memória em
+		bancos~(Figura~\ref{subfigure: numa}). Bancos de memória locais
+		(próximos ao \textit{core}) possuem uma latência de memória
+		menor que bancos de memória remotos (distantes do
 		\textit{core}).  Nesse sentido, o tempo de acesso à memória
-		principal pode ser pequeno (acesso a um banco de memória
-		local) ou grande (acesso a um banco de memória remoto),
-		dependendo da distância entre o processador ou \textit{core}
-		e o banco de memória que esse processador ou \textit{core}
-		está acessando.  Arquiteturas do tipo NUMA possuem maior
-		potencial de escalabilidade que arquiteturas UMA. Todavia,
-		esses sistemas são mais complexos, caros e de difícil
-		programação devido a questões relacionada à afinidade
-		de memória entre \textit{threads}~\cite{Pousa-SBAC-2009}.
+		principal pode ser pequeno ou grande, dependendo da distância
+		entre o processador ou \textit{core} e o banco de memória que
+		esse processador ou \textit{core} está acessando.  Arquiteturas
+		do tipo NUMA possuem maior potencial de escalabilidade que
+		arquiteturas UMA. Todavia, esses sistemas são mais
+		complexos, caros e de difícil programação devido a questões
+		relacionada à afinidade de memória entre
+		\textit{threads}~\cite{Pousa-SBAC-2009}.
 
 		Por fim, os sistemas de memória compartilhada e distribuída
 		apresentam uma organização mista da memória (compartilhada e
-		distribuída) em um único sistema. Por exemplo, nós
-		computacionais de \textit{clusters} e \textit{grids} podem
-		possuir diversos \textit{cores} cada. Nesse sentido, a memória
-		de um computador é compartilhada exclusivamente entre seus
-		\textit{cores}. Alternativamente, em processadores
-		\textit{manycore} recentes, os \textit{cores} são usualmente
-		agrupados em \textit{clusters}. Dentro de um \textit{cluster},
-		todos os \textit{cores} compartilham o acesso a uma memória.
-		Porém, um \textit{cluster} necessita realizar comunicações via
-		rede (usualmente, uma \textit{Network-on-Chip} -- NoC) para que
-		possa acessar a memória de outros \textit{clusters}. De fato, sistemas
-		de memória compartilhada e distribuída constituem uma tendência na
-		Computação de Alto Desempenho, por consistirem em um compromisso
-		entre as vantagens dos dois outros tipos de sistemas.
+		distribuída). Por exemplo, nós computacionais de
+		\textit{clusters} e \textit{grids} podem possuir diversos
+		\textit{cores} cada. Nesse sentido, a memória de um computador é
+		compartilhada exclusivamente entre seus \textit{cores}.
+		Alternativamente, em processadores \textit{manycore} recentes,
+		os \textit{cores} são usualmente agrupados em \textit{clusters}.
+		Dentro de um \textit{cluster}, todos os \textit{cores}
+		compartilham o acesso a uma memória.  Porém, um \textit{cluster}
+		necessita realizar comunicações via rede de interconecção
+		\textit{intrachip} (usualmente, uma \textit{Network-on-Chip} --
+		NoC) para que possa acessar a memória de outros
+		\textit{clusters}. De fato, sistemas de memória compartilhada e
+		distribuída constituem uma tendência na Computação de Alto
+		Desempenho, por consistirem em um compromisso entre as vantagens
+		dos dois outros tipos de sistemas.
 
 		O \openmp, assunto deste capítulo, consiste numa API para
 		sistemas de memória compartilhada e utiliza o conceito de
 		\textit{threads} para possibilitar o compartilhamento de dados
-		em memória. Por tanto, a API pode ser utilizada tanto para
-		arquiteturas UMA quanto para arquiteturas NUMA.
+		em memória. Por tanto, a API pode ser utilizada tanto para o
+		desenvolvimento de aplicações paralelas em arquiteturas UMA
+		quanto para arquiteturas NUMA.
 		
 	\subsection{Modelo Fork-Join}
 
@@ -372,12 +374,11 @@ void sayhello(int nthreads)
 		entre todas as \textit{threads} por padrão. No entanto, a
 		cláusula \texttt{private()} pode ser usada para a especificação
 		de variáveis locais privadas, e a diretiva \texttt{omp
-		threadprivate()} pode ser empregada para a definição de variáveis
-		globais privadas. Alternativamente, é possível alterar o
-		comportamento padrão para variáveis locais através da cláusula
-		\texttt{default()}, definindo todas elas como privadas, e então
-		especificar as variáveis locais compartilhadas pela cláusula
-		\texttt{shared()}.
+		threadprivate()} pode ser empregada para a definição de
+		variáveis globais privadas. Alternativamente, é definir todas as
+		variáveis locais como privadas, através da cláusula
+		\texttt{default()}, e então especificar as variáveis locais
+		compartilhadas pela cláusula \texttt{shared()}.
 
 		% Programação de Alto Desempenho
 		O uso dos mecanismos apresentados anteriormente é fundamental no
@@ -481,21 +482,22 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		Para ilustrar o impacto no desempenho que cada uma dessas
 		abordagens teriam no algoritmo clássico de multiplicação de
 		matrizes, experimentos foram conduzidos com tamanho da matriz de
-		entrada fixado em $1.680 \times 1.680$ e com o número de \textit{threads} 
-		variando de $2$ a $24$. Durante as execuções, foram coletadas estatísticas
-		de tempo de execução e número de faltas na \textit{cache} L2.  A análise
-		dos resultados de faltas na \textit{cache} L2 (Figura \ref{figure: cache misses
-		mm}) revela que a abordagem de paralelização mais grossa conduz
-		a um menor número de faltas, em contraste a estratégia de
-		paralelização do laço mais interno, para a plataforma e tamanho
-		de problema considerados. Essa diferença conduz a um ganho de
-		desempenho que é evidenciado nos resultados de tempo de execução
-		da aplicação (Figura \ref{figure: time mm}). Além disso, é
-		possível constatar que o ganho obtido com mais que $12$
-		\textit{threads} não é significantemente superior do que quando
-		menos \textit{threads} são usadas, indicando assim que na
-		plataforma considerada o tamanho de problema não escala
-		linearmente com o número de \textit{threads}.
+		entrada fixado em $1.680 \times 1.680$ e com o número de
+		\textit{threads} variando de $2$ a $24$. Durante as execuções,
+		foram coletadas estatísticas de tempo de execução e número de
+		faltas na \textit{cache} L2.  A análise dos resultados de faltas
+		na \textit{cache} L2 (Figura \ref{figure: cache misses mm})
+		revela que a abordagem de paralelização mais grossa conduz a um
+		menor número de faltas, em contraste com a estratégia de
+		paralelização do laço mais interno, para a plataforma
+		considerada. Essa diferença conduz a um ganho de desempenho que
+		é evidenciado nos resultados de tempo de execução da aplicação
+		(Figura \ref{figure: time mm}). Além disso, é possível constatar
+		que o ganho obtido com mais que $12$ \textit{threads} não é
+		significantemente superior do que quando menos \textit{threads}
+		são usadas, indicando assim que na plataforma considerada o
+		tamanho de problema não escala linearmente com o número de
+		\textit{threads}.
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
@@ -593,27 +595,46 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 			aplicação.
 		\end{itemize}
 		
+		\begin{figure}[b]
+			\captionsetup[subfigure]{justification=centering}
+			\centering
+				\begin{subfigure}{0.40\linewidth}
+					\includegraphics[width=\linewidth]{img/smm}
+					\caption{Escalabilidade das estratégias.}
+					\label{fig:static-dynamic-guided}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.40\linewidth}
+					\includegraphics[width=\linewidth]{img/chunk-size}
+					\caption{Análise do tamanho de \textit{chunks}.}
+					\label{fig:chunk-size}
+				\end{subfigure}
+			\caption{Desempenho das estratégias \texttt{dynamic} e
+			\texttt{static} na versão paralela do algoritmo clássico para multiplicação de matrizes esparsas.}
+		\end{figure}
+
 		% Análise de Desempenho
 		O Fragmento de Código~\ref{listing:sparsematrixmult} ilustra o
 		uso desses dois mecanismos na paralelização do algoritmo
-		clássico para multiplicação de matrizes esparsas, um típico
-		representante de uma aplicação irregular. Nesse exemplo, o
-		escalonamento de iterações é feito em blocos (\textit{chunks})
-		de tamanho 1 com a política de escalonamento \texttt{dynamic}.
-		Uma avaliação quantitativa do desempenho dessa estratégia nesse
-		algoritmo particular, frente à estratégia \texttt{static}, é
-		apresentada na Figura~\ref{fig:static-dynamic-guided}. Nesses
-		experimentos utilizou-se uma matriz de tamanho $1.680 \times 1.680$. 
-		O número de \textit{threads} ($n$) foi variado de $2$ a $12$ e o tamanho
-		dos \textit{chunks} foi fixado em $1.680/n$ e $1$, para as
-		estratégias escalonamento \texttt{static} e \texttt{dynamic},
-		respectivamente.  Para essa aplicação, tamanho de problema e
-		plataforma, a análise dos resultados revela que a estratégia de
-		escalonamento \texttt{dynamic} conduz a um melhor desempenho do
-		que a estratégia \texttt{static}, se mostrando assim mais
-		escalável.  De fato, esse comportamento é recorrente em
-		aplicações irregulares e pode ser utilizado para guiar o projeto
-		de soluções paralelas eficientes nesse domínio. No entanto, é
+		clássico para multiplicação de matrizes esparsas, uma típica
+		aplicação irregular. Nesse exemplo, o escalonamento de iterações
+		é feito em blocos (\textit{chunks}) de tamanho 1 com a política
+		de escalonamento \texttt{dynamic}.  Uma avaliação quantitativa
+		do desempenho dessa estratégia nesse algoritmo particular,
+		frente à estratégia \texttt{static}, é apresentada na
+		Figura~\ref{fig:static-dynamic-guided}. Nesses experimentos
+		utilizou-se uma matriz de tamanho $1.680 \times 1.680$.  O
+		número de \textit{threads} ($n$) foi variado de $2$ a $12$ e
+		o tamanho dos \textit{chunks} foi fixado em $1.680/n$ e $1$,
+		para as estratégias escalonamento \texttt{static} e
+		\texttt{dynamic}, respectivamente.  Para essa aplicação,
+		tamanho de problema e plataforma, a análise dos resultados
+		revela que a estratégia de escalonamento \texttt{dynamic}
+		conduz a um melhor desempenho do que a estratégia
+		\texttt{static}, se mostrando assim mais escalável.  De
+		fato, esse comportamento é recorrente em aplicações
+		irregulares e pode ser utilizado para guiar o projeto de
+		soluções paralelas eficientes nesse domínio. No entanto, é
 		pertinente observar que a granularidade de \textit{chunks}
 		consiste em um fator que impacta diretamente no desempenho
 		entregue pela estratégia \texttt{dynamic} e, então, deve ser
@@ -634,25 +655,6 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		com o aumento do tamanho do \textit{chunk}. Em contraste, a
 		estratégia \texttt{static} entrega um desempenho praticamente
 		constante à aplicação, independente do tamanho do \textit{chunk}.
-
-		\begin{figure}[t]
-			\captionsetup[subfigure]{justification=centering}
-			\centering
-				\begin{subfigure}{0.47\linewidth}
-					\includegraphics[width=\linewidth]{img/smm}
-					\caption{Escalabilidade das estratégias \texttt{dynamic} e \texttt{static}.}
-					\label{fig:static-dynamic-guided}
-				\end{subfigure}
-				\quad
-				\begin{subfigure}{0.47\linewidth}
-					\includegraphics[width=\linewidth]{img/chunk-size}
-					\caption{Desempenho para diferentes tamanhos de
-					\textit{chunks}.}
-					\label{fig:chunk-size}
-				\end{subfigure}
-			\caption{Desempenho das estratégias \texttt{dynamic} e \texttt{static} obtidos com a versão paralela
-			do algoritmo clássico para multiplicação de matrizes esparsas.}
-		\end{figure}
 
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
@@ -737,28 +739,24 @@ int scalar_product(struct vector *a, struct vector *b)
 		paralela por todas as \textit{worker threads}. Nesses trechos de
 		código, denominados \textit{seções críticas}, faz-se necessária
 		a utilização de um mecanismo de exclusão mútua para evitar que
-		duas ou mais \textit{worker threads} modifiquem simultaneamente 
-		dados compartilhados.  
-		
-		Para esses casos, a API \openmp oferece duas diretivas principais. A primeira delas,
-		denominada \texttt{omp critical}, implementa um mecanismo de
-		exclusão mútua clássico com uso de \textit{locks} similar ao
-		\textit{mutex}. A segunda delas, denominada \texttt{omp atomic},
-		é semelhante à primeira, porém somente pode ser utilizada para
-		proteger operações simples sobre uma variável compartilhada.
-		Por exemplo, para uma variável compartilhada \texttt{x}, as
+		duas ou mais \textit{worker threads} modifiquem simultaneamente
+		dados compartilhados.  Para esses casos, a API \openmp oferece
+		duas diretivas principais. A primeira delas, denominada
+		\texttt{omp critical}, implementa um mecanismo de exclusão mútua
+		clássico com uso de \textit{locks} similar ao \textit{mutex}. A
+		segunda delas, denominada \texttt{omp atomic}, é semelhante à
+		primeira, porém somente pode ser utilizada para proteger
+		operações simples sobre uma variável compartilhada.  Por
+		exemplo, para uma variável compartilhada \texttt{x}, as
 		operações permitidas pela diretiva \texttt{omp atomic} são: (i)
 		leitura, \eg \texttt{v = x}; (ii) escrita, \eg \texttt{x =}
 		\textit{expr} (onde \textit{expr} é uma expressão aritmética);
 		(iii) atualização, \eg \texttt{x++}; ou (iv)
-		incremento/decremento, \eg \texttt{v = x++}. A lista completa de
-		operações permitidas está disponível na especificação da API
-		\openmp em \url{http://openmp.org/wp/openmp-specifications}.
-		
-		É importante notar que, para o caso de uma seção crítica contendo
-		uma única operação aritmética, ambas as diretivas podem ser
-		utilizadas. Porém, nesse caso, a diretiva \texttt{omp atomic}
-		oferecerá um melhor desempenho, pois a sua implementação utiliza
+		incremento/decremento, \eg \texttt{v = x++}.  É importante notar
+		que, para o caso de uma seção crítica contendo uma única
+		operação aritmética, ambas as diretivas podem ser utilizadas.
+		Porém, nesse caso, a diretiva \texttt{omp atomic} oferecerá um
+		melhor desempenho, pois a sua implementação utiliza
 		\textit{spin-locks} e instruções de \textit{hardware} para
 		garantir a atomicidade das operações.
 		
@@ -776,10 +774,10 @@ int scalar_product(struct vector *a, struct vector *b)
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=0.6\linewidth]{img/tasks}
-		\caption{Paralelismo de tarefas do \openmp: uma ou mais \textit{threads} criam
-		tarefas, as quais são inseridas em uma estrutura de dados compartilhada
+		\caption{Paralelismo de tarefas do \openmp. \textit{Threads} criam
+		tarefas e as inserem em uma estrutura de dados compartilhada
 		que contém tarefas ainda não computadas. \textit{Threads} ociosas em
-		uma região paralela retiram tarefas dessa estrutura e as processam uma a
+		uma retiram tarefas dessa estrutura e as processam uma a
 		uma.}
 		\label{fig:tasks}
 	\end{figure}
@@ -841,8 +839,8 @@ int scalar_product(struct vector *a, struct vector *b)
 
 	\begin{figure}[t]
 		\centering
-		\includegraphics[width=0.8\linewidth]{img/fibonacci}
-		\caption{Grafo de dependência de tarefas gerado pelo algoritmo que calcula a soma da sequência
+		\includegraphics[width=0.7\linewidth]{img/fibonacci}
+		\caption{Grafo de dependência de tarefas gerado no cálculo da sequência
 		de Fibonacci.}\label{fig:fibonacci}
 	\end{figure}
 
@@ -861,9 +859,9 @@ int scalar_product(struct vector *a, struct vector *b)
 	\texttt{recursive\_fibonacci()}, tarefas correspondentes ao cálculo
 	$F_{n-1}$ e $F_{n-2}$ são criadas com o uso da diretiva \texttt{omp
 	task} (linhas 27--28 e 30--31) assim como as dependências são
-	criadas com a diretiva \texttt{omp taskwait} (linhas 33--34). Com as
-	tarefas correspondem a chamadas recursivas, essas tarefas poderão
-	criar novas tarefas.
+	criadas com a diretiva \texttt{omp taskwait} (linhas 33--34). Como as
+	tarefas são chamadas recursivas, novas tarefas poderão
+	ser criadas.
 	
 	Note que o Fragmento de Código~\ref{listing:fibonacci} inclui uma
 	condição de parada específica para a criação de tarefas (linha 23),
@@ -882,8 +880,24 @@ int scalar_product(struct vector *a, struct vector *b)
 	contendo cargas extremamente grandes podem gerar desbalanceamentos
 	de carga entre as \textit{worker threads}.
 
-\begin{lstlisting}[float,floatplacement=b,frame=single, caption=Exemplo de uma implementação recursiva simples da soma da sequencia de Fibonacci
-usando tarefas., label=listing:fibonacci]
+	Uma avaliação do impacto da granularidade das tarefas no desempenho
+	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Nesses
+	experimentos, o número de \textit{threads} foi fixado em 12 e o
+	valor da variável \texttt{n} foi fixado em 50. Os resultados mostram um ganho
+	significativo de desempenho quando a granularidade das tarefas é aumentada
+	(i.e., quando o valor usado na variável \texttt{stop} é aumentado) de $14$ para $26$
+	(ganho de desempenho de $19,8\times$).  Com \texttt{stop=26} tem-se então o
+	melhor compromisso entre sobrecusto da geração/controle de tarefas e
+	desbalanceamento de carga entre as \textit{threads}. A partir desse
+	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
+	comportamento é esperando pois um grão muito grande pode gerar
+	importantes desbalanceamentos de carga entre as \textit{worker threads}. A perda de
+	desempenho devido ao desbalanceamento de carga ocorre pois o tempo total
+	da aplicação passa a ser determinado pelo tempo de execução da \textit{worker thread}
+	mais sobrecarregada.
+
+\begin{lstlisting}[frame=single,
+caption=Implementação recursiva da sequência de Fibonacci., label=listing:fibonacci]
 int fibonacci(int n, int stop)
 {
 	int result;
@@ -908,8 +922,9 @@ long recursive_fibonacci(int n, int stop)
 	/* Condicao de parada da criacao de tarefas. */
 	if (n < stop) 
 		return (recursive_fibonacci(n-1, stop) + recursive_fibonacci(n-2, stop));
-	else
-	{	/* Criacao de tarefas e suas dependencias. */
+	
+	/* Criacao de tarefas e suas dependencias. */
+	else {
 		#pragma @omp@ task shared(f1)
 		f1 = recursive_fibonacci(n-1, stop);
 
@@ -923,42 +938,25 @@ long recursive_fibonacci(int n, int stop)
 	}
 }
 \end{lstlisting}
-
-	Uma avaliação do impacto da granularidade das tarefas no desempenho
-	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Nesses
-	experimentos, o número de \textit{threads} foi fixado em 12 e o
-	valor da variável \texttt{n} foi fixado em 50. Os resultados mostram um ganho
-	significativo de desempenho quando a granularidade das tarefas é aumentada
-	(i.e., quando o valor usado na variável \texttt{stop} é aumentado) de $14$ para $26$
-	(ganho de desempenho de $19,8\times$).  Com \texttt{stop=26} tem-se então o
-	melhor compromisso entre sobrecusto da geração/controle de tarefas e
-	desbalanceamento de carga entre as \textit{threads}. A partir desse
-	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
-	comportamento é esperando pois um grão muito grande pode gerar
-	importantes desbalanceamentos de carga entre as \textit{worker threads}. A perda de
-	desempenho devido ao desbalanceamento de carga ocorre pois o tempo total
-	da aplicação passa a ser determinado pelo tempo de execução da \textit{worker thread}
-	mais sobrecarregada.
 	
-		\begin{figure}[t]
+		\begin{figure}[b]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
-				\begin{subfigure}{0.47\linewidth}
+				\begin{subfigure}{0.45\linewidth}
 					\includegraphics[width=\linewidth]{img/fibonacci-task-grain}
 					\label{fig:grao-tarefas-tempo}
 					\caption{Tempos de execução.}
 				\end{subfigure}
 				\quad
-				\begin{subfigure}{0.47\linewidth}
+				\begin{subfigure}{0.45\linewidth}
 					\includegraphics[width=\linewidth]{img/fibonacci-speedup}
 					\label{fig:grao-tarefas-ganho}
 					\caption{Ganhos de desempenho.}
 				\end{subfigure}
-			\caption{Impacto da granularidade das tarefas no desempenho do cálculo da soma da sequência
+			\caption{Impacto da granularidade de tarefas no cálculo sequência
 				de Fibonacci.}
 			\label{fig:grao-tarefas}
 		\end{figure}
-
 
 \section{Conclusão}
 \label{sec:conclusao}
