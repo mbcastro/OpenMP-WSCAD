@@ -124,7 +124,9 @@
 	tendência é confirmada pelo \textit{website}
 	Top500\footnote{\url{www.top500.org}}, que provê um
 	\textit{ranking} atualizado	dos 500 supercomputadores mais poderosos
-	do mundo, conforme mostrado na Figura~\ref{fig:top500}.
+	do mundo. A Figura~\ref{fig:top500} mostra o número de \textit{cores}
+	do supercomputador mais poderoso do mundo ao longo dos anos 
+	segundo o \textit{ranking} do \textit{website} Top500.
 		
 	% Motivação
 	No entanto, ao passo que uma quantidade massiva de \textit{cores}
@@ -163,8 +165,8 @@
 	\begin{figure}[t]
 		\centering
 		\includegraphics[width=\linewidth]{img/cores-top500.pdf}
-		\caption{Número total de \textit{cores} dos 500 supercomputadores
-		mais poderosos do mundo.}
+		\caption{Número total de \textit{cores} do supercomputador mais
+		poderoso do mundo segundo o \textit{ranking} do \textit{website} Top500.}
 		\label{fig:top500}
 	\end{figure}
 
@@ -267,7 +269,7 @@
 		os \textit{cores} são usualmente agrupados em \textit{clusters}.
 		Dentro de um \textit{cluster}, todos os \textit{cores}
 		compartilham o acesso a uma memória.  Porém, um \textit{cluster}
-		necessita realizar comunicações via rede de interconecção
+		necessita realizar comunicações via rede de interconexão
 		\textit{intrachip} (usualmente, uma \textit{Network-on-Chip} --
 		NoC) para que possa acessar a memória de outros
 		\textit{clusters}. De fato, sistemas de memória compartilhada e
@@ -375,7 +377,7 @@ void sayhello(int nthreads)
 		cláusula \texttt{private()} pode ser usada para a especificação
 		de variáveis locais privadas, e a diretiva \texttt{omp
 		threadprivate()} pode ser empregada para a definição de
-		variáveis globais privadas. Alternativamente, é definir todas as
+		variáveis globais privadas. Alternativamente, é possível definir todas as
 		variáveis locais como privadas, através da cláusula
 		\texttt{default()}, e então especificar as variáveis locais
 		compartilhadas pela cláusula \texttt{shared()}.
@@ -776,9 +778,8 @@ int scalar_product(struct vector *a, struct vector *b)
 		\includegraphics[width=0.6\linewidth]{img/tasks}
 		\caption{Paralelismo de tarefas do \openmp. \textit{Threads} criam
 		tarefas e as inserem em uma estrutura de dados compartilhada
-		que contém tarefas ainda não computadas. \textit{Threads} ociosas em
-		uma retiram tarefas dessa estrutura e as processam uma a
-		uma.}
+		que contém tarefas ainda não computadas. \textit{Threads} ociosas 
+		retiram tarefas dessa estrutura e as processam uma a uma.}
 		\label{fig:tasks}
 	\end{figure}
 
