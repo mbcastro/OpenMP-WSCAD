@@ -148,7 +148,7 @@
 	mecanismos oferecidos por essa interface de programação são apresentados
 	através de exemplos práticos, disponíveis publicamente sob licença
 	GPLv3 em \url{www.github.com/lapesd/teaching-openmp}, e analisados
-	quantitativamente em uma máquina real UMA com 4 processadores Intel Xeon
+	quantitativamente em uma máquina real com 4 processadores Intel Xeon
 	X7 (6 \textit{cores} cada).
 	
 	Este capítulo está organizado da seguinte forma. A
@@ -408,7 +408,17 @@ void sayhello(int nthreads)
 	\subsection{Paralelização de Laços}
 	\label{subsection: paralelização de lacos}
 
-\begin{lstlisting}[frame=single,float,floatplacement=b,caption=Paralelização da multiplicação de matrizes no \openmp.,label=listing:matrixmult]
+		% Visão Geral
+		Duas diretivas de paralelização de laços estão disponíveis no
+		\openmp: \texttt{omp for} e \texttt{omp parallel for}. A
+		primeira diretiva instrui que as iterações do laço seguinte de
+		uma região paralela devem ser distribuídas entre as
+		\textit{threads} do grupo em questão e, então, executadas em
+		paralelo. A segunda diretiva tem o mesmo efeito, porém não
+		necessita que o laço esteja dentro de uma região paralela. 
+		
+
+\begin{lstlisting}[frame=single,caption=Paralelização da multiplicação de matrizes no \openmp.,label=listing:matrixmult]
 struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 {
 	struct matrix *c;
@@ -428,17 +438,9 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 
 	return (c);
 }
-\end{lstlisting}
-
-		% Visão Geral
-		Duas diretivas de paralelização de laços estão disponíveis no
-		\openmp: \texttt{omp for} e \texttt{omp parallel for}. A
-		primeira diretiva instrui que as iterações do laço seguinte de
-		uma região paralela devem ser distribuídas entre as
-		\textit{threads} do grupo em questão e, então, executadas em
-		paralelo. A segunda diretiva tem o mesmo efeito, porém não
-		necessita que o laço esteja dentro de uma região paralela. O
-		Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa
+\end{lstlisting}		
+		
+		O Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa
 		última diretiva na paralelização do algoritmo clássico de
 		multiplicação de matrizes. Nesse exemplo, um grupo de
 		\textit{threads} é criado para executar os comandos do laço da
@@ -465,13 +467,13 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
-				\begin{subfigure}{0.47\linewidth}
+				\begin{subfigure}{0.48\linewidth}
 					\includegraphics[width=\linewidth]{img/mm}
 					\caption{Tempo de execução.}
 					\label{figure: time mm}
 				\end{subfigure}
 				\quad
-				\begin{subfigure}{0.47\linewidth}
+				\begin{subfigure}{0.48\linewidth}
 					\includegraphics[width=\linewidth]{img/mm-cache}
 					\caption{Número de faltas de \textit{cache}.}
 					\label{figure: cache misses mm}
@@ -479,7 +481,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 				\caption{Resultados das soluções de paralelização para a
 				multiplicação de matrizes.}
 		\end{figure}
-			
+
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas
 		abordagens teriam no algoritmo clássico de multiplicação de
@@ -523,29 +525,6 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 			\text{Carga de Trabalho} = \dfrac{\text{Numéro de Linhas na Matriz}}%
 			                                 {\text{Número de Threads}}
 		\end{equation}
-
-\begin{lstlisting}[float,floatplacement=b,frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
-label=listing:sparsematrixmult]
-struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
-{
-	struct matrix *c;
-
-	c = matrix_create(a->nrows, b->ncols);
-
-	/* Multiplica matrizes esparsas. */
-	#pragma @omp@ parallel for private(i, j, k) schedule(dynamic, 1)
-	for (int i = 0; i < a->nrows; i++) {
-		for (int j = 0; j < a->ncols; j++) {
-			for (int k = 0; k < a->ncols; k++) {
-				if (MATRIX(a, i, k) != 0)
-					MATRIX(c, i, j) += MATRIX(a, i, k)*MATRIX(b, k, j);
-			}
-		}
-	}
-
-	return (c);
-}
-\end{lstlisting}
 		
 		% Aplicações Irregulares
 		No entanto, para aplicações que possuem um caráter irregular de
@@ -596,24 +575,6 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 			porção significativa do tempo total de execução da
 			aplicação.
 		\end{itemize}
-		
-		\begin{figure}[b]
-			\captionsetup[subfigure]{justification=centering}
-			\centering
-				\begin{subfigure}{0.40\linewidth}
-					\includegraphics[width=\linewidth]{img/smm}
-					\caption{Escalabilidade das estratégias.}
-					\label{fig:static-dynamic-guided}
-				\end{subfigure}
-				\quad
-				\begin{subfigure}{0.40\linewidth}
-					\includegraphics[width=\linewidth]{img/chunk-size}
-					\caption{Análise do tamanho de \textit{chunks}.}
-					\label{fig:chunk-size}
-				\end{subfigure}
-			\caption{Desempenho das estratégias \texttt{dynamic} e
-			\texttt{static} na versão paralela do algoritmo clássico para multiplicação de matrizes esparsas.}
-		\end{figure}
 
 		% Análise de Desempenho
 		O Fragmento de Código~\ref{listing:sparsematrixmult} ilustra o
@@ -642,6 +603,29 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		entregue pela estratégia \texttt{dynamic} e, então, deve ser
 		cuidadosamente considerado. 
 
+\begin{lstlisting}[float,floatplacement=b,frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
+label=listing:sparsematrixmult]
+struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
+{
+	struct matrix *c;
+
+	c = matrix_create(a->nrows, b->ncols);
+
+	/* Multiplica matrizes esparsas. */
+	#pragma @omp@ parallel for private(i, j, k) schedule(dynamic, 1)
+	for (int i = 0; i < a->nrows; i++) {
+		for (int j = 0; j < a->ncols; j++) {
+			for (int k = 0; k < a->ncols; k++) {
+				if (MATRIX(a, i, k) != 0)
+					MATRIX(c, i, j) += MATRIX(a, i, k)*MATRIX(b, k, j);
+			}
+		}
+	}
+
+	return (c);
+}
+\end{lstlisting}
+
 		% Granularidade de Chunks
 		Para enfatizar a influência do tamanho do \textit{chunk} no
 		desempenho do escalonador \textit{dynamic}, experimentos foram
@@ -657,6 +641,24 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		com o aumento do tamanho do \textit{chunk}. Em contraste, a
 		estratégia \texttt{static} entrega um desempenho praticamente
 		constante à aplicação, independente do tamanho do \textit{chunk}.
+
+		\begin{figure}[t]
+			\captionsetup[subfigure]{justification=centering}
+			\centering
+				\begin{subfigure}{0.48\linewidth}
+					\includegraphics[width=\linewidth]{img/smm}
+					\caption{Escalabilidade das estratégias.}
+					\label{fig:static-dynamic-guided}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.48\linewidth}
+					\includegraphics[width=\linewidth]{img/chunk-size}
+					\caption{Análise do tamanho de \textit{chunks}.}
+					\label{fig:chunk-size}
+				\end{subfigure}
+			\caption{Desempenho das estratégias \texttt{dynamic} e
+			\texttt{static} na versão paralela do algoritmo clássico para multiplicação de matrizes esparsas.}
+		\end{figure}
 
 	\subsection{Redução de Operações}
 	\label{subsection: reducao de operacoes}
@@ -698,7 +700,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		computação de interesse, seguido por um laço sequencial que
 		realiza a redução dos valores parciais computados.
 
-\begin{lstlisting}[float,floatplacement=b,frame=single, caption=Produto escalar.,
+\begin{lstlisting}[frame=single, caption=Produto escalar.,
 label=listing:prodescalar]
 int scalar_product(struct vector *a, struct vector *b)
 {
@@ -711,7 +713,6 @@ int scalar_product(struct vector *a, struct vector *b)
 	return (prod);
 }
 \end{lstlisting}
-
 
 \section{Sincronização}
 \label{section: sincronizacao}
@@ -840,7 +841,7 @@ int scalar_product(struct vector *a, struct vector *b)
 
 	\begin{figure}[t]
 		\centering
-		\includegraphics[width=0.7\linewidth]{img/fibonacci}
+		\includegraphics[width=0.8\linewidth]{img/fibonacci}
 		\caption{Grafo de dependência de tarefas gerado no cálculo da sequência
 		de Fibonacci.}\label{fig:fibonacci}
 	\end{figure}
@@ -880,22 +881,6 @@ int scalar_product(struct vector *a, struct vector *b)
 	reduzir o sobrecusto anteriormente mencionado. Todavia, tarefas
 	contendo cargas extremamente grandes podem gerar desbalanceamentos
 	de carga entre as \textit{worker threads}.
-
-	Uma avaliação do impacto da granularidade das tarefas no desempenho
-	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Nesses
-	experimentos, o número de \textit{threads} foi fixado em 12 e o
-	valor da variável \texttt{n} foi fixado em 50. Os resultados mostram um ganho
-	significativo de desempenho quando a granularidade das tarefas é aumentada
-	(i.e., quando o valor usado na variável \texttt{stop} é aumentado) de $14$ para $26$
-	(ganho de desempenho de $19,8\times$).  Com \texttt{stop=26} tem-se então o
-	melhor compromisso entre sobrecusto da geração/controle de tarefas e
-	desbalanceamento de carga entre as \textit{threads}. A partir desse
-	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
-	comportamento é esperando pois um grão muito grande pode gerar
-	importantes desbalanceamentos de carga entre as \textit{worker threads}. A perda de
-	desempenho devido ao desbalanceamento de carga ocorre pois o tempo total
-	da aplicação passa a ser determinado pelo tempo de execução da \textit{worker thread}
-	mais sobrecarregada.
 
 \begin{lstlisting}[frame=single,
 caption=Implementação recursiva da sequência de Fibonacci., label=listing:fibonacci]
@@ -939,8 +924,25 @@ long recursive_fibonacci(int n, int stop)
 	}
 }
 \end{lstlisting}
+
+	Uma avaliação do impacto da granularidade das tarefas no desempenho
+	da aplicação é apresentada na Figura~\ref{fig:grao-tarefas}. Nesses
+	experimentos, o número de \textit{threads} foi fixado em 12 e o
+	valor da variável \texttt{n} foi fixado em 50. Os resultados mostram um ganho
+	significativo de desempenho quando a granularidade das tarefas é aumentada
+	(i.e., quando o valor usado na variável \texttt{stop} é aumentado) de $14$ para $26$
+	(ganho de desempenho de $19,8\times$).  Com \texttt{stop=26} tem-se então o
+	melhor compromisso entre sobrecusto da geração/controle de tarefas e
+	desbalanceamento de carga entre as \textit{threads}. A partir desse
+	ponto, o desempenho da aplicação volta a piorar ligeiramente. Esse
+	comportamento é esperando pois um grão muito grande pode gerar
+	importantes desbalanceamentos de carga entre as \textit{worker threads}. A perda de
+	desempenho devido ao desbalanceamento de carga ocorre pois o tempo total
+	da aplicação passa a ser determinado pelo tempo de execução da \textit{worker thread}
+	mais sobrecarregada.
+
 	
-		\begin{figure}[b]
+		\begin{figure}[t]
 			\captionsetup[subfigure]{justification=centering}
 			\centering
 				\begin{subfigure}{0.45\linewidth}
