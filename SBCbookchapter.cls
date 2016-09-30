@@ -1,7 +1,7 @@
 %
 % SBCbookchapter - SBC book chapters
 %
-% Copyright (C) 2005 Rafael Bohrer ¡vila
+% Copyright (C) 2005 Rafael Bohrer √Åvila
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 %
-% Charset: ISO8859-1 (latin-1) ·ÈÌÛ˙Á
+% Charset: ISO8859-1 (latin-1) √°√©√≠√≥√∫√ß
 %
 % $Id$
 %
@@ -93,8 +93,7 @@
 %=======================================================================
 % [Re]definition of environments abstract and resumo
 %=======================================================================
-\renewenvironment{abstract}[1][Abstract]{%
-	\itshape
+\renewenvironment{abstract}[1][\textit{Abstract}]{%
 	\begin{center}
 	\textbf{#1}
 	\end{center}
@@ -119,7 +118,8 @@
 		{\reset@font\bfseries}%
 }
 \newcounter{chapter}\setcounter{chapter}{1}
-\renewcommand{\thesection}{\thechapter.\arabic{section}}
+%\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesection}{\arabic{section}}
 \def\@seccntformat#1{\csname the#1\endcsname.\hspace{.5em}}
 
 %=======================================================================
