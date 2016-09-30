@@ -42,7 +42,7 @@
 	belowcaptionskip=1\baselineskip,
 	breaklines=true,
 	frame=L,
-	xleftmargin=\parindent,
+	xleftmargin=0.6cm,
 	numbers=left,
 	stepnumber=1,
 	language=C,
@@ -300,7 +300,7 @@
 		
 	\subsection{Modelo Fork-Join}
 
-		\begin{figure}[b]
+		\begin{figure}[t]
 			\centering
 			\includegraphics[width=0.8\linewidth]{img/fork-join}
 			\caption{Visão geral do modelo \textit{Fork-Join}.}\label{fig:fork-join}
@@ -343,26 +343,6 @@
 	\subsection{Regiões Paralelas e Compartilhamento de Dados}
 	\label{subsection: regioes paralelas e compartilhamento de dados}
 
-\begin{lstlisting}[frame=single,float,floatplacement=t,caption=Um exemplo simples com uma região paralela.,label=listing:sayhello] 
-void sayhello(int nthreads)
-{
-	void tids[nthreads]
-
-	/* Cria threads. */
-	#pragma @omp@ parallel num_threads(nthreads)
-	{
-		int tid;
-
-		tid = omp_get_thread_num();
-		tids[tid] = tid;
-	}
-
-	/* Imprime IDs das threads. */
-	for (int i = 0; i < nthreads; i++)
-		printf("thread %d: my ID is %d\n", i, tids[i]);
-}
-\end{lstlisting}
-
 		% Descrição.
 		A definição de regiões paralelas no \openmp é feita através da
 		diretiva \texttt{omp parallel}, como ilustrado no Fragmento
@@ -384,6 +364,26 @@ void sayhello(int nthreads)
 		Esse identificador pode ser recuperado em tempo de execução por
 		cada \textit{thread} em uma região paralela através da função utilitária do
 		\openmp denominada \texttt{omp\_get\_thread\_num()}.
+
+\begin{lstlisting}[frame=single,float,floatplacement=t,caption=Um exemplo simples com uma região paralela.,label=listing:sayhello]
+void sayhello(int nthreads)
+{
+	void tids[nthreads]
+
+	/* Cria threads. */
+	#pragma @omp@ parallel num_threads(nthreads)
+	{
+		int tid;
+
+		tid = omp_get_thread_num();
+		tids[tid] = tid;
+	}
+
+	/* Imprime IDs das threads. */
+	for (int i = 0; i < nthreads; i++)
+		printf("thread %d: my ID is %d\n", i, tids[i]);
+}
+\end{lstlisting}
 
 		% Controle de Escopo de Dados 
 		Variáveis declaradas fora da região paralela são compartilhadas
@@ -430,9 +430,15 @@ void sayhello(int nthreads)
 		\textit{threads} do grupo em questão e, então, executadas em
 		paralelo. A segunda diretiva tem o mesmo efeito, porém não
 		necessita que o laço esteja dentro de uma região paralela. 
-		
+				
+		O Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa
+		última diretiva na paralelização do algoritmo clássico de
+		multiplicação de matrizes. Nesse exemplo, um grupo de
+		\textit{threads} é criado para executar os comandos do laço da
+		linha $9$. Cada \textit{thread} recebe um conjunto distinto de
+		iterações e, assim, a computação é efetuada em paralelo. 
 
-\begin{lstlisting}[frame=single,caption=Paralelização da multiplicação de matrizes no \openmp.,label=listing:matrixmult]
+\begin{lstlisting}[frame=single,float,floatplacement=t,caption=Paralelização da multiplicação de matrizes no \openmp.,label=listing:matrixmult]
 struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 {
 	struct matrix *c;
@@ -453,13 +459,6 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 	return (c);
 }
 \end{lstlisting}		
-		
-		O Fragmento de Código~\ref{listing:matrixmult} ilustra o uso dessa
-		última diretiva na paralelização do algoritmo clássico de
-		multiplicação de matrizes. Nesse exemplo, um grupo de
-		\textit{threads} é criado para executar os comandos do laço da
-		linha $9$. Cada \textit{thread} recebe um conjunto distinto de
-		iterações e, assim, a computação é efetuada em paralelo. 
 
 		% Discussão de Granularidade
 		Observe que nesse exemplo, assim como em diversas outras
@@ -477,24 +476,6 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		desbalanceamentos de carga durante a computação. Na
 		Seção~\ref{subsection: escalonamento de iteracoes} serão
 		discutidas as peculiaridades desse assunto em maiores detalhes.
-
-		\begin{figure}[t]
-			\captionsetup[subfigure]{justification=centering}
-			\centering
-				\begin{subfigure}{0.48\linewidth}
-					\includegraphics[width=\linewidth]{img/mm}
-					\caption{Tempo de execução.}
-					\label{figure: time mm}
-				\end{subfigure}
-				\quad
-				\begin{subfigure}{0.48\linewidth}
-					\includegraphics[width=\linewidth]{img/mm-cache}
-					\caption{Número de faltas de \textit{cache}.}
-					\label{figure: cache misses mm}
-				\end{subfigure}
-				\caption{Resultados das soluções de paralelização para a
-				multiplicação de matrizes.}
-		\end{figure}
 
 		% Análise de Desempenho
 		Para ilustrar o impacto no desempenho que cada uma dessas
@@ -516,6 +497,24 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		são usadas, indicando assim que na plataforma considerada o
 		tamanho de problema não escala linearmente com o número de
 		\textit{threads}.
+
+		\begin{figure}[t]
+			\captionsetup[subfigure]{justification=centering}
+			\centering
+				\begin{subfigure}{0.48\linewidth}
+					\includegraphics[width=\linewidth]{img/mm}
+					\caption{Tempo de execução.}
+					\label{figure: time mm}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.48\linewidth}
+					\includegraphics[width=\linewidth]{img/mm-cache}
+					\caption{Número de faltas de \textit{cache}.}
+					\label{figure: cache misses mm}
+				\end{subfigure}
+				\caption{Resultados das soluções de paralelização para a
+				multiplicação de matrizes.}
+		\end{figure}
 
 	\subsection{Escalonamento de Iterações}
 	\label{subsection: escalonamento de iteracoes}
@@ -617,7 +616,7 @@ struct matrix *matrix_mult(struct matrix *a, struct matrix *b)
 		entregue pela estratégia \texttt{dynamic} e, então, deve ser
 		cuidadosamente considerado. 
 
-\begin{lstlisting}[float,floatplacement=b,frame=single, caption=Exemplo de multiplicação de matrizes esparsas.,
+\begin{lstlisting}[float,floatplacement=b,frame=single,caption=Exemplo de multiplicação de matrizes esparsas.,
 label=listing:sparsematrixmult]
 struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 {
@@ -714,7 +713,7 @@ struct matrix *sparsematrix_mult(struct matrix *a, struct matrix *b)
 		computação de interesse, seguido por um laço sequencial que
 		realiza a redução dos valores parciais computados.
 
-\begin{lstlisting}[frame=single, caption=Produto escalar.,
+\begin{lstlisting}[float,floatplacement=b,frame=single,caption=Produto escalar.,
 label=listing:prodescalar]
 int scalar_product(struct vector *a, struct vector *b)
 {
@@ -896,7 +895,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	contendo cargas extremamente grandes podem gerar desbalanceamentos
 	de carga entre as \textit{worker threads}.
 
-\begin{lstlisting}[frame=single,
+\begin{lstlisting}[float,floatplacement=b,frame=single,
 caption=Implementação recursiva da sequência de Fibonacci., label=listing:fibonacci]
 int fibonacci(int n, int stop)
 {
