@@ -832,7 +832,7 @@ int scalar_product(struct vector *a, struct vector *b)
 	as tarefas criadas anteriormente.
 	
 	Um exemplo clássico de um problema recursivo que pode ser
-	paralelizado com o uso de tarefas é a soma da sequência de
+	paralelizado com o uso de tarefas é a sequência de
 	Fibonacci. Matematicamente, os números da sequência de Fibonacci são
 	gerados através da seguinte fórmula recursiva (Equação~\ref{eq:fib}):
 	
@@ -846,9 +846,9 @@ int scalar_product(struct vector *a, struct vector *b)
 	pelas tarefas $F_{n-1}$ e $F_{n-2}$ só poderão ser somados após o término
 	de ambas tarefas. Nesse caso, nota-se que $F_n$ depende de $F_{n-1}$ e
 	$F_{n-2}$. A Figura~\ref{fig:fibonacci} mostra um exemplo de um grafo de dependências
-	de tarefas para o cálculo da soma da sequência de Fibonacci usando tarefas.
+	de tarefas para o cálculo da sequência de Fibonacci usando tarefas.
 	Nesse exemplo, considera-se uma solução básica recursiva para o cálculo
-	da soma da sequência de Fibonacci com computações redundantes. Porém,
+	da sequência de Fibonacci com computações redundantes. Porém,
 	existem soluções mais otimizadas para esse problema que utilizam a técnica de
 	\textit{programação dinâmica}.
 
@@ -860,9 +860,9 @@ int scalar_product(struct vector *a, struct vector *b)
 	\end{figure}
 
 	O Fragmento de Código~\ref{listing:fibonacci} mostra um exemplo de
-	implementação básica (com computação redundante) para o cálculo da soma da sequência de
+	implementação básica (com computação redundante) para o cálculo da sequência de
 	Fibonacci usando tarefas em \openmp. Primeiramente é criada uma
-	região paralela com o uso da diretiva \texttt{omp parallel} (linha
+	região paralela com a diretiva \texttt{omp parallel} (linha
 	5). Para permitir que somente uma única \textit{worker thread}
 	inicie a computação, e consequentemente, a criação da primeira
 	tarefa, utiliza-se a diretiva \texttt{omp single} (linha 7). A
@@ -897,9 +897,9 @@ int scalar_product(struct vector *a, struct vector *b)
 
 \begin{lstlisting}[float,floatplacement=b,frame=single,
 caption=Implementação recursiva da sequência de Fibonacci., label=listing:fibonacci]
-int fibonacci(int n, int stop)
+unsigned long int fibonacci(int n, int stop)
 {
-	int result;
+	unsigned long int result;
 	
 	#pragma @omp@ parallel
   	{
@@ -910,9 +910,9 @@ int fibonacci(int n, int stop)
 	return (result);
 }
 
-long recursive_fibonacci(int n, int stop)
+unsigned long int recursive_fibonacci(int n, int stop)
 {
-	long f1, f2, fn;
+	unsigned long int f1, f2, fn;
 
 	/* Condicao de parada da recursao. */
 	if (n == 0 || n == 1) 
